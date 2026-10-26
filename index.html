@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style></head><body><title>Twin Stars</title>
+<title>Twin Stars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Saira+Condensed:wght@600;800&family=Saira:wght@400;600&display=swap">
@@ -223,7 +223,7 @@ button{font:inherit;cursor:pointer}
     <div class="card">
       <div class="eyebrow">A story football game · Part 1</div>
       <h1><span class="b">Twin</span><br><span class="g">Stars</span></h1>
-      <p>Nagi and Isagi were the greatest duo Aoba United ever had. Then Isagi was taken. Now Nagi carries a System, every skill in football, and one quest: avenge his friend.</p>
+      <p>Nagi and Isagi were the greatest duo Aoba United ever had. Then Isagi was taken. Now Nagi's ego is awake, every skill in football is his to take, and he has one goal: find his friend and bring him home.</p>
       <div class="row">
         <button class="btn primary" id="b-start">Start story</button>
         <button class="btn" id="b-chapters">Chapters</button>
@@ -4625,9 +4625,9 @@ function showLine(){
   const cls={SYSTEM:'sys',Isagi:'gold','Coach Hara':'red',Objective:'obj',Controls:'obj',Quest:'obj',Narration:'nar'}[L.who]||'';
   ui.dlg.className=cls;void ui.dlg.offsetWidth;ui.dlg.classList.add('pop');
   ui.dlg.style.setProperty('--c',(typeof STC==='object'&&STC[L.who])||'#4fb3ff');
-  ui.dlg.querySelector('.who').textContent=L.who;
+  ui.dlg.querySelector('.who').textContent=L.who==='SYSTEM'?'EGO':L.who;
   ui.dlg.querySelector('.txt').textContent='';
-  const chip=ui.dlg.querySelector('.chip b');if(chip)chip.textContent=(typeof STI==='object'&&STI[L.who])||L.who.charAt(0);
+  const chip=ui.dlg.querySelector('.chip b');if(chip)chip.textContent=L.who==='SYSTEM'?'E':(typeof STI==='object'&&STI[L.who])||L.who.charAt(0);
   if(typeof stChip==='function')stChip(L.who);
   if(L.who==='SYSTEM')sfx('sys');
 }
@@ -4800,16 +4800,16 @@ SC.rain=[
       if(t>2.1){ctx.fillStyle=`rgba(255,255,255,${clamp(1-(t-2.1)*1.6,0,1)})`;ctx.fillRect(0,0,W,H);}
       if(t>2.5){ctx.fillStyle=`rgba(0,0,0,${clamp((t-2.5)*4,0,1)})`;ctx.fillRect(0,0,W,H);}}},
   {dur:2,draw:t=>{panelBG('#000');smallText('...',W/2,H/2,30,'#555');}},
-  {dur:1,draw:t=>{panelBG('#0a0c10');const s=sc();if(typeof stPaper==='function'){stPaper(W/2,H*.42,1,Math.min(W-40,560*s),-.03,'AOBA STAR YOICHI ISAGI, 17,','KILLED IN HIT-AND-RUN','Driver not found. Club confirms signing of forward Daichi Vance.','THE AOBA DAILY');return;}ctx.save();ctx.translate(W/2,H*.45);ctx.rotate(-.03);const pw=Math.min(W-40,560*s),ph=pw*.62;
+  {dur:1,draw:t=>{panelBG('#0a0c10');const s=sc();if(typeof stPaper==='function'){stPaper(W/2,H*.42,1,Math.min(W-40,560*s),-.03,'AOBA STAR YOICHI ISAGI, 17,','MISSING AFTER HIT-AND-RUN','No one found at the scene. Club confirms signing of forward Daichi Vance.','THE AOBA DAILY');return;}ctx.save();ctx.translate(W/2,H*.45);ctx.rotate(-.03);const pw=Math.min(W-40,560*s),ph=pw*.62;
       ctx.fillStyle='#e9e4d6';ctx.fillRect(-pw/2,-ph/2,pw,ph);ctx.fillStyle='#1c1c1c';
       ctx.font=`700 ${pw*.045}px ${FS}`;ctx.textAlign='center';ctx.fillText('THE AOBA DAILY',0,-ph/2+pw*.06);ctx.fillRect(-pw/2+14,-ph/2+pw*.08,pw-28,2);
-      ctx.font=`800 ${pw*.075}px ${FD}`;ctx.fillText('AOBA STAR YOICHI ISAGI, 17,',0,-ph/2+pw*.17);ctx.fillText('KILLED IN HIT-AND-RUN',0,-ph/2+pw*.25);
+      ctx.font=`800 ${pw*.075}px ${FD}`;ctx.fillText('AOBA STAR YOICHI ISAGI, 17,',0,-ph/2+pw*.17);ctx.fillText('MISSING AFTER HIT-AND-RUN',0,-ph/2+pw*.25);
       ctx.font=`600 ${pw*.032}px ${FB}`;ctx.fillText('Driver not found. Club confirms signing of forward Daichi Vance.',0,-ph/2+pw*.32);
       ctx.fillStyle='#9a958a';for(let c=0;c<3;c++)for(let r=0;r<7;r++)ctx.fillRect(-pw/2+20+c*(pw-40)/3,-ph/2+pw*.38+r*pw*.028,(pw-40)/3-14,pw*.01);
       ctx.restore();},
-    lines:[{who:'Narration',text:'Yoichi Isagi died that night. The driver was never found.'},{who:'Narration',text:'That same week, Aoba United signed a new forward, Daichi Vance, to take his place.'}]},
+    lines:[{who:'Narration',text:'Yoichi Isagi vanished that night. An ambulance nobody called took him from the road, and never reached a hospital.'},{who:'Narration',text:'That same week, Aoba United signed a new forward, Daichi Vance, to take his place.'}]},
   {dur:1,draw:t=>{sceneStreet(t+9);const s=sc();glow(W*.5,H*.82,120*s,'rgba(255,200,120,.35)');ctx.fillStyle='#e9e4d6';ctx.fillRect(W*.5-10*s,H*.78,20*s,30*s);figure(W*.38,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',pose:'kneel'});rain(t+9,.45);},
-    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted your place on this team.'}]},
+    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted you gone.'},{who:'SYSTEM',text:'Then stop sitting in the rain. Get stronger. Find him. And this time, protect him.'}]},
 ];
 SC.bench=[
   {dur:1.8,draw:t=>chapterCard(3,'Benched',t,'Aoba United without Isagi')},
@@ -4823,7 +4823,7 @@ SC.bench=[
       figure(W*.2,H*.9,1.25*s,{...RENO,pose:'sit',face:1});
       figure(W*.62,H*.9,1.2*s,{sil:'#0a0c10',face:-1});figure(W*.72,H*.92,1.25*s,{sil:'#0a0c10',face:-1});figure(W*.84,H*.9,1.2*s,{sil:'#0a0c10',face:-1});
       figure(W*.47,H*.9,1.3*s,{...HARA,face:-1});},
-    lines:[{who:'Teammate',text:'Since Isagi died he just plays for himself.'},{who:'Teammate',text:'I heard Isagi was out that late because of him.'},{who:'Coach Hara',text:'Nagi. You are on the bench. Vance starts on Saturday.'}]},
+    lines:[{who:'Teammate',text:'Since Isagi went missing he just plays for himself.'},{who:'Teammate',text:'I heard Isagi was out that late because of him.'},{who:'Coach Hara',text:'Nagi. You are on the bench. Vance starts on Saturday.'}]},
   {dur:1,draw:t=>{sceneStadium(t,{bright:.5});const s=sc();ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#2a3240';ctx.fillRect(W*.05,H*.8,W*.5,10*s);
       figure(W*.25,H*.92,1.35*s,{...RENO,pose:'sit',face:1});
       for(let i=0;i<3;i++)figure(W*(.65+i*.1)+Math.sin(t*2+i)*10,H*.72,.55*s,{...AOBA,hair:'#222',pose:'run',t:t+i});},
@@ -4843,11 +4843,11 @@ SC.awaken=[
     lines:[{who:'Nagi',text:'Everyone thinks I am finished. Maybe they are right.'},{who:'Nagi',text:'If I were strong enough to play for both of us... strong enough to find out who did this...'}]},
   {dur:3.2,sfx:'glitch',events:[[1,()=>sfx('sys')],[2,()=>sfx('sys')]],draw:t=>{ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);const s=sc();
       if(t<.8){for(let i=0;i<14;i++){ctx.fillStyle=`rgba(89,225,255,${Math.random()*.4})`;ctx.fillRect(0,Math.random()*H,W,rnd(2,18));}}
-      const w=Math.min(W-32,460*s);sysWindow(W/2-w/2,H*.28,w,150,'[ SYSTEM ]',['Strong will detected.','Host: SEISHIRO NAGI','Synchronizing........ 100%'],t,{size:14+2*s});},
-    lines:[{who:'SYSTEM',text:'Strong will detected. A host has been found.'}]},
+      const w=Math.min(W-32,460*s);sysWindow(W/2-w/2,H*.28,w,150,'[ EGO ]',['Strong will detected.','Host: SEISHIRO NAGI','Synchronizing........ 100%'],t,{size:14+2*s});},
+    lines:[{who:'SYSTEM',text:'Wake up, Nagi. Lazy is over. Your ego just woke up.'}]},
   {dur:1,draw:t=>{ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);const s=sc();const w=Math.min(W-32,500*s);
       sysWindow(W/2-w/2,H*.12,w,260,'ABILITY GRANTED: TOTAL FOOTBALL',[{t:'DEFENDING   S',bar:1},{t:'DRIBBLING   S',bar:1},{t:'PASSING     S',bar:1},{t:'SHOOTING    S',bar:1},{t:'VISION      S',bar:1},{t:'Every skill. Every position.',c:'#ffc04a',b:1}],t,{size:13+2*s,lh:30});},
-    lines:[{who:'SYSTEM',text:'You can now perform any football skill. Defending, dribbling, passing, shooting. All of it, mastered.'},{who:'SYSTEM',text:'MAIN QUEST: Avenge Yoichi Isagi. Find out who wanted him gone.'},{who:'SYSTEM',text:'SUB-QUEST: Join a new team. Kurogane SC holds open trials tomorrow morning.'}]},
+    lines:[{who:'SYSTEM',text:'Want to be the best in the world? Then every skill is yours to take. Defend, dribble, pass, shoot. Take all of it.'},{who:'SYSTEM',text:'GOAL: Find Yoichi Isagi. Find out who took him, and protect him this time.'},{who:'SYSTEM',text:'NEXT: Join a new team. Kurogane SC holds open trials tomorrow morning.'}]},
   {dur:1,draw:t=>{ctx.fillStyle=grad(['#020308','#061220','#0a1a10']);ctx.fillRect(0,0,W,H);const s=sc();speedLines(W*.5,H*.55,t,'rgba(89,225,255,.5)',50,.25);
       figure(W*.5,H*.9,1.9*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1,aura:'rgba(89,225,255,.35)',eye:'#59e1ff'});},
     lines:[{who:'Nagi',text:'Isagi. Watch me.'}]},
@@ -4861,7 +4861,7 @@ SC.trialIntro=[
 ];
 SC.trialOutro=[
   {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.72,H*.9,1.3*s,{jersey:'#ff8a3d',shorts:'#2a2f38',sock:'#ff8a3d',hair:'#3b2a1e',pose:'fallen',face:-1});figure(W*.4,H*.88,1.45*s,{...RENO,jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',face:1});ballAt(W*.46,H*.865,11*s);figure(W*.58,H*.88,1.45*s,{...ISHI,face:-1});},
-    lines:[{who:'Coach Ishida',text:'...You took it off him at full speed and did not even break stride.'},{who:'Coach Ishida',text:'Where does a striker learn to defend like that?'},{who:'Nagi',text:'I told you, coach. Any position.'},{who:'Coach Ishida',text:'Then you start where we are weakest. Centre back. Welcome to Kurogane SC.'},{who:'SYSTEM',text:'SUB-QUEST COMPLETE: Join a new team. Reward: Defender\'s Instinct.'}]},
+    lines:[{who:'Coach Ishida',text:'...You took it off him at full speed and did not even break stride.'},{who:'Coach Ishida',text:'Where does a striker learn to defend like that?'},{who:'Nagi',text:'I told you, coach. Any position.'},{who:'Coach Ishida',text:'Then you start where we are weakest. Centre back. Welcome to Kurogane SC.'},{who:'SYSTEM',text:'DONE: You found a new team. Your defender\'s instinct is awake.'}]},
 ];
 SC.debut=[
   {dur:1.8,draw:t=>chapterCard(6,'The Wall',t,'Kurogane SC vs Seiran FC · Nagi\'s debut')},
@@ -4870,7 +4870,7 @@ SC.debut=[
 ];
 SC.debutOutro=[
   {dur:1,draw:t=>{sceneStadium(t,{cols:['#59e1ff','#2b303a','#ffffff']});const s=sc();figure(W*.4,H*.88,1.5*s,{...KURO,hair:'#14161c',face:1,eye:'#59e1ff'});figure(W*.62,H*.88,1.5*s,{...ISHI,face:-1});},
-    lines:[{who:'Coach Ishida',text:'Every ball you won turned into an attack. That is a centre back I can build a team around.'},{who:'SYSTEM',text:'Quest log updated. The truth about Yoichi Isagi is still out there.'},{who:'Nagi',text:'One match down, Isagi. I am just getting started.'}]},
+    lines:[{who:'Coach Ishida',text:'Every ball you won turned into an attack. That is a centre back I can build a team around.'},{who:'SYSTEM',text:'Not enough. Isagi is still out there. Get stronger.'},{who:'Nagi',text:'One match down, Isagi. I am just getting started.'}]},
   {dur:3.5,draw:t=>{panelBG('#04060b');const s=sc();bigText('PART 2',W/2,H*.44,64*s,'#eef3f8');smallText('The old team is waiting',W/2,H*.44+50*s,16*s+2,'#ffc04a','center',FS,700);}},
 ];
 SC.reunion=[
@@ -4880,18 +4880,18 @@ SC.reunion=[
 ];
 SC.returnOutro=[
   {dur:1,draw:t=>{sceneStadium(t,{cols:['#59e1ff','#4fb3ff','#ffffff']});const s=sc();figure(W*.4,H*.88,1.5*s,{...KURO,hair:'#eeeff3',face:1,eye:'#59e1ff'});figure(W*.62,H*.88,1.5*s,{...AOBA,hair:'#d8b27a',face:-1});},
-    lines:[{who:'Vance',text:'That first touch. That was never luck. ...Fine. A deal is a deal.'},{who:'Vance',text:'Isagi was taken to a facility north of the city. The hit and run was no accident. The same people built that System in your head.'},{who:'Nagi',text:'Mendokusai. But I will go and get him.'},{who:'SYSTEM',text:'Quest log updated: Find the facility. Chapter 8 begins.'}]},
+    lines:[{who:'Vance',text:'That first touch. That was never luck. ...Fine. A deal is a deal.'},{who:'Vance',text:'Isagi was taken to a facility north of the city. The hit and run was no accident. The same people have been watching you since the night your ego woke up.'},{who:'Nagi',text:'Mendokusai. But I will go and get him.'},{who:'SYSTEM',text:'Then go. Find the facility. Bring him home.'}]},
 ];
 SC.facility=[
   {dur:1.8,draw:t=>chapterCard(8,'The Hokuto Facility','Kurogane SC vs Hokuto Prototypes · Find Isagi')},
   {dur:1,draw:t=>{sceneStreet(t);const s=sc();figure(W*.4,H*.9,1.55*s,{...KURO,hair:'#eeeff3',face:1,eye:'#59e1ff'});figure(W*.6,H*.9,1.55*s,{...KURO,jersey:'#e9c24a',hair:'#2a2330',face:-1});smallText('NORTH OF THE CITY · MIDNIGHT',W/2,H*.12,14*s+3,'#59e1ff','center',FS,700);},
-    lines:[{who:'Bachira',text:'This is it. The Hokuto Facility. No sign, no windows, one door. Vance was not lying.'},{who:'Nagi',text:'Mendokusai. How do we get in?'},{who:'Bachira',text:'We do not sneak. The gate scanner reads the System in your head. You are the key, Nagi.'},{who:'Dr. Kuroiwa',text:'Welcome home, Prototype Zero. Every eleven we built learned from your data. Prove you are better than your copies and the doors will open.'},{who:'Nagi',text:'Where is Isagi?'},{who:'Dr. Kuroiwa',text:'Subject Seven plays for us. Win, and you may speak to him.'}]},
+    lines:[{who:'Bachira',text:'This is it. The Hokuto Facility. No sign, no windows, one door. Vance was not lying.'},{who:'Nagi',text:'Mendokusai. How do we get in?'},{who:'Bachira',text:'We do not sneak. They have been studying your ego since the trial. They want you inside. You are the key, Nagi.'},{who:'Dr. Kuroiwa',text:'Welcome home, Prototype Zero. Every eleven we built learned from your data. Prove you are better than your copies and the doors will open.'},{who:'Nagi',text:'Where is Isagi?'},{who:'Dr. Kuroiwa',text:'Subject Seven plays for us. Win, and you may speak to him.'}]},
   {dur:1,sfx:'crowd',draw:t=>{sceneStadium(t,{cols:['#dfe5ee','#59e1ff','#ff5a4f','#2b303a']});const s=sc();figure(W*.36,H*.88,1.6*s,{...KURO,hair:'#eeeff3',face:1,eye:'#59e1ff'});figure(W*.64,H*.88,1.6*s,{jersey:'#dfe5ee',shorts:'#161b26',sock:'#dfe5ee',hair:'#1f2340',face:-1,eye:'#ff5a4f'});bigText('NAGI  vs  SUBJECT 7',W/2,H*.18,50*s,'#eef3f8');smallText('HOKUTO PROTOTYPES · REFEREE AI ONLINE',W/2,H*.18+40*s,13*s+3,'#ff8a80');},
     lines:[{who:'Referee AI',text:'Match begins. Contact is monitored. Fouls, cards, advantage and offside will be enforced.'},{who:'SYSTEM',text:'OBJECTIVE: Beat the Hokuto Prototypes. They have studied your skill moves. Mix them up.'},{who:'SYSTEM',text:'MANA FLOW: after a clean skill move your aura flows for 2 seconds and boosts your speed.'}]},
 ];
 SC.facilityOutro=[
   {dur:1,draw:t=>{sceneStadium(t,{cols:['#dfe5ee','#59e1ff','#ff5a4f']});const s=sc();figure(W*.38,H*.88,1.55*s,{...KURO,hair:'#eeeff3',face:1,eye:'#59e1ff'});figure(W*.64,H*.88,1.55*s,{jersey:'#dfe5ee',shorts:'#161b26',sock:'#dfe5ee',hair:'#1f2340',face:-1,eye:'#ff5a4f'});},
-    lines:[{who:'Dr. Kuroiwa',text:'Impressive. The prototype learned from itself. As promised: Subject Seven.'},{who:'Isagi',text:'Nagi. ...You are the target I was built to stop.'},{who:'Nagi',text:'Isagi. It is me. Why are your eyes like that?'},{who:'SYSTEM',text:'WARNING: Subject Seven carries a counter-System. Hostile signature detected.'}]},
+    lines:[{who:'Dr. Kuroiwa',text:'Impressive. The prototype learned from itself. As promised: Subject Seven.'},{who:'Isagi',text:'Nagi. ...You are the target I was built to stop.'},{who:'Nagi',text:'Isagi. It is me. Why are your eyes like that?'},{who:'SYSTEM',text:'That is not Isagi\'s ego. They erased it and put a machine in its place.'}]},
   {dur:3.5,draw:t=>{panelBG('#04060b');const s=sc();bigText('TO BE CONTINUED',W/2,H*.44,56*s,'#eef3f8');smallText('Chapter 9 · Subject Seven',W/2,H*.44+50*s,16*s+2,'#ff8a80','center',FS,700);}},
 ];
 function sceneTraining(t){
@@ -4917,7 +4917,7 @@ function genDesign(teamName,kit,num,role,seed){
   const skin=pk(TONES),dark=TONES.indexOf(skin)>4;const style=pk(STYLES);
   const color=style==='bald'?'#1a1a1a':pk(dark?['#16130f','#1a1410','#2a1c14','#20160f','#c9a36a','#d8b27a']:HAIRC);
   const build={h:+(.94+R()*.14).toFixed(2),w:+(.92+R()*.22).toFixed(2),bulk:+(.88+R()*.36).toFixed(2)};
-  const face={eyes:pk(['round','narrow','sharp']),brows:pk(['soft','flat','thick','angry']),nose:pk(['small','long','wide']),mouth:pk(['flat','smile','grin']),jaw:pk(['round','square','narrow']),eyeColor:pk(['#2a1c12','#3b2a1e','#1a120c','#3d6e9e','#4a7a4a'])};
+  const face={eyes:pk(['round','narrow','sharp']),brows:pk(['soft','flat','thick','angry']),nose:pk(['small','long','wide']),mouth:pk(['flat','smile','grin']),jaw:pk(['round','square','narrow']),eyeColor:pk(['#7a4a26','#8a5a2b','#5a7fb0','#4f8a5a','#9a6a3a','#6b5a8a','#3d6e9e','#b07a3a','#5f6f80','#2f8a8a'])};
   if(R()<.32)face.beard=pk(['stubble','full','goatee','stubble']);
   const d=D(pk(GIVEN)+' '+pk(SURN),teamName,ROLEN[role]||role,skin,{style,color},build,face,{kit,num});
   return typeof dzGenExtras==='function'?dzGenExtras(d,seed):d;
@@ -5303,9 +5303,9 @@ function endMatch(){
   $('r-eyebrow').textContent=`Full time · ${M.home.name} vs ${M.away.name}`;
   $('r-title').textContent=`${M.home.short} ${h} – ${a} ${M.away.short}`;
   const st=$('r-stats');st.innerHTML='';
-  const rows=(M.ch===7||M.ch===8)?[['Goals',h],['Shots',M.shots],['Skill moves',M.skills],['Ultimates',M.ults||0]]:M.ch===1?[['One-two combos',M.combos],['Duo goals',M.duoGoals],['Shots on goal',M.shots],['Final hype',Math.round(M.hype)+'%']]:[['Perfect defenses',M.defenses],['Steals',(M.user&&M.user.hs&&M.user.hs.st)||0],['Shots',M.shots]];
+  const rows=(M.ch>=7)?[['Goals',h],['Shots',M.shots],['Skill moves',M.skills],['Ultimates',M.ults||0]]:M.ch===1?[['One-two combos',M.combos],['Duo goals',M.duoGoals],['Shots on goal',M.shots],['Final hype',Math.round(M.hype)+'%']]:[['Perfect defenses',M.defenses],['Steals',(M.user&&M.user.hs&&M.user.hs.st)||0],['Shots',M.shots]];
   for(const [k,v] of rows){const a1=document.createElement('span');a1.textContent=k;const b1=document.createElement('span');b1.textContent=v;st.append(a1,b1);}
-  $('r-note').textContent=M.ch===8?(h>a?'The prototypes learned from you, and you still beat them. The doors open.':h===a?'A draw. The referee AI logged every touch.':'A loss. Subject Seven read you perfectly.'):M.ch===7?(h>a?'You beat the team that threw you away. Vance has nothing left to say.':h===a?'A draw against Aoba United. Neither side blinked.':'A loss, but the System noticed what you did out there.'):M.ch===1?(h>a?'The crowd will remember this night. The Twin Stars are going to the final.':h===a?'A draw, but the crowd only talks about the Twin Stars.':'A loss on the scoreboard. The crowd still chanted their names.'):(h>=a?'The System logs your debut as a success.':'A hard debut. The story continues either way.');
+  $('r-note').textContent=M.ch===8?(h>a?'The prototypes learned from you, and you still beat them. The doors open.':h===a?'A draw. The referee AI logged every touch.':'A loss. Subject Seven read you perfectly.'):M.ch===7?(h>a?'You beat the team that threw you away. Vance has nothing left to say.':h===a?'A draw against Aoba United. Neither side blinked.':'A loss, but your ego noticed what you did out there.'):M.ch===1?(h>a?'The crowd will remember this night. The Twin Stars are going to the final.':h===a?'A draw, but the crowd only talks about the Twin Stars.':'A loss on the scoreboard. The crowd still chanted their names.'):(h>=a?'Your ego wants more after that debut.':'A hard debut. The story continues either way.');
   show('result');syncUI();
 }
 function moveCam(dt,tx,ty,tz){
@@ -5326,7 +5326,7 @@ function startShotCine(p,aimY){
   const L=M.lastLink;const assist=(M.ch===1&&L&&L.to===p&&M.time-L.t<8&&((p.isUser&&L.from.duo)||(p.duo&&L.from.isUser)))?L.from:null;
   if(assist)pg+=.1;if(p.curveShot)pg+=.2;if(p.duel)pg+=p.duel.act==='rush'?.35:.15;if(p.isUser&&adaptOn())pg+=.25;
   const ng=p.isUser&&p.design==='ren';if(ng){pg+=(d<760?.1:.04)+ang*.2+(p.curveShot?.12:0)+(M.flow?.08:0);pg=Math.min(pg,.93);}
-  const r=Math.random();const out=r<pg?'goal':r<pg+(1-pg)*(ng?.85:.65)?'saved':'wide';
+  if(M.hardPg){pg=clamp(pg*M.hardPg.k-M.hardPg.pr*.05*M.hard/3,.05,.9);}const r=Math.random();const out=r<pg?'goal':r<pg+(1-pg)*(ng?.85:.65)?'saved':'wide';
   let ty=clamp(aimY,GY0+10,GY1-10);if(out==='wide')ty=aimY<PH/2?GY0-26:GY1+26;
   const to=out==='saved'?{x:gx-T.dir*20,y:ty}:{x:gx+T.dir*14,y:ty};
   const gkTo=out==='saved'?{x:gx-T.dir*20,y:ty}:out==='goal'?{x:gk.x,y:lerp(gk.y,ty,.45)+(ty>gk.y?-18:18)}:{x:gk.x,y:lerp(gk.y,ty,.6)};
@@ -6211,7 +6211,7 @@ const CHAPTERS=[
   {title:'The Greatest Duo',sub:'Play a match with Isagi as the Twin Stars',start:()=>playCutscene(SC.prologue,()=>{startMatch(1);showHowTo('duo');})},
   {title:'The Rainy Night',sub:'Cutscene · Isagi is taken',start:()=>playCutscene(SC.rain,()=>CHAPTERS[2].start())},
   {title:'Benched',sub:'Cutscene · blamed, benched and released',start:()=>playCutscene(SC.bench,()=>CHAPTERS[3].start())},
-  {title:'Awakening',sub:'Cutscene · the System chooses Nagi',start:()=>playCutscene(SC.awaken,()=>CHAPTERS[4].start())},
+  {title:'Awakening',sub:'Cutscene · Nagi\'s ego awakens',start:()=>playCutscene(SC.awaken,()=>CHAPTERS[4].start())},
   {title:'The Trial',sub:'Steal the ball from an out-of-control player',start:()=>playCutscene(SC.trialIntro,()=>{startTrial();showHowTo('trial');})},
   {title:'The Wall',sub:'Debut match as a centre back for Kurogane SC',start:()=>playCutscene(SC.debut,()=>{startMatch(6);showHowTo('wall');})},
   {title:'Return to Aoba',sub:'Face your old team as the striker. Dap Shot unlocked',start:()=>playCutscene(SC.reunion,()=>{startMatch(7);showHowTo('return');})},
@@ -6425,7 +6425,7 @@ function bikePose(B,dt){const u=B.u,t=B.t;
   u.airH=ultBikeH(t);const yaw=t<.7?lerpAng(B.yaw0,B.toG+ULT_SIDE,ease(t/.7)):B.toG+ULT_SIDE;u.fx=Math.sin(yaw);u.fy=Math.cos(yaw);u.vx=u.vy=0;}
 function bikeStep(dt){const B=M.bike,u=B.u,b=M.ball;
   if(G3.dbgBikeHold!=null&&B.t+dt>G3.dbgBikeHold)dt=Math.max(0,G3.dbgBikeHold-B.t);
-  B.t+=dt*(B.t>.85&&B.t<1.15?.22:B.t>.45&&B.t<1.4?.5:1);bikePose(B,dt);G3.bikeCam=lerp(G3.bikeCam||0,1,Math.min(1,dt*3));
+  if(G3.dbgBikeHold!=null&&B.t>=G3.dbgBikeHold)dt=0;B.t+=dt*(B.t>.85&&B.t<1.15?.22:B.t>.45&&B.t<1.4?.5:1);bikePose(B,dt);G3.bikeCam=lerp(G3.bikeCam||0,1,Math.min(1,dt*3));
   const Rt={x:-u.fy,y:u.fx};
   if(B.t<1.0){b.owner=null;b.vx=b.vy=0;b.air=null;b.x=u.x+u.fx*4+Rt.x*10;b.y=u.y+u.fy*4+Rt.y*10;b.h=30+4*Math.sin(B.t*6);return;}
   if(!B.snd.k){B.snd.k=1;B.from={x:b.x,y:b.y,h:b.h};sfx('bigkick');G3.impact=.8;try{fxKick({shake:.07,flash:.2,radial:.5});}catch(e){}
@@ -7079,6 +7079,8 @@ function readCam(c,dt){if(c.calmOn){flowCam(c.u,c.ct,c.calm,dt,c.o);return;}cons
   if(c.far&&!c.miss){const tc=c.shot?c.tB:c.tI;if(t>tc-.32){const T=c.shot?c.B:c.I,dd=V((T.x-c.U0.x),0,(T.y-c.U0.y)).normalize(),sd=V(-dd.z,0,dd.x);
     pos=U.clone().addScaledVector(sd,4.3).addScaledVector(dd,.8).add(V(0,.75,0));look=U.clone().addScaledVector(dd,.6).add(V(0,.7+(u.airH||0)*.5,0));fov=44;k=t<tc+.5?40:9;ph=34;}}
   if(t>=c.tS&&t<c.tArr+.35){FXC.tTint=[1,.86,.45,.12];FXC.tDesat=.45;}else if(t<c.tS){FXC.tTint=[.85,.92,1,.08];FXC.tDesat=.2;}
+  if(c.shot&&!c.far&&c.blocked&&c.tV&&t>c.tV-.3&&t<c.tV+.1){const Hd=ultHead(u),F=V(u.fx,0,u.fy).normalize(),Rr=V(-F.z,0,F.x),C=Hd.clone().add(V(0,-.1,0)).addScaledVector(F,-.45);
+    const d=F.clone().addScaledVector(Rr,.8).normalize();pos=C.clone().addScaledVector(d,3.3).add(V(0,-.1,0));look=C;fov=42;k=30;ph=77;}
   const cut=G3.cinePhase!==ph;G3.cinePhase=ph;setCam(pos,look,fov,dt,k,cut);}
 // --- overlay: the read, the prediction line, speed streaks along the sprint path ---
 function readBolt(pts,amp,w,col,a){if(pts.length<2)return;ctx.globalAlpha=a;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();
@@ -7162,7 +7164,7 @@ function startUltCine(){
 function dapFace(p,x,y){const fx=x-p.x,fy=y-p.y,l=Math.hypot(fx,fy)||1;p.fx=fx/l;p.fy=fy/l;}
 function ultUpdate(c,dt){
   if(G3.dbgUltHold!=null&&c.t+dt>G3.dbgUltHold)dt=Math.max(0,G3.dbgUltHold-c.t);
-  const j0=c.t-c.tT,rate=c.t<.9?1:j0<-.85?1:j0<-.08?.6:j0<.3?.42:j0<.9?.7:j0<1.44?.5:j0<1.86?1.55:j0<2.1?.22:1.2;
+  const j0=c.t-c.tT,rate=c.t<.9?1:j0<-.85?1:j0<-.08?.6:j0<.3?.42:j0<.9?.7:j0<1.44?.5:j0<1.86?1.55:j0<2.1?.22:j0<2.4?.45:1.2;
   if(c.hsT>0){c.hsT-=dt;dt=0;}else dt*=rate;c.rateNow=rate;
   c.t+=dt;const t=c.t,j=t-c.tT,u=c.u,b=M.ball,dir=c.dir,S=c.snd,q=c.mate,gk=c.gk;c.j=j;
   const toG=Math.atan2(c.G.x-c.R.x,c.G.y-c.R.y),FG={x:Math.sin(toG),y:Math.cos(toG)};
@@ -7263,9 +7265,10 @@ function ultCam(c,dt){
     pos=Hd.clone().addScaledVector(F,.5).addScaledVector(Rr,.16*s).add(V(0,.02,0));look=Hd.clone().add(V(0,.02,0));fov=20;k=60;}
   else if(j<1.86){ph=6;const q=ease((j-1.62)/.24),a0=Math.atan2(-s,-dir*.7),a=a0+q*1.1*dir,r=lerp(3.4,2.6,q);
     pos=U.clone().add(V(Math.cos(a)*r,0,Math.sin(a)*r)).setY(lerp(.6,1.7,q)+(c.u.airH||0)*.5);look=Hd.clone().lerp(B,.35).add(V(0,-.25,0));fov=lerp(46,38,q);k=18;}
-  else if(t<c.tS+.12){ph=9;wipe=true;noClear=true;const F=V(Math.sin(Math.atan2(c.G.x-c.R.x,c.G.y-c.R.y)),0,Math.cos(Math.atan2(c.G.x-c.R.x,c.G.y-c.R.y))),Rr=V(-F.z,0,F.x),q=ease(clamp((j-1.86)/.3,0,1)),hy=.95+(c.u.airH||0)*.75;   // side-on at ball height: flying flat into the volley, defenders looking up
-    pos=U.clone().addScaledVector(Rr,-s*lerp(2.9,2.5,q)).addScaledVector(F,lerp(.9,.6,q)).setY(hy-.12);look=U.clone().setY(hy).lerp(B,.45);fov=lerp(40,36,q);k=30;}
-  else if(t<c.tN-.05&&t>c.tS+.16){ph=19;wipe=true;const Gp=v3(c.G.x,c.G.y),Xd=V(dir,0,0);pos=Gp.clone().addScaledVector(Xd,2.2).setY(.9);look=B.clone();fov=40;k=40;}
+  else if(t<c.tS+.08){const F=V(c.u.fx,0,c.u.fy).normalize(),Rr=V(-F.z,0,F.x).multiplyScalar(s),C=Hd.clone().add(V(0,-.1,0)).addScaledVector(F,-.45),ap=t<c.tS-.06;wipe=true;noClear=true;k=30;
+    if(ap){ph=24;const d=F.clone().negate().addScaledVector(Rr,.6).normalize();pos=C.clone().addScaledVector(d,3.4).add(V(0,-1.2,0));look=C;fov=42;}   // the apex: under and behind him, his back over the two defenders, head turned back to the ball
+    else{ph=9;const d=F.clone().addScaledVector(Rr,.8).normalize();pos=C.clone().addScaledVector(d,3.3).add(V(0,-.1,0));look=C;fov=40;}}   // the strike: the anime frame, in front and to the side at his height
+  else if(t<c.tN-.05&&t>c.tN-.14){ph=19;wipe=true;const Gp=v3(c.G.x,c.G.y),Xd=V(dir,0,0);pos=Gp.clone().addScaledVector(Xd,2.2).setY(.9);look=B.clone();fov=40;k=40;}
   else if(t<c.tN-.05){ph=10;const Gb=v3(c.G.x,c.G.y).sub(B).setY(0).normalize();pos=B.clone().addScaledVector(Gb,-3.4).addScaledVector(Z,1.3*s).setY(B.y*.9+.5);look=B.clone().addScaledVector(Gb,3.2);fov=50;k=t<c.tS+.1?60:22;}
   else{const t2=t-c.tN+6.85;
     if(t2<7.2){ph=11;wipe=true;noClear=true;const Gp=v3(c.G.x,c.G.y);pos=Gp.clone().addScaledVector(X,2.55).setY(1.55);look=Gp.clone().addScaledVector(X,-14).setY(1.2);fov=50;k=40;}
@@ -7279,6 +7282,7 @@ function ultCam(c,dt){
   if(t>=c.tS&&t<c.tS+.5)fov+=15*Math.max(0,1-(t-c.tS)/.5);
   if(!noClear&&ph!==0){const r=ultClear(c,pos,look,ph);pos=r.pos;look=r.look;}
   const prev=G3.cinePhase,cut=ph!==prev;G3.cinePhase=ph;if(cut&&prev>=0&&wipe)FXC.cutNew={dir:ph%2?1:-1};
+  if(window.__camO){const o=window.__camO({U,Hd,B,F:V(c.u.fx,0,c.u.fy),s,c,V,t,j});if(o){pos=o[0];look=o[1];fov=o[2]||fov;k=999;}}
   setCam(pos,look,fov,dt,k,cut);
   if(!fxAFX()&&G3.fx.shake>.002){const sh=G3.fx.shake,tt=clock*31;G3.cam.position.x+=Math.sin(tt*1.3)*sh;G3.cam.position.y+=Math.sin(tt*1.7+1)*sh*.7;}}
 function ultOv(c,s){const t=c.t,j=c.j,por=W<H*.8,top=fxTopY(),blue='#59a8ff';letterbox(t,blue);ultAuraOv(c,s);
@@ -7312,7 +7316,19 @@ function ultMaxAura(c,j,dt){const u=c.u,t=c.t,pk=t>c.tS-.08&&t<c.tS+.35,S=c.snd;
     if(j>1.44&&!S.au0){S.au0=1;fxRing(U.x,.06,U.z,'#59a8ff',1.2,.3,4.5,.5,.3);fxKick({bloom:.6,radial:.5});}
     if(t>=c.tS&&!S.au1){S.au1=1;fxRing(U.x,h+.9,U.z,'#cfe8ff',1.2,.3,5,.4,.3);fxRing(U.x,.06,U.z,'#9fd4ff',1.4,.4,12,.9,.4);
       fxSparks(U.x,h+.9,U.z,8,7,'#ffffff');fxSparks(U.x,h+.9,U.z,6,6,'#59a8ff');fxKick({flash:.06,bloom:.3,aberr:.2,radial:.4,shake:.1});}}catch(e){}}
-function ultAuraOv(c,s){const t=c.t,j=c.j;if(!(j>1.25&&t<c.tN+.4))return;const u=c.u,P=fxP(u.x,u.y,1+(u.airH||0));if(P.behind)return;
+function ultStrikeAura(c){const t=c.t;if(!(t>c.tS-.42&&t<c.tS+.14))return;const u=c.u,h=1+(u.airH||0)*.9,P=fxP(u.x,u.y,h);if(P.behind)return;
+  const k=clamp((t-(c.tS-.42))/.12,0,1)*clamp((c.tS+.14-t)/.1,0,1),bk=1.6/S3,Q=fxP(u.x-u.fx*bk,u.y-u.fy*bk,h+.5);let dx=Q.x-P.x,dy=Q.y-P.y;const L=Math.hypot(dx,dy)||1;dx/=L;dy/=L;const nx=-dy,ny=dx,sz=Math.min(W,H);
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  const band=ctx.createLinearGradient(0,P.y+sz*.06-sz*.035,0,P.y+sz*.06+sz*.035);band.addColorStop(0,'rgba(40,110,255,0)');band.addColorStop(.5,`rgba(210,235,255,${.38*k})`);band.addColorStop(1,'rgba(40,110,255,0)');
+  ctx.fillStyle=band;ctx.fillRect(0,P.y+sz*.025,W,sz*.07);
+  const hz=ctx.createLinearGradient(0,0,W,0);hz.addColorStop(0,'rgba(0,0,0,0)');hz.addColorStop(.5,`rgba(255,255,255,${.25*k})`);hz.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=hz;ctx.fillRect(0,P.y+sz*.055,W,sz*.012);
+  ctx.lineCap='round';
+  for(let i=0;i<9;i++){const o=(i-4)/4,off=o*sz*.09,len=sz*(.32+.18*Math.sin(i*2.3)),wv=Math.sin(clock*9+i*1.7)*sz*.03;
+    const x0=P.x+dx*sz*.06+nx*off*.5,y0=P.y+dy*sz*.06+ny*off*.5,x1=P.x+dx*len*.5+nx*(off+wv),y1=P.y+dy*len*.5+ny*(off+wv),x2=P.x+dx*len+nx*(off*1.4-wv),y2=P.y+dy*len+ny*(off*1.4-wv);
+    const g=ctx.createLinearGradient(x0,y0,x2,y2);g.addColorStop(0,`rgba(90,160,255,${.3*k})`);g.addColorStop(.6,`rgba(30,70,200,${.16*k})`);g.addColorStop(1,'rgba(10,30,120,0)');
+    ctx.strokeStyle=g;ctx.lineWidth=sz*(.035-.02*Math.abs(o));ctx.beginPath();ctx.moveTo(x0,y0);ctx.quadraticCurveTo(x1,y1,x2,y2);ctx.stroke();}
+  ctx.restore();}
+function ultAuraOv(c,s){const t=c.t,j=c.j;ultStrikeAura(c);if(!(j>1.25&&t<c.tN+.4))return;const u=c.u,P=fxP(u.x,u.y,1+(u.airH||0));if(P.behind)return;
   const pk=clamp(1-Math.abs(t-c.tS)/.3,0,1),a=clamp((j-1.25)/.3,0,1)*(t>c.tN?clamp((c.tN+.4-t)/.4,0,1):1),R=Math.min(W,H)*(.32+.25*pk)*(1+.05*Math.sin(clock*30));
   ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(P.x,P.y,R*.05,P.x,P.y,R);g.addColorStop(0,`rgba(255,255,255,${.06*a+.08*pk})`);g.addColorStop(.35,`rgba(89,168,255,${.08*a})`);g.addColorStop(1,'rgba(0,30,90,0)');
   ctx.fillStyle=g;ctx.fillRect(P.x-R,P.y-R,R*2,R*2);ctx.strokeStyle=`rgba(200,230,255,${.14*a})`;ctx.lineWidth=1.5;
@@ -7734,7 +7750,7 @@ function abCelT(o,an){if(M&&M.celFlow&&M.user&&abSamePl(o,M.user))return 'flowSh
 // the white tiger rising behind him on the big strikes (G intercept, block, Dap Shot strike), like the reference art
 function flowTiger(p,k,s,roar){if(!p||k<=.01)return;const P=fxP(p.x,p.y,1.5+(p.airH||0));if(P.behind)return;const r=Math.min(W,H)*.34*(.85+.15*k);
   const cx=clamp(P.x+(P.x<W/2?r*.35:-r*.35),r*.6,W-r*.6),cy=clamp(P.y-r*.25,r*.55,H*.6);
-  ctx.save();ctx.globalAlpha=1;try{tigerSym(cx,cy,r,.5*k,roar||0,clock);}catch(e){}ctx.restore();}
+  ctx.save();ctx.globalAlpha=1;try{tigerSym(cx,cy,r,.22*k,roar||0,clock);}catch(e){}ctx.restore();}
 
 // ---------- real voice clips for Nagi and Isagi (recordings supplied by the user), played through the game's audio context ----------
 // hello: "Nice to meet you, Japan. I am Nagi Seishiro."  da: "Nagi Seishiro da."  back: "Humans are unable to suddenly go backward."  n1: Nagi line set
@@ -7876,7 +7892,7 @@ crRegister();
 $('ro-back').onclick=()=>toTitle();
 $('cambtn').onclick=()=>{G3.camMode=nextCam();};
 $('b-back').onclick=()=>show('menu');
-$('b-replay').onclick=()=>{startMatch(M.ch);showHowTo(M.ch===1?'duo':M.ch===8?'facility':M.ch===7?'return':'wall');};
+$('b-replay').onclick=()=>{startMatch(M.ch);showHowTo(M.ch===1?'duo':M.ch>=8?'facility':M.ch===7?'return':'wall');};
 $('b-continue').onclick=()=>{if(M.ch===1)playCutscene(SC.duoOutro,()=>CHAPTERS[1].start());else if(M.ch===6)playCutscene(SC.debutOutro,()=>CHAPTERS[6].start());else if(M.ch===7)playCutscene(SC.returnOutro,()=>CHAPTERS[7].start());else playCutscene(SC.facilityOutro,toTitle);};
 let pausedFrom=null,howKind=null;
 const kc=(k,hot)=>`<span class="kc${hot?' hot':''}">${k}</span>`;
@@ -7894,7 +7910,7 @@ function howToHTML(kind){
       hrow(kc('Shift'),'Hold to sprint.'),hrow(kc('Mouse'),'Click the game once to lock the pointer, then move the mouse or touchpad to turn. Without the lock, hold left click and drag.')]);
   const ball=hsec('With the ball',[hrow(t?kc('PASS'):kc('J')+kc('R')+kc('Right click'),'Pass to the teammate in front of you.'),hrow(t?kc('SHOOT'):kc('K')+kc('Left click'),'Shoot at goal. Every shot plays a cutscene.'),
     hrow(t?kc('CURVE'):kc('C'),'Curve shot: only Nagi can bend it like this. Higher chance to score.'),hrow(t?kc('LOB'):kc('F'),'Lob the ball up in front of you. Press Shoot while it is in the air for a bicycle kick.'),hrow(t?kc('DRIB'):kc('Space'),'Dribble: a quick skill move without the picker.'),hrow(t?kc('ADAPT'):kc('★'),'ADAPTATION: when his team trails, Nagi reads the game. The bar fills, then at a critical moment he finds the missing piece and surpasses everyone for 16 seconds.'),
-    duo?hrow(t?kc('DUO',1):kc('X',1),'Duo Special with Isagi when the HYPE bar is full.'):hrow(kc('★',1),'Win the ball and the System plays a pass to a teammate.')]);
+    duo?hrow(t?kc('DUO',1):kc('X',1),'Duo Special with Isagi when the HYPE bar is full.'):hrow(kc('★',1),'Win the ball and your instinct plays a pass to a teammate.')]);
   const skill=hsec('Skill moves',[hrow(t?kc('SKILL',1):kc('Q',1),'Open the skill-move picker while you have the ball. The game pauses.'),hrow(t?kc('TAP'):kc('1')+kc('2')+kc('3')+kc('4'),'Pick a move: step-over, roulette, elastico, rainbow flick and more. Each one plays its own cutscene.'),hrow(kc('!'),'The picker also pops up by itself when a defender closes in. Bolder moves are riskier.'),hrow(t?kc('ULTIMATE',1):kc('Z',1),'Ultimate Dap Shot: with the ball in the final 40% of the pitch toward goal, unleash a 10-second cinematic goal. Recharges after use.')]);
   const def=hsec('Without the ball',[hrow(t?kc('TACKLE'):kc('E'),'Tackle when you are next to an opponent with the ball.'),hrow(t?kc('CALL'):kc('R'),'Call for the ball: the teammate who has it passes to you.'),hrow(t?kc('DRAG'):kc('Mouse'),'Turn the camera: move the mouse or touchpad (click once to lock the pointer), or drag a finger across the screen.'),hrow(kc('↔'),'Step into a passing lane to intercept.')]);
   const cam=hsec('Camera and menu',[hrow(t?kc('CAM'):kc('V'),'Cycle the camera: behind Nagi, ball cam, broadcast. In the behind-Nagi camera, the mouse or touchpad turns the view.'),hrow(t?kc('II'):kc('Esc'),'Pause. Substitutions and controls are in the pause menu.'),hrow(kc('▣'),'The mini-map shows every player.')]);
@@ -7908,7 +7924,7 @@ const HOWINFO={duo:['Chapter 1 · The Greatest Duo','Match controls','Win the ma
 function showHowTo(kind){howKind=kind;pausedFrom=(mode==='howto'||mode==='paused')?pausedFrom:mode;mode='howto';const [e,ti,g]=HOWINFO[kind];$('ht-eyebrow').textContent=e;$('ht-title').textContent=ti;$('ht-goal').textContent=g;$('ht-body').innerHTML=howToHTML(kind);$('ht-hint').textContent=touchUI?'Tap Play to start.':'Press Enter to start.';show('howto');syncUI();}
 function startFromHowTo(){mode=pausedFrom;show(null);syncUI();}
 $('b-play').onclick=startFromHowTo;
-$('b-controls').onclick=()=>{showHowTo(TR&&pausedFrom==='trial'?'trial':(M&&M.ch===1?'duo':M&&M.ch===8?'facility':M&&M.ch===7?'return':'wall'));};
+$('b-controls').onclick=()=>{showHowTo(TR&&pausedFrom==='trial'?'trial':(M&&M.ch===1?'duo':M&&M.ch>=8?'facility':M&&M.ch===7?'return':'wall'));};
 function pauseGame(){pausedFrom=mode;mode='paused';show('pause');$('b-subs').hidden=!(M&&pausedFrom==='match');syncUI();}
 $('b-subs').onclick=openSubs;$('sb-done').onclick=()=>show('pause');
 $('b-resume').onclick=()=>{mode=pausedFrom;show(null);syncUI();};
@@ -7975,9 +7991,9 @@ function ballCam(dt){
 // Rig: Bachira body (CC-BY El_yujinas) with hair styles from "Seishiro Nagi" (CC-BY Yume Official) and "Isagi free fire" (CC-BY rocklee.ff),
 // merged offline into assets/players/anime.json (one skeleton, 162 bones). Everything is recoloured in one shader from a texture atlas.
 const N={ok:false,geo:{},cm:{},mats:new Map(),num:new Map(),numFlip:[[-1,1],[1,-1]]};
-const NSTYLES=['bob','messy','straight','buzz'];
-const NSTYLE_OF={spiky:'messy',mohawk:'messy',afro:'messy',curly:'messy',dreads:'messy',swept:'straight',undercut:'straight',long:'bob',ponytail:'bob',bun:'bob',buzz:'straight',bald:'straight'};
-const NHAIRMESH={bob:'hair_bob',messy:'hair_nagi',straight:'hair_isagi'};
+const NSTYLES=['bob','messy','straight','buzz','mane','dome'];
+const NSTYLE_OF={spiky:'messy',mohawk:'messy',afro:'messy',curly:'messy',dreads:'messy',swept:'straight',undercut:'straight',long:'bob',ponytail:'bob',bun:'bob',buzz:'straight',bald:'dome',mane:'mane',dome:'dome'};
+const NHAIRMESH={dome:'hair_isagi',mane:'hair_bob',bob:'hair_bob',messy:'hair_nagi',straight:'hair_isagi'};
 const NSKIN={porcelain:'#f3dccb',fair:'#eccbb0',light:'#e2b996',tan:'#cf9d73',olive:'#b88a5e',brown:'#8f5e3d',deep:'#66402a',ebony:'#47291a'};
 const NREG={jersey:0,inner:1,skin:2,hair:3,eye:4,shoe:5,pal:6,brow:7,ego:8,num:9,scalp:10,shorts:11,hand:12,face:13,awake:14,badge:15,lash:16};
 function nStyle(d){return (d.hair&&d.hair.n)||NSTYLE_OF[d.hair&&d.hair.style]||'straight';}
@@ -8026,7 +8042,7 @@ function nPrep(g){
         P[i*3]=pv.x+(P[i*3]-pv.x)*sc;P[i*3+1]=pv.y+(y-pv.y)*sc;P[i*3+2]=pv.z+(P[i*3+2]-pv.z)*sc;}
       if(eyeKeys.test(p.key)&&ctr[p.key]){const e=p.key==='brow'?1.12:ES;for(let i=0;i<p.n;i++){const sg=P[i*3]>=0?1:-1,c0=ctr[p.key][sg];if(!c0)continue;const c=[pv.x+(c0[0]-pv.x)*HS,pv.y+(c0[1]-pv.y)*HS,pv.z+(c0[2]-pv.z)*HS];
           P[i*3]=c[0]+(P[i*3]-c[0])*e;P[i*3+1]=c[1]+(P[i*3+1]-c[1])*e;P[i*3+2]=c[2]+(P[i*3+2]-c[2])*(1+(e-1)*.3);}}}}
-  N.hairRef={};for(const st of NSTYLES){const hk=NHAIRMESH[st];const list=parts.filter(p=>p.reg!==NREG.hair||p.key===hk);N.geo[st]=nMerge(list);
+  N.hairRef={};for(const st of NSTYLES){const hk=NHAIRMESH[st];let list=parts.filter(p=>p.reg!==NREG.hair||p.key===hk);if(st==='mane')list=list.map(p=>p.key!==hk?p:nMane(p));if(st==='dome')list=list.map(p=>p.key!==hk?p:nDome(p));N.geo[st]=nMerge(list);
     const hp2=parts.find(p=>p.key===hk);N.hairRef[st]=hp2?Math.max(.08,hp2.href):.5;}
   // reference luminance of the plain jersey area (for shading-preserving recolour)
   const us=SLOT.uniform;let sum=0,c=0;for(let y=us[1]*k;y<(us[1]+us[3])*k;y+=4)for(let x=us[0]*k;x<(us[0]+us[2])*k;x+=4){const l=lum(atl,(y*AW+x)*4);if(l>.3){sum+=l;c++;}}N.uniRef=c?sum/c:.5;
@@ -8045,6 +8061,17 @@ function nModelBuild(k,j){return new Promise(ok=>{const im=new Image();im.onload
   const tex=new THREE.Texture(im);tex.encoding=THREE.sRGBEncoding;tex.flipY=false;tex.anisotropy=4;tex.needsUpdate=true;N.cm[k]={geo:g,tex};ok();};im.onerror=()=>ok();im.src=j.atlas;});}
 function nLoadModels(){const base=window.__CB||'assets/players/';return Promise.all(['nagi','isagi','bachira'].map(k=>((e=>e?Promise.resolve(JSON.parse(e)):fetch(base+'char_'+k+'.json').then(r=>r.json()))(window.__EMB&&__EMB.get('emb-assets_players_char_'+k+'_json'))).then(j=>nModelBuild(k,j)).catch(e=>console.warn('model '+k,e))));}
 function gcN(a,i,k){let v=a[['getX','getY','getZ','getW'][k]](i);if(a.normalized){const A=a.array;v/=A instanceof Uint8Array?255:A instanceof Uint16Array?65535:1;}return v;}
+function nDome(p){const P=Float32Array.from(p.pos);let y1=-1e9,x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(let i=0;i<p.n;i++){y1=Math.max(y1,P[i*3+1]);x0=Math.min(x0,P[i*3]);x1=Math.max(x1,P[i*3]);z0=Math.min(z0,P[i*3+2]);z1=Math.max(z1,P[i*3+2]);}
+  const cx=(x0+x1)/2,cz=(z0+z1)/2-(z1-z0)*.04,Rr=(x1-x0)*.35,cy=y1-Rr*1.45;
+  for(let i=0;i<p.n;i++){let dx=P[i*3]-cx,dy=P[i*3+1]-cy,dz=P[i*3+2]-cz;const l=Math.hypot(dx,dy,dz)||1;dx/=l;dy/=l;dz/=l;const mn=.05-1.05*Math.max(0,-dz-.1)-.35*Math.max(0,Math.abs(dx)-.5);if(dy<mn)dy=mn+(dy-mn)*.12;
+    P[i*3]=cx+dx*Rr;P[i*3+1]=cy+dy*Rr*(dy>0?.8:.98);P[i*3+2]=cz+dz*Rr*1.12;}
+  return {...p,pos:P};}
+function nMane(p){const P=Float32Array.from(p.pos),SI=p.si.slice(),SW=p.sw.slice(),hb=N.boneNames.findIndex(n=>bname(n)==='Head');let y0=1e9,y1=-1e9,cx=0,cz=0;for(let i=0;i<p.n;i++){const y=P[i*3+1];y0=Math.min(y0,y);y1=Math.max(y1,y);cx+=P[i*3];cz+=P[i*3+2];}cx/=p.n;cz/=p.n;
+  const H=y1-y0,yc=y0+H*.55,K=4.2;let zmax=-1e9;for(let i=0;i<p.n;i++)zmax=Math.max(zmax,P[i*3+2]);
+  for(let i=0;i<p.n;i++){const y=P[i*3+1];if(y>=yc)continue;const d=yc-y,dx=P[i*3]-cx,dz=P[i*3+2]-cz,fr=Math.max(0,(P[i*3+2]-cz)/(zmax-cz||1));
+    const k=K*(1-.9*fr);P[i*3+1]=yc-d*k;const out=1+d*(k-1)/H*.25;P[i*3]=cx+dx*out;P[i*3+2]=cz+dz*out-d*(k-1)*.1;
+    if(hb>=0&&d>H*.04){SI[i*4]=hb;SW[i*4]=1;SW[i*4+1]=SW[i*4+2]=SW[i*4+3]=0;}}
+  return {...p,pos:P,si:SI,sw:SW};}
 function nMerge(list){let n=0,ni=0;for(const p of list){n+=p.n;ni+=p.idx.length;}
   const pos=new Float32Array(n*3),nor=new Float32Array(n*3),uv=new Float32Array(n*2),si=new Uint16Array(n*4),sw=new Float32Array(n*4),rg=new Float32Array(n),idx=new Uint32Array(ni);let o=0,oi=0;
   for(const p of list){pos.set(p.pos,o*3);nor.set(p.nor,o*3);uv.set(p.uv,o*2);si.set(p.si,o*4);sw.set(p.sw,o*4);rg.set(p.rg,o);for(let i=0;i<p.idx.length;i++)idx[oi+i]=p.idx[i]+o;o+=p.n;oi+=p.idx.length;}
@@ -8060,7 +8087,7 @@ function nNumTex(num,jersey,ink){const k=num+'|'+jersey+'|'+ink;if(N.num.has(k))
 // ---------- material ----------
 const NLIN=h=>new THREE.Color(h).convertSRGBToLinear();
 function nMat(d,kit,st,o={}){
-  const f=d.face||{},hair=(d.hair&&d.hair.color)||'#222',tone=NSKIN[d.skin]||NSKIN.light;
+  const f=d.face||{},tone=NSKIN[d.skin]||NSKIN.light,hair=st==='dome'?darker(tone,.86):(d.hair&&d.hair.color)||'#222';
   const orig=d.model?1:0,key=[d.model?(N.cm[d.model]?d.model:'wait'):'',st,d.skin,hair,f.eyeColor||'',kit.jersey,kit.shorts,kit.accent,kit.trim||'',kit.sleeve||'',kit.boots||'',kit.gloves||'',kit.num,o.ol?1:0].join('|');
   if(N.mats.has(key))return N.mats.get(key);
   const base=N.skinBase,t=NLIN(tone);
@@ -9348,6 +9375,12 @@ const abK_DAPBIKE=abTK([[0,{hy:-.17,kL:.85,kR:.8,lLx:.35,lRx:.35,ikL:1,ikR:1,sx:
   [1.35,{bz:-1.15,bp:.9,lRx:-.5,lRz:.65,kR:.35,lLx:.25,kL:.6,ikL:0,ikR:0,aLz:.7,aLx:-1.1,aRz:1.5,sy:.25,nx:.15}],
   [1.75,{bz:-1.2,bp:.9,lRx:-.2,lRz:.2,kR:.6,lLx:.3,kL:.7,ikL:0,ikR:0,aLz:.35,aLx:-1.2,aRz:1.3,nx:.2}],
   [2.4,{}]],abP_ST);
+{const BK={.75:{bx:-.5,bz:0,bp:.9,lLx:-1.3,kL:1.2,lLz:0,lRx:.2,lRz:0,kR:.6,aLz:1.1,aRz:1.1,aLx:-.3,aRx:-.3,eL:.3,eR:.3,sx:.2,sy:0,hpy:0,nx:.5},
+  .95:{bx:-1.35,bz:0,bp:.9,lLx:-.4,kL:.9,lLz:0,lRx:-1.6,lRz:0,kR:1.0,fR:.3,aLz:1.4,aRz:1.4,aLx:0,aRx:0,eL:.3,eR:.3,sx:.35,sy:0,hpy:0,nx:.7},
+  1.05:{bx:-1.5,bz:0,bp:.9,lLx:.3,kL:.6,lLz:0,lRx:-2.3,lRz:0,kR:.05,fR:.7,aLz:1.5,aRz:1.5,aLx:0,aRx:0,eL:.2,eR:.2,sx:.3,sy:0,hpy:0,nx:.75},
+  1.35:{bx:-1.45,bz:0,bp:.9,lLx:.1,kL:.5,lLz:0,lRx:-1.6,lRz:0,kR:.4,fR:.4,aLz:1.0,aRz:1.0,aLx:.4,aRx:.4,eL:.6,eR:.6,sx:.3,sy:0,hpy:0,nx:.5},
+  1.75:{bx:-1.4,bz:0,bp:.9,lLx:-.6,kL:.9,lLz:0,lRx:-.9,lRz:0,kR:.7,fR:.2,aLz:.7,aRz:.7,aLx:1.0,aRx:1.0,eL:.8,eR:.8,sx:.25,sy:0,hpy:0,nx:.4}};
+ for(const [kt,P] of abK_DAPBIKE)for(const k in BK)if(Math.abs(kt-(+k))<1e-3)for(const n in BK[k])P[abCI[n]]=BK[k][n];}
 abKD.dapbike=[abK_DAPBIKE,2.5];
 // the lift-tap volley (time = spec seconds from the jump): left boot lifts the ball, tuck at the apex, right boot reaches and taps mid-twist, wind-up, volley
 const abK_LIFTAP=abTK([[0,{hy:-.22,kL:1.1,kR:1.0,lLx:.6,lRx:.55,ikL:0,ikR:0,sx:.3,aLz:.5,aRz:.5,aLx:-.7,aRx:-.7,nx:.2}],
@@ -9401,7 +9434,12 @@ for(const [kt,P] of abK_DAPDRAG){if(Math.abs(kt-2.05)<1e-3||Math.abs(kt-2.14)<1e
   P[abCI.bz]=e?-.8:-.72;P[abCI.aLz]=1.1;P[abCI.aLx]=.45;P[abCI.eL]=.35;P[abCI.cL]=.4;P[abCI.aRz]=.95;P[abCI.aRx]=-.55;P[abCI.eR]=.4;P[abCI.cR]=.5;P[abCI.nx]=.42;}}
 for(const [kt,P] of abK_DAPDRAG){if(Math.abs(kt-2.05)<1e-3||Math.abs(kt-2.14)<1e-3){const e=kt<2.1?0:1;
   P[abCI.bz]=e?-1.25:-1.1;P[abCI.bp]=.9;P[abCI.lRx]=e?-1.55:-1.1;P[abCI.kR]=e?.12:.6;P[abCI.lLx]=.75;P[abCI.kL]=1.35;P[abCI.aLz]=1.4;P[abCI.aLx]=.3;P[abCI.eL]=.3;P[abCI.aRz]=1.2;P[abCI.aRx]=-.6;P[abCI.eR]=.35;P[abCI.nx]=.5;P[abCI.nz]=.25;}}
-abKD.dapdrag=[abK_DAPDRAG,3.07];
+for(const [kt,P] of abK_DAPDRAG){if(Math.abs(kt-2.05)<1e-3||Math.abs(kt-2.14)<1e-3){const e=kt<2.1?0:1;
+  P[abCI.bx]=1.25;P[abCI.bz]=-.15;P[abCI.bp]=.95;P[abCI.sx]=-.15;P[abCI.nx]=-.75;P[abCI.nz]=0;P[abCI.ny]=0;
+  P[abCI.aRx]=-1.1;P[abCI.aRz]=.25;P[abCI.aRy]=.3;P[abCI.eR]=1.7;P[abCI.cR]=1;P[abCI.aLx]=.9;P[abCI.aLz]=.55;P[abCI.aLy]=0;P[abCI.eL]=.35;P[abCI.cL]=.3;
+  P[abCI.lRx]=e?-1.75:-1.45;P[abCI.lRz]=0;P[abCI.kR]=e?.5:1.7;P[abCI.fR]=.4;P[abCI.lLx]=.35;P[abCI.lLz]=.08;P[abCI.kL]=.45;P[abCI.fL]=.5;P[abCI.ikL]=0;P[abCI.ikR]=0;}}
+for(const [kt,P] of abK_DAPDRAG){if(Math.abs(kt-1.92)<1e-3){const A={bx:.96,bz:-.61,bp:.95,hpx:.26,hpy:-.35,hpz:-.17,sx:.5,sy:-.9,sz:.3,nx:-.25,ny:-1.1,nz:.25,aRx:-1.3,aRy:-.4,aRz:.3,eR:1.9,aLx:1.0,aLy:0,aLz:1.0,eL:.3,lRx:-1.13,lRz:-.2,kR:2.0,fR:.6,lLx:.8,lLz:.3,kL:.35};for(const n in A)P[abCI[n]]=A[n];}}
+abKD.dapdrag=[abK_DAPDRAG,3.07];window.__abDap=abK_DAPDRAG;window.__abCI=abCI;
 // lunging block (reference art 1): leans back, long leg thrust out at the ball, arms flung behind
 const abK_LUNGE=abTK([[0,{hy:-.12,sx:.25,lRx:.3,kR:.9,ikR:0,aLz:.7,aRz:.6,nx:.35}],
   [.12,{hy:-.2,sx:.15,lRx:.75,kR:1.5,fR:.4,ikR:0,aLz:.95,aLx:-.3,aRz:.8,aRx:.35,eL:.5,eR:.6,nx:.4}],
@@ -9442,6 +9480,10 @@ const abG_DIVE=abPZ({bz:1.32,bp:.95,by:.22,hy:0,sx:.05,sz:.15,aLx:-2.85,aLz:.15,
   lLx:.2,kL:.55,lLz:.2,lRx:-.15,kR:.1,lRz:.05,fL:.4,fR:.5,ikL:0,ikR:0,nx:-.15,nz:-.25},abP_ST);
 const abG_DIVE2=abPZ({bz:1.12,bp:.95,by:-.28,hy:.05,sx:.12,sz:.22,aLx:-2.35,aLz:.25,eL:.45,aRx:-2.15,aRz:.4,eR:.55,wL:-.2,wR:-.2,cL:.05,cR:.05,
   lLx:-.75,kL:1.05,lLz:.25,lRx:.15,kR:.2,lRz:.1,fL:.3,fR:.6,ikL:0,ikR:0,nx:.05,nz:-.35},abP_ST);
+const abG_DPUSH=abPZ({bz:.45,bp:.95,by:0,hy:-.16,sx:.28,sz:.35,sy:.1,aLx:-1.6,aLz:.5,eL:1.1,aRx:-1.2,aRz:.7,eR:1.25,cL:.1,cR:.1,
+  lLx:-.95,kL:1.55,lLz:.2,fL:.2,lRx:.35,kR:.25,fR:.7,ikL:0,ikR:0,nx:.1,ny:.3,nz:-.4},abP_ST);
+const abG_DIVE3=abPZ({bz:1.15,bp:.95,by:-.2,hy:.05,sx:.2,sz:.35,sy:.18,aLx:-2.5,aLz:.2,eL:.25,aRx:-1.9,aRz:.55,eR:.75,wL:-.3,wR:-.15,cL:.05,cR:.15,
+  lLx:-.55,kL:1.2,lLz:.3,fL:.3,lRx:.35,kR:.45,lRz:.1,fR:.7,ikL:0,ikR:0,nx:-.1,ny:.25,nz:-.45},abP_ST);
 const abG_LAND=abPZ({bz:1.5,bp:.95,by:-.66,sx:.25,sz:.1,aLx:-2.2,aLz:.1,eL:.9,aRx:-2.0,aRz:.25,eR:1.0,cL:.5,cR:.5,lLx:-.4,kL:1.1,lLz:.15,lRx:-.2,kR:.6,ikL:0,ikR:0,nx:.1,nz:-.2},abP_ST);
 const abG_LOAD=abPZ({hy:-.24,sx:.38,aLx:-.5,aLz:.5,eL:1.0,aRx:-.5,aRz:.5,eR:1.0,cL:.1,cR:.1,nx:-.15},abP_ST);
 function abGK(c,s,o,dt){const P=s.P;let key='';const C=abInMatch(o)?M.cine:null;
@@ -9449,12 +9491,12 @@ function abGK(c,s,o,dt){const P=s.P;let key='';const C=abInMatch(o)?M.cine:null;
     const side=-Math.sign(dl)*Math.sign(Math.sin(yw)||1)||1,wide=C.out==='wide';const A=s.A;
     abPmask(P,abP_GKR,abSst(.2,.8,t),MK_NOFT);s.wantWide=.08;
     if(t>SH.DIVE-.25){const lt=abSst(SH.DIVE-.25,SH.DIVE-.05,t)*(1-abSst(SH.DIVE,SH.DIVE+.12,t));abPmask(P,abG_LOAD,lt,MK_NOFT);}
-    if(t>SH.DIVE){const u=clamp((t-SH.DIVE)/(SH.ARR+.1-SH.DIVE),0,1),amp=wide?.45:1,hi=clamp(((C.peak||15)-12)/20,0,1);A.set(abG_DIVE2);
+    if(t>SH.DIVE){const u=clamp((t-SH.DIVE)/(SH.ARR+.1-SH.DIVE),0,1),amp=wide?.45:1,hi=clamp(((C.peak||15)-12)/20,0,1);A.set(abG_DPUSH);abPlerp(A,abG_DIVE3,abSst(.05,.4,u));A[abCI.kL]+=.18*Math.sin(u*9);A[abCI.kR]+=.12*Math.sin(u*9+1.3);A[abCI.eR]+=.15*Math.sin(u*7);
       if(t>SH.ARR+.1){abPlerp(A,abG_LAND,abSst(SH.ARR+.1,SH.ARR+.45,t));if(C.out==='saved')abPmask(A,abPZ_GHOLD,1,MK_ARMS);}
       A[abCI.by]+=(Math.sin(Math.PI*u)*(.06+.26*hi)-.14*u+.25*hi*(1-u))*(t<SH.ARR+.1?1:0);
       if(side<0){abPmir(A,abP_TMP);A.set(abP_TMP);}abPmask(P,A,abSst(SH.DIVE-.02,SH.DIVE+.22,t)*amp,abMK_ALL);key='dive';s.lookW=.6;abExpr(c,s,'determined');
       if(C.out==='saved'&&t>SH.ARR-.02)abG.hands.push(c);}}
-  else if(o.dive){const A=s.A;A.set(abG_DIVE2);if(o.dive<0){abPmir(A,abP_TMP);A.set(abP_TMP);}abPmask(P,A,Math.abs(o.dive),abMK_ALL);key='dive';}
+  else if(o.dive){const A=s.A;A.set(abG_DIVE3);if(o.dive<0){abPmir(A,abP_TMP);A.set(abP_TMP);}abPmask(P,A,Math.abs(o.dive),abMK_ALL);key='dive';}
   if(key)return key;
   if(abInMatch(o)&&abSamePl(o,M.ball.owner)&&o.hold>0){abPmask(P,abP_HOLD,1,MK_UP);abG.hands.push(c);s.lookW=.4;return 'hold';}
   if(abInMatch(o)&&!C){const b=M.ball,gx=o.team.dir>0?0:PW,d=Math.hypot(b.x-gx,b.y-PH/2),own=b.owner&&b.owner.team===o.team;
@@ -10002,7 +10044,7 @@ function fxTrailStyle(T,st){const c=FX_TR[st]||FX_TR.SKILL;T.style=st;T.cfg=c;T.
   T.rib.forEach((R,j)=>{const a=fxCol(c.c1,c.i),b=fxCol(j===1&&c.core?c.c1:c.c2,c.i);R.m.uniforms.uC1.value.setRGB(a[0],a[1],a[2]);R.m.uniforms.uC2.value.setRGB(b[0],b[1],b[2]);R.m.uniforms.uN.value=st==='KNUCKLEBALL'?70:40;});}
 // called from updateTrail() right after the ball is placed: samples the ball, builds camera-facing ribbons (shape per shot style)
 function fxTrail(on){const T=FXC.trail;if(!T||!G3.ball||!M)return;const c=M.cine,dt=FXC.dt;
-  const st=c?(c.type==='shot'?c.style:c.type==='duo'||c.type==='combo'?'GOLD':c.type==='defense'?'SYSTEM':c.type==='drib'?'SKILL':null):null;
+  const st=c?(c.type==='shot'?c.style:c.type==='duo'||c.type==='combo'?'GOLD':c.type==='defense'?'EGO':c.type==='drib'?'SKILL':null):null;
   const want=!!st&&(on||(c.type==='defense'&&c.kicked&&c.t<2.6));const bp=G3.ball.position;
   if(want){if(T.style!==st)fxTrailStyle(T,st);T.a=Math.min(1,T.a+dt*10);
     const jump=T.n>0&&Math.hypot(bp.x-T.hx[0],bp.y-T.hy[0],bp.z-T.hz[0])>8;if(jump)T.n=0;
@@ -10026,7 +10068,7 @@ function fxMkCircle(){const tex=canvasTex(512,512,(x)=>{x.translate(256,256);x.s
     x.lineWidth=7;x.beginPath();x.arc(0,0,244,0,7);x.stroke();x.lineWidth=2;x.beginPath();x.arc(0,0,226,0,7);x.stroke();x.beginPath();x.arc(0,0,150,0,7);x.stroke();x.lineWidth=4;x.beginPath();x.arc(0,0,92,0,7);x.stroke();
     for(let k=0;k<72;k++){const a=k/72*PI2;x.save();x.rotate(a);x.fillRect(228,-2,k%6?8:14,4);x.restore();}
     for(const [r,o] of [[205,0],[150,Math.PI/6]]){x.lineWidth=3;x.beginPath();for(let k=0;k<=6;k++){const a=k/6*PI2+o;x.lineTo(Math.cos(a)*r,Math.sin(a)*r);}x.stroke();}
-    x.font='700 20px "Courier New",monospace';x.textAlign='center';const s='SYSTEM · TOTAL FOOTBALL · DEFENSIVE READ · ';for(let k=0;k<s.length;k++){x.save();x.rotate(k/s.length*PI2);x.fillText(s[k],0,-180);x.restore();}
+    x.font='700 20px "Courier New",monospace';x.textAlign='center';const s='EGO · TOTAL FOOTBALL · DEFENSIVE READ · ';for(let k=0;k<s.length;k++){x.save();x.rotate(k/s.length*PI2);x.fillText(s[k],0,-180);x.restore();}
     for(let k=0;k<6;k++){const a=k/6*PI2;x.beginPath();x.arc(Math.cos(a)*150,Math.sin(a)*150,12,0,7);x.stroke();}});
   const m=new THREE.MeshBasicMaterial({map:tex,color:LIN('#59e1ff'),transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false});
   const o=new THREE.Mesh(FXC.plane,m);o.rotation.x=-Math.PI/2;o.renderOrder=27;o.visible=false;G3.scene.add(o);return {o,m,a:0};}
@@ -10076,7 +10118,7 @@ function fxAuraFor(a){if(a.__fxA&&a.__fxA.root===a.root)return a.__fxA;
     for(const o of list){const s=new THREE.SkinnedMesh(o.geometry,mat);s.bind(o.skeleton,o.bindMatrix);s.position.copy(o.position);s.quaternion.copy(o.quaternion);s.scale.copy(o.scale);s.frustumCulled=false;s.renderOrder=29;s.userData.fxAura=1;s.visible=false;s.castShadow=false;o.parent.add(s);A.shells.push(s);}}
   const g=new THREE.Mesh(FXC.plane,new THREE.MeshBasicMaterial({map:FXC.glowTex,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));g.rotation.x=-Math.PI/2;g.position.y=.04;g.scale.setScalar(2.6);g.renderOrder=26;g.visible=false;a.root.add(g);A.glow=g;
   a.__fxA=A;FXC.auras.push(A);return A;}
-function fxAuraSet(p,col,s){if(!p)return;{const c=M&&M.cine;if(c)s=Math.min(s,c.type==='ult'?.12:.45);}const a=fxActor(p);if(!a)return;const A=fxAuraFor(a);if(s>=A.target){A.target=s;A.col=col;}}
+function fxAuraSet(p,col,s){if(!p)return;{const c=M&&M.cine;if(c)s=Math.min(s,c.type==='read'&&c.blocked?.1:c.type==='ult'?(c.j>1.6&&c.t<c.tS+.3?.04:.12):.45);}const a=fxActor(p);if(!a)return;const A=fxAuraFor(a);if(s>=A.target){A.target=s;A.col=col;}}
 function fxAuras(dt,c,rdt){const U=M.user;
   for(const A of FXC.auras)A.target=0;
   try{nagiFarm(c,U,rdt);}catch(e){}
@@ -10263,8 +10305,12 @@ function fxCircleTick(dt,c){const C=FXC.circle,on=!!(c&&c.type==='defense'&&c.t<
 
 // ---------- C7: cinematic camera choreography ----------
 function fxCineCam(c,dt){
-  if(c.rep&&cineRepCam(c,dt))return;
-  if(c.type==='read'){readCam(c,dt);return;}
+  const rdV=c.type==='read'&&c.shot&&!c.far&&c.blocked&&c.tV&&c.t>c.tV-.3&&c.t<c.tV+.1;
+  if(!rdV&&c.rep&&cineRepCam(c,dt))return;
+  if(c.type==='read'){readCam(c,dt);
+    if(c.shot&&!c.far&&c.blocked&&c.tV&&c.t>c.tV-.3&&c.t<c.tV+.1){const u=c.u,V=(x,y,z)=>new THREE.Vector3(x,y,z),Hd=ultHead(u),F=V(u.fx,0,u.fy).normalize(),Rr=V(-F.z,0,F.x),C=Hd.clone().add(V(0,-.1,0)).addScaledVector(F,-.45);
+      const d=F.clone().addScaledVector(Rr,.8).normalize();setCam(C.clone().addScaledVector(d,3.3).add(V(0,-.1,0)),C,42,dt,30,G3.cinePhase!==78);G3.cinePhase=78;}
+    return;}
   if(c.type==='flow'){flowCineCam(c,dt);return;}if(c.type==='chain'){chainCam(c,dt);return;}
   if(c.type==='setpiece'){refCineCam(c,dt);return;}
   if(c.type==='ult'){ultCam(c,dt);return;}if(c.type==='tele'||c.type==='clutch'||c.type==='gkduel'||c.type==='vision'){microCam(c,dt);return;}
@@ -10493,8 +10539,8 @@ function fxOvDuo(c,s){const t=c.t,por=W<H*.8,top=fxTopY();letterbox(t,'#ffc04a')
 function fxOvDef(c,s){const t=c.t,por=W<H*.8,top=fxTopY(),cy='#59e1ff',tkx=c.how==='TACKLE'&&c.vic;letterbox(t,cy);
   if(tkx&&t>.55&&t<c.tP+.4){const a=clamp((t-.55)/.15,0,1)*clamp((c.tP+.4-t)/.25,0,1);ctx.save();ctx.globalAlpha=a;smallText('"Humans can\'t suddenly go backward."',W/2,H*.8,Math.min(15*s+3,W/30),'#eef3f8','center',FB,600);ctx.restore();}
   if(tkx&&(t<.4||t>1.15)){}else if(t<(c.tP||1.1)){ctx.fillStyle='rgba(0,24,44,.28)';ctx.fillRect(0,0,W,H);const sp=fxP(c.u.x,c.u.y,1);fxRays(sp.x,sp.y,Math.hypot(W,H),'rgba(89,225,255,.5)',60,.4);fxScan(0,0,W,H,cy,.07);
-    const pw=por?W-36:Math.min(W*.6,620),ph=por?pw/3.4:pw/4.3;fxCutPanel(por?18:W-pw-W*.045,top+8,pw,ph,ph*.22,{p:c.u,mode:'eyes',col:'#1a6a8a',glow:cy,k:clamp(t/.2,0,1),from:1,scan:cy,tag:'[ SYSTEM ] DEFENSIVE READ'});
-    const k=clamp((t-.15)/.2,0,1),x=W*.06,y=por?H*.64:H*.66;if(k>0){ctx.save();ctx.globalAlpha=k;fxSysPanel(x-8,y-30*s-14,Math.min(W*.62,470),96*s+10);smallText('[ SYSTEM ]',x,y-30*s,13*s+3,cy,'left',FS,700);
+    const pw=por?W-36:Math.min(W*.6,620),ph=por?pw/3.4:pw/4.3;fxCutPanel(por?18:W-pw-W*.045,top+8,pw,ph,ph*.22,{p:c.u,mode:'eyes',col:'#1a6a8a',glow:cy,k:clamp(t/.2,0,1),from:1,scan:cy,tag:'[ EGO ] DEFENSIVE READ'});
+    const k=clamp((t-.15)/.2,0,1),x=W*.06,y=por?H*.64:H*.66;if(k>0){ctx.save();ctx.globalAlpha=k;fxSysPanel(x-8,y-30*s-14,Math.min(W*.62,470),96*s+10);smallText('[ EGO ]',x,y-30*s,13*s+3,cy,'left',FS,700);
       const tt=c.how==='TACKLE'?'PERFECT TACKLE':'INTERCEPTED',n=Math.floor(tt.length*clamp((t-.2)/.35,0,1));bigText(tt.slice(0,n)+(n<tt.length&&Math.sin(clock*30)>0?'▌':''),x,y+10*s,Math.min(50*s,W/9),cy,{align:'left'});
       smallText('Pass route calculated · '+Math.round(88+((c.mate.num*7)%11))+'% success',x,y+44*s,11*s+3,'#d9f7ff','left',FS,500);ctx.restore();}
     if(t>.35){const A=fxP(c.u.x,c.u.y,.2),B=fxP(c.mate.x,c.mate.y,.2);fxRoute(A,B,cy,clock,clamp((t-.35)/.4,0,1));}}
@@ -10548,12 +10594,12 @@ function fxHype(s){const hx=16,hy=H-(touchUI?190:48),hw=Math.min(260,W*.5),hh=14
     ctx.restore();}
   ctx.restore();}
 function fxSys(s){const x=16,y=Math.round(64*s+8),w=Math.min(250,W*.6),h=56,cy='#59e1ff';if(0){fxSysPanel(x,y,w,h);
-  smallText('[SYSTEM] TOTAL FOOTBALL'+(Math.sin(clock*5)>0?'_':''),x+10,y+14,11,cy,'left',FS,700);smallText('Perfect defenses',x+10,y+37,Math.min(13,(w-90)/9.5),'#d9f7ff','left',FS,500);
+  smallText('[EGO] TOTAL FOOTBALL'+(Math.sin(clock*5)>0?'_':''),x+10,y+14,11,cy,'left',FS,700);smallText('Perfect defenses',x+10,y+37,Math.min(13,(w-90)/9.5),'#d9f7ff','left',FS,500);
   for(let i=0;i<3;i++){const hx=x+w-62+i*20,hy=y+37,on=i<M.defenses;fxHex(hx,hy,8,Math.PI/6);ctx.fillStyle=on?cy:'rgba(89,225,255,.08)';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=cy;ctx.stroke();if(on){ctx.save();ctx.globalAlpha=.4+.3*Math.sin(clock*6+i);ctx.globalCompositeOperation='lighter';fxHex(hx,hy,12,Math.PI/6);ctx.stroke();ctx.restore();}}
   smallText(`${M.defenses}/3`,x+w-8,y+14,11,'#d9f7ff','right',FS,700);
   if(M.questDone){ctx.save();ctx.translate(x+w+14,y+30);ctx.rotate(-.12);ctx.font=`800 10px ${FS}`;const tw=ctx.measureText('CLEAR').width+10;ctx.strokeStyle='#ffc04a';ctx.lineWidth=1.5;ctx.strokeRect(-tw/2,-8,tw,16);smallText('CLEAR',0,0,10,'#ffc04a','center',FS,800);ctx.restore();}}
   const T=M.toast;if(T&&T.t<4&&!T.sub&&!T.skill){const a=clamp(Math.min(T.t*4,(4-T.t)*2),0,1),tw=Math.min(W-32,540),th=58,tx=W/2-tw/2,ty=touchUI?Math.max(H*.3,240):H*.28;ctx.save();ctx.globalAlpha=a;
-    const gl=T.t<.25?(fxH(clock*50)-.5)*14:0;ctx.translate(gl,0);fxSysPanel(tx,ty,tw,th);smallText('[ SYSTEM MESSAGE ]',tx+12,ty+14,11,cy,'left',FS,700);
+    const gl=T.t<.25?(fxH(clock*50)-.5)*14:0;ctx.translate(gl,0);fxSysPanel(tx,ty,tw,th);smallText('[ EGO ]',tx+12,ty+14,11,cy,'left',FS,700);
     const n=Math.floor(T.text.length*clamp(T.t/1,0,1));smallText(T.text.slice(0,n)+(n<T.text.length?'▌':''),tx+12,ty+38,Math.min(14,tw/42),'#d9f7ff','left',FS,700);ctx.restore();}}
 function fxBubble(x,y,w,h,tx,ty,fill,stroke,jag){ctx.beginPath();if(jag){const n=22;for(let i=0;i<n;i++){const a=i/n*PI2,r=i%2?.86:1.08;ctx.lineTo(x+w/2+Math.cos(a)*w*.56*r,y+h/2+Math.sin(a)*h*.62*r);}ctx.closePath();}
   else{ctx.ellipse(x+w/2,y+h/2,w/2+h*.25,h*.72,0,0,PI2);}
@@ -11221,7 +11267,10 @@ function dzHairGeo(d){
     case 'long':{ // parted bangs, side curtains to the shoulders, back curtain
       for(const s of [-1,1])for(let i=0;i<5;i++){const ph0=.15+i*.15;clump([[s*.06,ph0,.05],[s*(.62+i*.13),1.05,.08],[s*(1.12+i*.13),1.75,.07]],.15,.06,.8,C,{tail:[.6,.06],n:10,bulge:1});}
       for(let i=0;i<6;i++){const th=Math.PI+(i-2.5)*.3;clump([[th,.2,.06],[th,1.2,.08],[th,2.0,.08]],.16,.06,.9,C,{tail:[.65,.06],n:10,bulge:1});}
-      for(const s of [-1,1])clump([[s*.12,.75,.07],[s*.3,1.22,.06],[s*.45,1.72,.03]],.08,.05,1,C);break;}
+      for(const s of [-1,1])clump([[s*.12,.75,.07],[s*.3,1.22,.06],[s*.45,1.72,.03]],.08,.05,1,C);
+      if(hr.len){const L=hr.len;for(let i=0;i<9;i++){const th=Math.PI+(i-4)*.26;clump([[th,.5,.07],[th,1.3,.1],[th,1.9,.12]],.16,.07,1,C.clone().multiplyScalar(rr(.88,1.08)),{tail:[2.4*L,.25],n:14,bulge:1});}
+        for(const s of [-1,1])for(let i=0;i<3;i++)clump([[s*(.9+i*.2),.9,.07],[s*(1.3+i*.2),1.5,.09],[s*(1.6+i*.25),1.85,.1]],.13,.06,1,C,{tail:[2.0*L,.2],n:12,bulge:1});}
+      break;}
     case 'bun':{
       for(let i=0;i<10;i++){const th=-1.4+i*.31;clump([[th,1.05,.035],[th*.5,.2,.06],[0,-.45,.06]],.15,.05,.2,C,{n:10});}
       for(let i=0;i<9;i++){const a=i/9*PI2;clump([[Math.PI,.5,.09],[Math.PI+Math.cos(a)*.2,.5+Math.sin(a)*.2,.25],[Math.PI+Math.cos(a+2.4)*.13,.5+Math.sin(a+2.4)*.13,.34]],.12,.09,.3,C,{bulge:1,n:6});}break;}
@@ -11293,7 +11342,7 @@ function dzNumTex(K){const key='num|'+[K.num,K.name||'',K.crest||'',K.jersey,K.a
 // stats: PAC DRI SHO PAS DEF PHY (0-99). Plot facts are untouched; this is flavour for the roster, barks and animation styles.
 const DZP={
   ren:{captain:0,boots:'#e9eef5',acc:{wrist:'#e9eef5',wrist2:false},aura:'#e9eef5',face:{base:'focus'},body:{chest:.98,sh:1.05},
-    persona:{title:'The Lone Twin Star',quote:'Isagi. Watch me.',traits:['Relentless','Any position','Ice-cold finish'],bio:'Half of Aoba United\'s Twin Stars. Released after the night Isagi died, he now hears a SYSTEM nobody else can, and plays for both of them.',stats:{PAC:88,DRI:90,SHO:86,PAS:82,DEF:84,PHY:76},signature:'Twin Star Drive'},
+    persona:{title:'The Lone Twin Star',quote:'Isagi. Watch me.',traits:['Relentless','Any position','Ice-cold finish'],bio:'Half of Aoba United\'s Twin Stars. Released after the night Isagi was taken. His ego woke up that night, and it only wants one thing: to get Isagi back and protect him.',stats:{PAC:88,DRI:90,SHO:86,PAS:82,DEF:84,PHY:76},signature:'Twin Star Drive'},
     anim:{stride:1.06,lean:1.15,armSwing:1.05,bounce:.9,swagger:0,idle:'stoic',celebrate:'kneelSky'},
     barks:{goal:['That one\'s yours, Isagi.','Watch me.','Again.'],tackle:['Mine.','Not today.','Too slow.'],skill:['Read you.','Mastered.','Move.'],pass:['Go!','Take it!','Now!'],fail:['Tch.','Not enough...','Again.']}},
   kaito:{boots:'#ffc04a',acc:{wrist:'#ffc04a',wrist2:false},aura:'#ffc04a',face:{base:'pleasant'},body:{chest:.95,sh:.97,head:1.08},
@@ -11680,7 +11729,7 @@ function stSysBuild(){const f=new THREE.Group();f.visible=false;ST.grp.add(f);co
     const m=new THREE.Mesh(G('stHolo',()=>new THREE.PlaneGeometry(1.15,.67)),new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,fog:false,opacity:0}));m.renderOrder=6;f.add(m);Y.panels.push({m,cv:c,tx,key:''});}
   const rt=canvasTex(512,512,(x,w,h)=>{x.translate(w/2,h/2);x.strokeStyle='#59e1ff';x.shadowColor='#59e1ff';x.shadowBlur=12;for(const [r,lw] of [[240,6],[200,2],[150,3],[90,1.5]]){x.lineWidth=lw;x.beginPath();x.arc(0,0,r,0,7);x.stroke();}
     for(let i=0;i<48;i++){const a=i/48*PI2;x.lineWidth=i%4?1.5:4;x.beginPath();x.moveTo(Math.cos(a)*205,Math.sin(a)*205);x.lineTo(Math.cos(a)*(i%4?222:236),Math.sin(a)*(i%4?222:236));x.stroke();}
-    x.font=`700 20px ${FS}`;x.fillStyle='#bff4ff';for(let i=0;i<6;i++){x.save();x.rotate(i/6*PI2);x.fillText('SYSTEM · SYNC',-62,-166);x.restore();}});
+    x.font=`700 20px ${FS}`;x.fillStyle='#bff4ff';for(let i=0;i<6;i++){x.save();x.rotate(i/6*PI2);x.fillText('EGO · SYNC',-62,-166);x.restore();}});
   Y.ring=new THREE.Mesh(G('stRing',()=>new THREE.PlaneGeometry(3.6,3.6)),new THREE.MeshBasicMaterial({map:rt,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false,fog:false}));Y.ring.rotation.x=-Math.PI/2;Y.ring.position.y=.03;f.add(Y.ring);
   Y.g1=stGlow('#59e1ff',3.8,0);Y.g1.position.y=1.1;f.add(Y.g1);Y.g2=stGlow('#c8f8ff',1.5,0);Y.g2.position.y=1.25;f.add(Y.g2);
   const n=lowQ()?70:180,pg=new THREE.BufferGeometry(),pp=new Float32Array(n*3),ps=new Float32Array(n);for(let i=0;i<n;i++){const a=Math.random()*PI2,r=.25+Math.random()*.6;pp.set([Math.cos(a)*r,0,Math.sin(a)*r],i*3);ps[i]=Math.random();}
@@ -11904,17 +11953,13 @@ function stAttach(){const PI=Math.PI,A=(k,i,o)=>{if(SC[k]&&SC[k][i])SC[k][i].s3=
     ov(t){smallText('. . .',W/2,H*.32,Math.round(26*sc()),'rgba(220,226,236,.85)','center',FS,700);}});
   A('rain',4,{set:'street',cast:[],toon:0,
     d3(t){const u=clamp(t/9,0,1);stC(stE(-5,-3,u),stE(7.5,6,u),stE(-3.2,-2.4,u),.5,0,1.6,42,.04);ST.focus.set(0,0,2);},
-    ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,560*s);stTint('#04060b',.42);stPaper(W/2-(p&&li>=1?W*.08:0),H*(p?.4:.34),clamp(t*2.5,0,1),pw,-.03,'AOBA STAR YOICHI ISAGI, 17,','KILLED IN HIT-AND-RUN','Driver not found. Police appeal for witnesses.','THE AOBA DAILY');
+    ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,560*s);stTint('#04060b',.42);stPaper(W/2-(p&&li>=1?W*.08:0),H*(p?.4:.34),clamp(t*2.5,0,1),pw,-.03,'AOBA STAR YOICHI ISAGI, 17,','MISSING AFTER HIT-AND-RUN','No one at the scene. Police appeal for witnesses.','THE AOBA DAILY');
       if(li>=1)stPaper(W/2+(p?W*.17:W*.04),H*(p?.52:.5),clamp(lt*3,0,1),pw*.62,.06,'AOBA UNITED SIGN','FORWARD DAICHI VANCE','"He will take the number nine role."','SPORTS · AOBA DAILY');}});
-  A('rain',5,{set:'funeral',cast:['renF','haraF','satoF','moriF','uedaF','vanceF','kaiA'],toon:0,
-    d3(t,dt,li,lt){const SS=ST.sets.funeral;stIsaPhoto(SS);const R=stA('renF'),bow={nx:.4};
-      stP(R,0,-1.15,PI,{pose:li>=1?'kneelGrim':'kneel',ex:li>=1?'angry':'sad'});
-      stP(stA('haraF'),-2.3,.35,PI,{pose:'stand',hd:bow,ex:'sad'});stP(stA('satoF'),-1.35,.75,PI-.08,{pose:'stand',hd:bow,ex:'sad'});
-      stP(stA('moriF'),1.35,.6,PI+.08,{pose:'stand',hd:bow,ex:'sad'});stP(stA('uedaF'),2.3,.4,PI,{pose:'stand',hd:bow,ex:'sad'});
-      stP(stA('vanceF'),3.5,1.5,PI+.35,{pose:'stand',ex:li>=1?'smirk':'neutral',look:li>=1?stLk(0,.8,-1.15):null});
-      if(li<=0){if(lt<4){const u=clamp(lt/4,0,1);stC(stE(.55,.3,u),stE(1.3,1.5,u),stE(.4,-1.2,u),0,2.02,-3.95,stE(34,27,u),0);}else{const u=clamp((lt-4)/4,0,1);stC(stE(2.3,1.7,u),1.45,stE(-2.7,-2.4,u),stE(-.4,-.6,u),1.15,.9,stE(44,40,u),0);}}
-      else{const u=clamp(lt/6,0,1),h=stHv(R,0);stC(-.95,1.0,-2.6+.1*u,h[0],h[1]-.05,h[2],stE(36,31,u),.05);}ST.focus.set(0,0,-1);},
-    ov(t,li,lt){if(li>=1){stTint('#dfe8ff',lt<.25?.5*(1-lt/.25):0);stTint('#300508',.1);}stStamp('AOBA MEMORIAL HALL · ISAGI\'S FUNERAL',t);}});
+  A('rain',5,{set:'street',cast:['renA'],toon:0,
+    d3(t,dt,li,lt){const R=stA('renA');stP(R,-2.2,3.9,-.35,{pose:li>=2?'stand':'slump',ex:li>=2?'angry':'sad',look:li<2?stLk(-3,1.5,4.7):null});
+      if(li<=1){const u=clamp(t/8,0,1);stC(stE(-4.6,-4.1,u),1.55,stE(6.6,6.1,u),-2.6,1.45,4.3,stE(40,36,u),0);}else{const u=clamp(lt/5,0,1),h=stHv(R,0);stC(-.7,1.5,2.5+.1*u,h[0],h[1]-.02,h[2],stE(34,28,u),.04);}ST.focus.set(-2.2,0,3.9);},
+    ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,420*s);if(li<=1){stTint('#04060b',.25);stPaper(p?W*.72:W/2,H*(p?.42:.3),clamp(t*2,0,1)*.95,pw,.04,'MISSING · YOICHI ISAGI, 17','HAVE YOU SEEN HIM?','Last seen on the river road, 22:40. Call Aoba Police.','MISSING PERSON');}
+      if(li>=2){stTint('#59e1ff',lt<.3?.25*(1-lt/.3):0);}stStamp('RIVER ROAD · ONE WEEK LATER',t);}});
   A('bench',1,{set:'night',cast:['renA','r9','r10'],toon:1,crowd:.8,
     d3(t){const i=Math.min(2,Math.floor(t/1.2));stP(stA('renA'),0,0,.4,{pose:['handsHead','dejected','kneesHands'][i],ex:'sad'});
       if(i===2){stP(stA('r9'),-5.2,-4.2,2.3,{pose:'celebrate',cel:'fistPump',celT:t-2.2+1.2});stP(stA('r10'),-3.8,-6.4,2.6,{pose:'cheer'});}
@@ -11950,20 +11995,20 @@ function stAttach(){const PI=Math.PI,A=(k,i,o)=>{if(SC[k]&&SC[k][i])SC[k][i].s3=
     ov(t,li){stStamp('KUROSAWA PARK GROUND · 00:41',t);}});
   A('awaken',2,{set:'pitch',cast:['renC'],toon:0,rain:0,
     d3(t){const R=stA('renC');stP(R,0,0,RY,{pose:'kneel',hd:t>.45?{nx:-.75}:null,ex:t>.45?'shock':'sad',look:t>.45?stLk(0,4,0):null});stBall(.85,.15,-.55);
-      stSys(0,0,{t:t-.4,panels:t>.6?[['SYSTEM','HOST',['Strong will detected'],'#59e1ff'],['SYNC','100%',['Synchronizing...'],'#59e1ff'],['TARGET','NAGI',['Nagi · 17'],'#59e1ff']]:[],r:1.9,py:1.4,spin:.4,ring:clamp((t-.35)*2,0,1),beam:t>.35?clamp(1-(t-.35)*1.2,.25,1):0,light:clamp((t-.35)*3,0,1)});
+      stSys(0,0,{t:t-.4,panels:t>.6?[['EGO','AWAKE',['I want to win'],'#59e1ff'],['WILL','100%',['Protect Isagi'],'#59e1ff'],['TARGET','NAGI',['Nagi · 17'],'#59e1ff']]:[],r:1.9,py:1.4,spin:.4,ring:clamp((t-.35)*2,0,1),beam:t>.35?clamp(1-(t-.35)*1.2,.25,1):0,light:clamp((t-.35)*3,0,1)});
       stCv(RP(0,0,RY,4.0,.5,1.1),[0,1.05,0],38);stShake(t<1?.012*(1-t):.002);ST.focus.set(0,0,0);},
-    ov(t){stGlitch(t<.9?1-t/.9:Math.random()<.05?.5:0);const w=Math.min(W-32,460*sc());sysWindow(W/2-w/2,H*(W<H?.08:.12),w,150,'[ SYSTEM ]',['Strong will detected.','Host: SEISHIRO NAGI','Synchronizing........ 100%'],t-.6,{size:14+2*sc()});
+    ov(t){stGlitch(t<.9?1-t/.9:Math.random()<.05?.5:0);const w=Math.min(W-32,460*sc());sysWindow(W/2-w/2,H*(W<H?.08:.12),w,150,'[ EGO ]',['Strong will detected.','Host: SEISHIRO NAGI','Synchronizing........ 100%'],t-.6,{size:14+2*sc()});
       if(t>.3&&t<.5)stTint('#bff8ff',(.5-t)*4);}});
   A('awaken',3,{set:'pitch',cast:['renC'],toon:0,rain:0,lc:false,
     d3(t,dt,li,lt){const R=stA('renC');stP(R,0,0,RY,{pose:'kneel',hd:{nx:-.55},look:stLk(Math.sin(RY)*2,2.2,Math.cos(RY)*2),ex:'determined'});stBall(.85,.15,-.55);
       const P0=[['DEFENDING','S',['Every tackle, every lane'],'#59e1ff'],['DRIBBLING','S',['Every feint mastered'],'#59e1ff'],['PASSING','S',['Every angle seen'],'#59e1ff'],['SHOOTING','S',['Every strike'],'#59e1ff'],['VISION','S',['Total Football'],'#ffc04a']];
-      const P1=[['MAIN QUEST','!!',['Avenge Yoichi Isagi','Find who wanted him gone'],'#ff5a4f'],['STATUS','???',['The driver was never found'],'#ff5a4f']];
+      const P1=[['MAIN QUEST','!!',['Find Yoichi Isagi','Find who wanted him gone'],'#ff5a4f'],['STATUS','???',['The driver was never found'],'#ff5a4f']];
       const P2=[['SUB-QUEST','JOIN',['Kurogane SC','Open trials · tomorrow 08:00'],'#ffc04a'],['REWARD','???',['Complete to unlock'],'#59e1ff']];
       stSys(0,0,{t:li<=0?t:lt,panels:li<=0?P0:li===1?P1:P2,r:2.2,py:1.45,spin:.18,ring:1,aura:.35,beam:.25,light:.6,pa:.8});
       const a=RY+.9+t*.12;stC(Math.sin(a)*4.4,1.7,Math.cos(a)*4.4,0,1.15,0,40);ST.focus.set(0,0,0);},
     ov(t,li,lt){const s=sc(),p=W>=H,w=p?Math.min(W*.42,440*s):W-32,x=p?Math.max(16,W*.04):16,y=p?H*.12:H*.07;
       if(li<=0)sysWindow(x,y,w,Math.min(260,H*.62),'ABILITY GRANTED: TOTAL FOOTBALL',[{t:'DEFENDING   S',bar:1},{t:'DRIBBLING   S',bar:1},{t:'PASSING     S',bar:1},{t:'SHOOTING    S',bar:1},{t:'VISION      S',bar:1},{t:'Every skill. Every position.',c:'#ffc04a',b:1}],t,{size:13+2*s,lh:p?30:24});
-      else if(li===1)sysWindow(x,y,w,150,'MAIN QUEST',[{t:'Avenge Yoichi Isagi.',c:'#ff8a80',b:1},'Find out who wanted him gone.',{t:'Reward: ???',c:'#ffc04a'}],lt,{size:13+2*s});
+      else if(li===1)sysWindow(x,y,w,150,'MAIN QUEST',[{t:'Find Yoichi Isagi.',c:'#ff8a80',b:1},'Find out who wanted him gone.',{t:'Reward: ???',c:'#ffc04a'}],lt,{size:13+2*s});
       else sysWindow(x,y,w,150,'SUB-QUEST',[{t:'Join a new team.',b:1},'Kurogane SC · open trials',{t:'Tomorrow morning',c:'#ffc04a'}],lt,{size:13+2*s});}});
   A('awaken',4,{set:'pitch',cast:['renC'],toon:1,rain:0,
     d3(t){const R=stA('renC');stP(R,0,0,RY,{pose:'rise',pt:t*1.15,ex:t>1?'determined':'angry'});stEyes(R,clamp((t-.8)*1.5,0,1));stBall(.85,.15,-.55);
@@ -11999,7 +12044,7 @@ function stAttach(){const PI=Math.PI,A=(k,i,o)=>{if(SC[k]&&SC[k][i])SC[k][i].s3=
   A('debut',1,{set:'day',cast:['renK','shun','kenji','taro'],toon:1,crowd:.9,lc:false,
     d3(t,dt,li,lt){const R=stA('renK'),z=Math.min(-18,-33.5+1.35*t);stP(R,0,z,0,{pose:li===1?'hero':'stand',ex:'determined',look:li===1?null:stLk(0,1.6,z+8)});stEyes(R,li===1?1:.55);
       if(!lowQ()){stP(stA('shun'),-1.7,z-1.6,.05,{ex:'smile'});stP(stA('taro'),1.6,z-1.9,-.05,{});stP(stA('kenji'),.3,z-3.4,0,{});}
-      if(li<=0)stCv(RP(0,z,0,3.3,.3,.85),[0,1.35,z],34);else if(li===1){const h=stHv(R,.08);stCv(RP(0,z,0,1.55,.3,h[1]-.05),[h[0]-.2,h[1]-.02,h[2]],30);stSys(0,z,{t:lt,panels:[['SYSTEM','ONLINE',['Total Football','Defensive read active'],'#59e1ff']],bill:true,bx:-.42,py:1.62,bz:.25,ps:.45});}
+      if(li<=0)stCv(RP(0,z,0,3.3,.3,.85),[0,1.35,z],34);else if(li===1){const h=stHv(R,.08);stCv(RP(0,z,0,1.55,.3,h[1]-.05),[h[0]-.2,h[1]-.02,h[2]],30);stSys(0,z,{t:lt,panels:[['EGO','AWAKE',['Total Football','Defensive read active'],'#59e1ff']],bill:true,bx:-.42,py:1.62,bz:.25,ps:.45});}
       else stCv(RP(0,z,0,-2.6,.55,1.0),[0,1.45,z+10],42);ST.focus.set(0,0,z);},
     ov(t,li,lt){const s=sc();if(li<=0){stTitle('KUROGANE SC','#4 · CENTRE BACK · SEISHIRO NAGI','#59e1ff','#eef3f8',t-.2,H*.2);}}});
   A('debutOutro',0,{set:'day',cast:['renK','ishi'],toon:1,crowd:.8,
@@ -12275,59 +12320,4 @@ function rxInset(sp,dt){const r=G3.renderer,B=rxBox(),t=clock-RX.t0,cam=RX.cam||
     ctx.restore();}}catch(e){}};}
 
 // ---------- v80: our direct free kicks. Always a big curler into the corner; the outcome depends on distance only:
-// from 28 m or further it is a coin flip between goal and save, and every metre closer adds about 3.5% (to ~85% at 18 m) ----------
-function fkGoalChance(dm){return clamp(.5+(28-dm)*.035,.5,.86);}
-{const _sh=shoot;shoot=function(p,aimDy){const fk=!!(M&&M.sp&&M.sp.type==='fk'&&M.sp.taker===p&&p.team===M.home);M.fkNow=fk?p:null;
-  try{return _sh.apply(this,arguments);}finally{M.fkNow=null;}};}
-{const _gd=startGkDuel;startGkDuel=function(p){if(M&&M.fkNow===p)return false;return _gd.apply(this,arguments);};}
-{const _ss=startShotCine;startShotCine=function(p,aimY){const fk=M&&M.fkNow===p;const r=_ss.apply(this,arguments);if(!fk)return r;
-  try{const c=M.cine;if(!c||c.type!=='shot')return r;const T=p.team,gx=T.dir>0?PW:0,gk=c.gk,b=p;
-    const dm=Math.hypot(gx-b.x,PH/2-b.y)*S3,side=Math.sign(aimY-PH/2)||(Math.random()<.5?-1:1),ty=side<0?GY0+15:GY1-15;
-    const out=Math.random()<fkGoalChance(dm)?'goal':'saved';c.out=out;c.fk={dm:Math.round(dm),p:fkGoalChance(dm)};
-    c.to=out==='saved'?{x:gx-T.dir*20,y:ty}:{x:gx+T.dir*14,y:ty};
-    c.gkTo=out==='saved'?{x:gx-T.dir*20,y:ty}:{x:gk.x,y:lerp(gk.y,ty,.5)+(ty>gk.y?-16:16)};
-    const dx=c.to.x-b.x,dy=c.to.y-b.y,dl=Math.hypot(dx,dy)||1;c.dir={x:dx/dl,y:dy/dl};
-    c.style='CURLER';c.peak=rnd(22,32);c.curlS=-side*T.dir*1.6;c.fkK=1;
-    fxPop('FREE KICK · '+c.fk.dm+' m',p.x,p.y,2.4,'#ffd34a',{size:20,life:1.6});}catch(e){}
-  return r;};}
-{const _fs=fxShotShape;fxShotShape=function(c,m){const o=_fs.apply(this,arguments);if(c&&c.fkK){o.h*=1+.35*Math.sin(Math.PI*m);}return o;};}
-// ---------- v80b: when the chapter's quest is complete the story carries on by itself after a short look at the result ----------
-function questComplete(){if(!M)return false;const [h,a]=M.score;return M.ch===6?h>=a:h>a;}
-{const _em=endMatch;endMatch=function(){const r=_em.apply(this,arguments);try{if(questComplete()){const B=$('b-continue'),lab='Continue story';let n=5;
-  const tick=()=>{if(mode!=='result'){B.textContent=lab;return;}if(n<=0){B.textContent=lab;B.onclick();return;}B.textContent=lab+' ('+n+')';n--;setTimeout(tick,1000);};
-  setTimeout(tick,600);M.autoCont=true;}}catch(e){}return r;};}
-
-stAttach();stP2();
-// ---------- debug / test helpers ----------
-G3.stDbg={go(key,i,li,t,lt){if(!CS||CS.shots!==SC[key])playCutscene(SC[key],()=>{});CS.i=i;startShot();if(li!=null&&li>=0){CS.li=li;showLine();const L=curLine();if(L)CS.chars=L.text.length;}CS.t=t||0;CS.lt0=CS.t-(lt||0);},
-  frames:()=>ST.frames,info:()=>{const r=G3.renderer.info.render;return {set:ST.set,stad:ST.stad,actors:ST.actors.size,calls:r.calls,tris:r.triangles,broken:ST.broken};},
-  cs:()=>CS?{i:CS.i,li:CS.li,t:CS.t,n:CS.shots.length}:null,
-  lab(list){const X=i=>(i%7)*1.5-4.5,Z=i=>-Math.floor(i/7)*2.6;const shots=[{dur:999,draw:()=>panelBG(),s3:{set:'training',toon:0,cast:[],vig:0,lb:0,d3(){list.forEach((p,i)=>{const k='lab'+i;if(!CAST[k])CAST[k]=['ren',KIT_RC];const a=stA(k);
-    stP(a,X(i),Z(i),0,{pose:p,pt:9});if(p==='phone')stPhone(a,true);});stC(0,2.6,9.5,0,.7,-2.6,46);ST.focus.set(0,0,-2);},
-    ov(){list.forEach((p,i)=>{const q=stProj(X(i),2.05,Z(i));smallText(p,q.x,q.y,12,'#fff');});}}}];playCutscene(shots,()=>{});}};
-// v6: Meguru Bachira, the dribbler who hears the monster
-DESIGNS.bachira=D('Meguru Bachira','Kurogane SC','Left midfielder #8','light',{n:'bob',style:'long',color:'#2b2420'},{h:.97,w:.95,bulk:.93},{eyes:'round',brows:'soft',nose:'small',mouth:'grin',jaw:'narrow',eyeColor:'#d8a83a'},
-  {kit:'kuro',num:8,look:'Black bob with a wild fringe, golden eyes, a grin that never switches off. Light on his feet.',aura:'#ffd34a',
-   persona:{title:'The Monster Dribbler',quote:'Hey Nagi, wanna play with my monster?',traits:['Free spirit','Instinct dribbler','Loves a duel'],bio:'Kurogane SC\'s left midfielder. Dribbles because it is fun, passes only to people who make it more fun. He picked Nagi on day one.',stats:{PAC:84,DRI:93,SHO:74,PAS:78,DEF:42,PHY:66},signature:'Monster Dribble'},
-   barks:{goal:['That was FUN!','Again, again!'],tackle:['Mine!','Hehe, gotcha.'],skill:['Watch my monster!','Too slow!'],pass:['Nagi!','Go, go!'],fail:['Aw, man.','Next one is mine.']}});
-if(!ROSTER.includes('bachira'))ROSTER.splice(2,0,'bachira');
-DESIGNS.bachira.model='bachira';DESIGNS.bachira.bodySkin='fair';
-// v5: Nagi and Isagi looks on the anime rig
-(function(){const n=DESIGNS.ren,i=DESIGNS.kaito;
-  if(n){n.hair={...n.hair,style:'messy',n:'messy',color:'#eeeff3',streak:null};n.skin='fair';n.tone='fair';n.face={...n.face,eyeColor:'#8a8a92',eyes:'sharp'};n.build={...n.build,h:1.05,w:.95,bulk:.94};
-    n.look='Messy white hair, pale skin, half-closed grey eyes. Tall, lazy, and a genius when he wakes up.';}
-  if(i){i.hair={...i.hair,style:'straight',n:'straight',color:'#1f2340',streak:null};i.skin='light';i.tone='light';i.face={...i.face,eyeColor:'#2f5fb0'};i.build={...i.build,h:.97,w:.97,bulk:.95};i.aura='#4f8cff';
-    i.look='Dark navy hair with two antenna strands, blue eyes. The one who reads the whole field.';}
-  if(n)n.model='nagi';if(i)i.model='isagi';
-})();
-// ==== END PKG-E ====
-// (filler line 1: keep packages apart)
-// (filler line 2)
-// (filler line 3)
-window.__twin={get CS(){return CS},get TRr(){return TR},get ST(){return ST},defCine:(u,h)=>startDefenseCine(u,h),play:k=>playCutscene(SC[k],toTitle),ht:()=>halfTime(),RX,rxFire:(k)=>rxFire(k),goal:(h)=>goalScored(h?M.home:M.away),shotT:(r,x,y,ay)=>{const p=M.user,R=Math.random;p.x=x;p.y=y;p.fx=M.home.dir;p.fy=0;giveBall(p);Math.random=()=>r;try{startShotCine(p,ay);}finally{Math.random=R;}return M.cine&&M.cine.out;},endM:()=>endMatch(),fk:(x,y,r,ay)=>{const p=M.user,R=Math.random;p.x=x;p.y=y;giveBall(p);M.sp={type:'fk',team:M.home,taker:p,x,y,t:0,delay:2.4};Math.random=()=>r;try{shoot(p,ay||0);}finally{Math.random=R;}const c=M.cine;return c?{out:c.out,fk:c.fk,style:c.style,curl:c.curlS}:null;},shoot:(r)=>{const R=Math.random;Math.random=()=>r;try{shoot(M.user,0);}finally{Math.random=R;}return M.cine&&M.cine.out;},fxActor:p=>fxActor(p),S3,PW,PH,drib:(k,d)=>startDribCine(k,d),get clock(){return clock},ultState:()=>ultState(),ult:()=>startUltCine(),sim:{updateMatch,closePick,endCine,passTo},ref:{foul:refFoul,award:refAward,offside:refOffside,judge:refJudge,send:refSendOff,off:refOffsideCall},startChapter,get mode(){return mode},get M(){return M},get TR(){return TR},RIG,G3};
-init3D();
-requestAnimationFrame(frame);
-})();
-</script>
-<div id="ldnote" style="position:fixed;left:10px;bottom:8px;z-index:99;font:600 12px/1.3 system-ui,sans-serif;color:#cfe3ff;background:rgba(6,10,20,.78);padding:5px 9px;border-radius:4px;pointer-events:none">Loading players…</div>
-<script>(function(){var n=document.getElementById('ldnote'),t0=Date.now();var iv=setInterval(function(){var w=window.__twin,R=w&&w.RIG;if(R&&R.ready){n.remove();clearInterval(iv);}else if(R&&R.failed){n.textContent='Players failed to load: '+(window.__ldErr||'unknown')+' (reload to retry)';n.style.color='#ffb0a8';clearInterval(iv);}else if(Date.now()-t0>180000){n.textContent='Still loading players…';}},400);})();</script>
+// from 28 m or further it is a coin flip between goal and save, and every metre closer adds about 3.5% (
