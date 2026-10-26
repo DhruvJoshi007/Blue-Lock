@@ -13101,10 +13101,16 @@ function aimDraw(){const A=M.aim,g=A.g,th=A.theme,X=ctx,mn=Math.min(W,H),now=A.t
   X.font=`700 ${Math.round(fs*.42)}px ${FS}`;X.fillStyle=th.line;X.fillText(th.name,W/2,fs*1.75);
   const bw=Math.min(W*.5,320),bx=W/2-bw/2,by=fs*2.25,rem=A.locked?0:1-k;X.fillStyle='rgba(255,255,255,.15)';X.fillRect(bx,by,bw,4);X.fillStyle=rem<.3?'#ff4d6a':th.glow;X.fillRect(bx+bw*(1-rem)/2,by,bw*rem,4);
   if(!A.locked){X.font=`600 ${Math.round(clamp(mn*.026,10,15))}px ${FB}`;X.fillStyle='rgba(255,255,255,.82)';
-    X.fillText(touchUI?'TAP THE GOAL TO AIM & SHOOT':'MOUSE: CLICK THE GOAL  ·  WASD/ARROWS: ZONE  ·  SPACE/ENTER: LOCK',W/2,H-Math.max(18,mn*.05));}
+    X.fillText(touchUI?'TAP THE GOAL TO AIM & SHOOT':'MOVE THE MOUSE TO AIM  ·  CLICK TO SHOOT  ·  OR WASD + SPACE',W/2,H-Math.max(18,mn*.05));}
   else{const q=clamp(A.lt/.12,0,1),sz=fs*1.9*(1.5-.5*q);label('LOCK ON!',W/2,H*.5+(R.y>H*.5?-H*.22:H*.22)*0+(R.y<H*.45?H*.18:-H*.18),sz,'#ffffff',th.glow);
     const d=A.data;if(d){label(d.post?(d.postKind==='CROSSBAR'?'CROSSBAR!':'POST!'):d.isTopCorner?'TOP CORNER':d.isLowDriven?'LOW DRIVEN':'PLACED',W/2,H*.5+(R.y<H*.45?H*.18:-H*.18)+sz*.8,fs*.7,th.line,th.glow);}}
 }
+// mouse aiming while the pointer is captured for the camera: mouse movement steers the target over the goal, a left click shoots there
+function aimGoalPx(A){const a=aimProj(A.g,-1,0),b=aimProj(A.g,1,0),c=aimProj(A.g,0,1),d=aimProj(A.g,0,0);
+  return{w:Math.max(60,Math.hypot(b.x-a.x,b.y-a.y)),h:Math.max(30,Math.hypot(c.x-d.x,c.y-d.y)),sx:(b.x-a.x)<0?-1:1};}
+addEventListener('pointermove',e=>{const A=M&&M.aim;if(!A||mode!=='match'||document.pointerLockElement!==cv)return;e.stopImmediatePropagation();if(A.locked)return;
+  const g=aimGoalPx(A),k=1.1;A.u=clamp(A.u+e.movementX*k/g.w*2*g.sx,-1.25,1.25);A.v=clamp(A.v-e.movementY*k/g.h,0,1.25);A.ru=A.u;A.rv=A.v;A.src='mouse';A.hover=true;},true);
+addEventListener('pointerdown',e=>{const A=M&&M.aim;if(!A||mode!=='match'||document.pointerLockElement!==cv)return;e.preventDefault();e.stopImmediatePropagation();if(!A.locked&&e.button===0)aimLock('click');},true);
 
 // ==== W3 LOOK: clean exits from a match, real eyeballs for the generic cast, real-looking grass, less clutter ====
 // ---------- A: leaving a match tears everything down; menu screens never show a stale match frame ----------
