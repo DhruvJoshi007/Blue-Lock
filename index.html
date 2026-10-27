@@ -13552,8 +13552,8 @@ const D5_KEYS=[
   [1.6,{hy:-.26,lLx:-.45,kL:1.05,lRx:-.45,kR:1.05,ikL:1,ikR:1,sx:.38,aLz:.35,aRz:.35,aLx:.55,aRx:.55,eL:.4,eR:.4,nx:-.3}],  // load, eyes on the ball
   [1.72,{hy:0,lLx:-.35,kL:.7,lRx:.25,kR:.95,fR:.3,ikL:0,ikR:0,sx:-.08,aLz:.95,aRz:.95,aLx:-.55,aRx:-.55,nx:-.2}],             // take-off
   [1.92,{hy:0,bz:-.7,bx:.2,lLx:.45,kL:.5,lRx:-1.0,kR:1.7,ikL:0,ikR:0,sx:.1,aLz:.5,aRz:.5,aLx:.7,aRx:.7,eL:1.6,eR:1.6,nx:.1}],                               // tucked, rising
-  [2.2,{hy:0,bz:-1.38,bx:.25,lLx:.9,kL:.25,lRx:-1.25,kR:1.9,ikL:0,ikR:0,sx:.05,sy:.1,aLz:.45,aRz:.45,aLx:.95,aRx:.85,eL:1.8,eR:1.7,nx:.45,ny:.35}],   // round to face the goal, right glove up
-  [2.3,{hy:0,bz:-1.38,bx:.25,lLx:.9,kL:.25,lRx:-1.25,kR:1.9,ikL:0,ikR:0,sx:.05,sy:.1,aLz:.45,aRz:.45,aLx:.95,aRx:.85,eL:1.8,eR:1.7,nx:.45,ny:.35}],  // right glove raised
+  [2.2,{hy:0,bz:-.8,bx:.05,lLx:.9,kL:.25,lRx:-1.25,kR:1.9,ikL:0,ikR:0,sx:.05,sy:.1,aLz:.45,aRz:.45,aLx:.95,aRx:.85,eL:1.8,eR:1.7,nx:.45,ny:.35}],   // round to face the goal, right glove up
+  [2.3,{hy:0,bz:-.8,bx:.05,lLx:.9,kL:.25,lRx:-1.25,kR:1.9,ikL:0,ikR:0,sx:.05,sy:.1,aLz:.45,aRz:.45,aLx:.95,aRx:.85,eL:1.8,eR:1.7,nx:.45,ny:.35}],  // right glove raised
   [2.36,{hy:0,bz:-1.0,bp:.9,lLx:-1.5,lLz:.25,kL:.12,fL:.5,lRx:.35,kR:1.45,ikL:0,ikR:0,sx:-.15,sy:-.2,aLz:1.35,aLx:.35,eL:.3,aRz:1.4,aRx:-.5,eR:.4,nx:.3,ny:.1}],  // STRIKE
   [2.47,{hy:0,bz:-.95,bp:.9,lLx:-1.65,lLz:-.35,kL:.25,fL:.5,lRx:.5,kR:1.5,ikL:0,ikR:0,sx:-.1,sy:-.35,aLz:1.3,aLx:.4,aRz:1.3,aRx:-.45,nx:.3}],              // follow-through
   [2.75,{hy:-.05,bz:-.15,lLx:-.6,kL:.9,lRx:-.3,kR:1.0,ikL:0,ikR:0,sx:.1,aLz:.9,aRz:.9,nx:.2}],
@@ -13635,10 +13635,10 @@ function ultUpdate(c,dt){
   else if(!S.k&&t>1.1&&u.kick==='pass')u.kick=undefined;
   // the jumping turn: coil, a 0.25 s whip to 160 degrees, then the rest of the 360 in the air so he comes round facing the goal
   c.spinS=c.spinS||(c.side*dir>0?1:-1);
-  const DG=Math.PI/180,yA=t<23.9?0:t<24.7?-20*ease((t-23.9)/.8):t<24.95?-20+180*(1-Math.pow(1-(t-24.7)/.25,5)):t<29.7?160+20*ease((t-24.95)/4.75):180;
-  u.yawSpin=yA*DG*c.spinS;
+  const DG=Math.PI/180;let yA=t<23.9?0:t<24.7?-20*ease((t-23.9)/.8):t<24.95?-20+180*(1-Math.pow(1-(t-24.7)/.25,5)):t<29.7?160+20*ease((t-24.95)/4.75):180;
+  yA+=yA>100?(c.yOff==null?-30:c.yOff):0;u.yawSpin=yA*DG*c.spinS;
   if(t>=24.7&&!S.whip){S.whip=1;sfx('swoosh');sfx('kick');G3.impact=.2;fxKick({shake:.05});}
-  u.airH=tau<1.72?0:tau<1.95?.5*ease((tau-1.72)/.23):tau<2.4?.5+.04*Math.sin((t-24)*1.3):.54*(1-ease((tau-2.4)/.5));
+  u.airH=tau<1.72?0:tau<1.95?.8*ease((tau-1.72)/.23):tau<2.4?.8+.05*Math.sin((t-24)*1.3):.85*(1-ease((tau-2.4)/.5));
   // after the volley he comes down flat on his front, then looks back over his shoulder
   if(t>=D5T.land){if(!c.ld){c.ld={h:u.airH};u.kick=undefined;u.kickWarp=null;}const k=ease((t-D5T.land)/.45);u.airH=lerp(c.ld.h,0,k);u.pose='raw';const R=c.ldR||(c.ldR={});
     for(const kk in D5_PRONE)R[kk]=D5_PRONE[kk];R.ny=1.1*ease(clamp((t-D5T.look-.3)/.6,0,1))*c.spinS;R.nx=lerp(-.8,-.35,ease(clamp((t-D5T.look-.3)/.6,0,1)));u.raw=R;const P=d5V(c,-1.3,0,0);u.x=P.x;u.y=P.y;}
