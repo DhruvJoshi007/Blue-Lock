@@ -11163,7 +11163,8 @@ function dzFrame(){if(DZ.f===clock)return;DZ.f=clock;const r=G3.renderer;if(r){c
 function faceUpdate(c,o,dt){const F=c&&c.dzF;if(!F)return;dt=dt>0?Math.min(dt,.1):0;dzFrame();
   const inMatch=(mode==='match'||mode==='paused'||mode==='howto'||mode==='result')&&M&&G3.active,cine=!!(M&&M.cine);
   let far=0;if(inMatch||mode==='trial'){const cp=G3.cam.position,rp=c.root.position;far=Math.hypot(cp.x-rp.x,cp.z-rp.z);}
-  const olOn=!DZ.noOl&&(!far||cine||far<(lowQ()?13:34));for(const m of F.ol)m.visible=olOn;F.fmat.visible=!far||far<(lowQ()?12:24);
+  const olOn=!DZ.noOl&&(!far||cine||far<(lowQ()?10:24));for(const m of F.ol)m.visible=olOn;F.fmat.visible=!far||far<(lowQ()?9:18);
+  {const shOn=!far||cine||far<(lowQ()?30:52);if(F.shOn!==shOn){F.shOn=shOn;c.root.traverse(m=>{if(m.isSkinnedMesh){if(m.userData._cs===undefined)m.userData._cs=!!m.castShadow;m.castShadow=shOn&&m.userData._cs;}});}}
   if(far>60&&!cine)return;
   // expression target: explicit > automatic > personal base
   let name=F.ex&&clock<F.exT?F.ex:null;if(!name){F.ex=null;name=dzAuto(c,o,F)||F.base;}
@@ -13947,6 +13948,23 @@ function mlenDur(){return MLEN[mlenGet()].dur;}
 function mlenApply(m){if(!m)return;const d=mlenDur(),o=m.dur||d;if(o===d)return;const k=d/o;m.time*=k;m.htOff*=k;m.dur=d;}   // same minute on the clock, new pace
 function mlenSync(){const b=$('b-mlen');if(b)b.textContent=MLEN[mlenGet()].label;}
 {const b=$('b-mlen');if(b){mlenSync();b.onclick=()=>{const n=mlenGet()==='story'?'full':'story';try{localStorage.setItem('twin.mlen',n);}catch(e){}mlenSync();if(M)mlenApply(M);};}}
+
+// ==== v76 flow state + performance: glass pieces without per-piece canvas shadow blur (the costly part), speed streaks while running in flow ====
+function flowPiece(cx,cy,r,rot,sx,a){if(r<1.5||a<=.01)return;ctx.save();ctx.translate(cx,cy);ctx.rotate(rot);ctx.scale(sx,1);
+  const s=r,k=s*.28;ctx.beginPath();ctx.moveTo(-s,-s);ctx.lineTo(-k,-s);ctx.arc(0,-s-k*.2,k*.9,Math.PI,0,false);ctx.lineTo(s,-s);ctx.lineTo(s,-k);ctx.arc(s+k*.2,0,k*.9,-Math.PI/2,Math.PI/2,false);
+  ctx.lineTo(s,s);ctx.lineTo(-s,s);ctx.lineTo(-s,k);ctx.arc(-s+k*.9,0,k*.9,Math.PI/2,-Math.PI/2,true);ctx.closePath();
+  ctx.globalCompositeOperation='lighter';ctx.globalAlpha=a*.3;ctx.fillStyle='#7fc4ff';ctx.fill();
+  ctx.lineJoin='round';ctx.globalAlpha=a*.2;ctx.strokeStyle='#7fc4ff';ctx.lineWidth=Math.max(2,r*.3);ctx.stroke();   // soft glow: a wide faint stroke instead of shadowBlur
+  ctx.globalAlpha=a;ctx.strokeStyle=FLOW.ICE;ctx.lineWidth=Math.max(1,r*.09);ctx.stroke();
+  ctx.globalAlpha=a*.8;ctx.beginPath();ctx.moveTo(-s*.7,-s*.45);ctx.lineTo(-s*.15,-s*.75);ctx.stroke();ctx.restore();}
+// blue-white speed lines trailing him while he runs in flow, fading in and out with the flow strength
+function flowStreaks(u,k){if(!u||k<.05)return;const sp=Math.hypot(u.vx||0,u.vy||0);if(sp<120)return;const g=clamp((sp-120)/220,0,1)*k;if(g<.03)return;
+  const A=fxP(u.x,u.y,.95);if(A.behind)return;const B=fxP(u.x-u.vx*.16,u.y-u.vy*.16,.95);if(B.behind)return;let dx=B.x-A.x,dy=B.y-A.y;const L=Math.hypot(dx,dy);if(L<4)return;dx/=L;dy/=L;
+  const px=-dy,py=dx,sz=Math.min(W,H)*.06;ctx.save();ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
+  for(let i=0;i<7;i++){const o=(flowR(i+21)-.5)*2,len=sz*(1.6+2.4*flowR(i+23)),ph=(clock*3.2+flowR(i+25))%1,st=sz*(.4+ph*1.4),x0=A.x+px*o*sz*.9+dx*st,y0=A.y+py*o*sz*.9+dy*st-sz*.5*(flowR(i+27)-.3);
+    ctx.globalAlpha=g*.5*(1-ph);ctx.strokeStyle=i%2?'#ffffff':'#8fd2ff';ctx.lineWidth=Math.max(1,sz*.05);ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+dx*len,y0+dy*len);ctx.stroke();}
+  ctx.restore();}
+{const _fl=flowLiveOv;flowLiveOv=function(s){_fl.apply(this,arguments);try{if(M&&mode==='match'&&!M.cine&&G3.active&&FLS.k>.02)flowStreaks(M.user,FLS.k);}catch(e){}};}
 
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
