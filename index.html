@@ -13629,14 +13629,14 @@ function ultUpdate(c,dt){
   else if(t<D5T.top){const k=ease((t-D5T.run)/(D5T.top-D5T.run-.4));u.x=lerp(c.Ps.x,c.O.x,k);u.y=lerp(c.Ps.y,c.O.y,k);u.fRun=k<1?(t-D5T.run)*1.7:null;u.fRunW=k<1?1:0;}
   else{u.x=c.O.x;u.y=c.O.y;u.fRun=null;u.fRunW=0;}
   if(!c.Lv&&t>.2){const Lf=d5Foot(c,'Left'),Rf=d5Foot(c,'Right');if(Lf&&Rf){const dx=Lf.x-Rf.x,dy=Lf.y-Rf.y,l=Math.hypot(dx,dy);if(l>1){c.Lv={x:dx/l,y:dy/l};if(c.Lv.x*L.x+c.Lv.y*L.y<0){c.L={x:-L.x,y:-L.y};for(const d of c.D)d.s=-d.s;}}}}
-  if(t<.6&&mate){const dx=c.Mt.x-u.x,dy=c.Mt.y-u.y,l=Math.hypot(dx,dy)||1;u.fx=dx/l;u.fy=dy/l;}else if(t<D5T.top-.6){u.fx=-F.x;u.fy=-F.y;}else{u.fx=F.x;u.fy=F.y;}   // he walks in towards goal, then sets himself back to goal
+  if(t<.6&&mate){const dx=c.Mt.x-u.x,dy=c.Mt.y-u.y,l=Math.hypot(dx,dy)||1;u.fx=dx/l;u.fy=dy/l;}else{u.fx=-F.x;u.fy=-F.y;}   // he walks in towards goal, then sets himself back to goal
   if(!S.pk){S.pk=1;u.kick='pass';u.kickAt=null;u.kickT=clock;u.kickWarp=null;}
   if(t>=D5T.top&&!S.k){S.k=1;u.kick='dap5';u.kickAt=null;u.kickT=clock;u.kickWarp=()=>M.cine===c?d5Tau(c.t):9;}
   else if(!S.k&&t>1.1&&u.kick==='pass')u.kick=undefined;
   // the jumping turn: coil, a 0.25 s whip to 160 degrees, then the rest of the 360 in the air so he comes round facing the goal
   c.spinS=c.spinS||(c.side*dir>0?1:-1);
-  const DG=Math.PI/180;let yA=t<23.9?0:t<24.7?-20*ease((t-23.9)/.8):t<24.95?-20+180*(1-Math.pow(1-(t-24.7)/.25,5)):t<29.7?160+20*ease((t-24.95)/4.75):180;
-  yA+=yA>100?(c.yOff==null?-30:c.yOff):0;u.yawSpin=yA*DG*c.spinS;
+  const DG=Math.PI/180;let yA=t<23.9?0:t<24.7?-20*ease((t-23.9)/.8):t<24.95?-20+350*(1-Math.pow(1-(t-24.7)/.25,5)):t<29.7?330+10*ease((t-24.95)/4.75):340;
+  u.yawSpin=yA*DG*c.spinS;
   if(t>=24.7&&!S.whip){S.whip=1;sfx('swoosh');sfx('kick');G3.impact=.2;fxKick({shake:.05});}
   u.airH=tau<1.72?0:tau<1.95?.8*ease((tau-1.72)/.23):tau<2.4?.8+.05*Math.sin((t-24)*1.3):.85*(1-ease((tau-2.4)/.5));
   // after the volley he comes down flat on his front, then looks back over his shoulder
