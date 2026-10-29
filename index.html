@@ -6424,18 +6424,21 @@ function bikeStart(u){
   M.lob=null;b.owner=u;u.vx=u.vy=0;u.kick='dapbike';u.kickAt=null;u.kickT=clock;u.kickWarp=()=>M.bike?M.bike.t:2.5;
   sfx('swoosh');return true;}
 function bikePose(B,dt){const u=B.u,t=B.t;
-  u.airH=ultBikeH(t);const yaw=t<.7?lerpAng(B.yaw0,B.toG+ULT_SIDE,ease(t/.7)):B.toG+ULT_SIDE;u.fx=Math.sin(yaw);u.fy=Math.cos(yaw);u.vx=u.vy=0;}
+  u.airH=0;const yaw=t<.7?lerpAng(B.yaw0,B.toG,ease(t/.7)):B.toG;u.fx=Math.sin(yaw);u.fy=Math.cos(yaw);u.vx=u.vy=0;}
 function bikeStep(dt){const B=M.bike,u=B.u,b=M.ball;
   if(G3.dbgBikeHold!=null&&B.t+dt>G3.dbgBikeHold)dt=Math.max(0,G3.dbgBikeHold-B.t);
-  if(G3.dbgBikeHold!=null&&B.t>=G3.dbgBikeHold)dt=0;B.t+=dt*(B.t>.85&&B.t<1.15?.22:B.t>.45&&B.t<1.4?.5:1);bikePose(B,dt);G3.bikeCam=lerp(G3.bikeCam||0,1,Math.min(1,dt*3));
+  if(G3.dbgBikeHold!=null&&B.t>=G3.dbgBikeHold)dt=0;B.c=(B.c||0)+dt*(Math.abs((B.c||0)-.95)<.12?.4:1);B.t=B.c<.95?B.c/.95:1+(B.c-.95)/1.8;bikePose(B,dt);G3.bikeCam=lerp(G3.bikeCam||0,1,Math.min(1,dt*3));
   const Rt={x:-u.fy,y:u.fx};
-  if(B.t<1.0){b.owner=null;b.vx=b.vy=0;b.air=null;b.x=u.x+u.fx*4+Rt.x*10;b.y=u.y+u.fy*4+Rt.y*10;b.h=30+4*Math.sin(B.t*6);return;}
+  if(B.t<1.0){b.owner=null;b.vx=b.vy=0;b.air=null;b.x=u.x+u.fx*4+Rt.x*10;b.y=u.y+u.fy*4+Rt.y*10;b.h=30+4*Math.sin(B.t*6);
+    if((B.c||0)>.6){const a=fxActor(u);if(a&&a.bones&&a.bones.LeftFoot&&a.bones.RightFoot){const V=new THREE.Vector3(),P=new THREE.Vector3();if(!B.fn&&B.c>.8){a.bones.LeftFoot.getWorldPosition(V);a.bones.RightFoot.getWorldPosition(P);B.fn=V.y>P.y?'LeftFoot':'RightFoot';}
+      if(B.fn){a.bones[B.fn].getWorldPosition(V);const k=ease(clamp((B.c-.7)/.22,0,1));b.x=lerp(b.x,V.x/S3+PW/2,k);b.y=lerp(b.y,V.z/S3+PH/2,k);b.h=lerp(b.h,Math.max(0,(V.y+.04-.15)/(S3*1.2)),k);}}}
+    return;}
   if(!B.snd.k){B.snd.k=1;B.from={x:b.x,y:b.y,h:b.h};sfx('bigkick');G3.impact=.8;try{fxKick({shake:.07,flash:.2,radial:.5});}catch(e){}
     if(B.out!=='goal'){const dx=B.G.x-b.x,dy=B.G.y-b.y,d=Math.hypot(dx,dy)||1,sp=680;b.owner=null;b.vx=dx/d*sp;b.vy=dy/d*sp;b.air={t:0,T:d/sp*1.1,pk:rnd(14,34)};b.lastTeam=u.team;b.passer=u;b.target=null;b.tried=new Set();b.gkTried=null;u.cool=.6;M.shots++;B.released=true;return;}
     M.shots++;}
   if(B.out==='goal'){B.fl+=dt;const k=clamp(B.fl/.45,0,1),kk=1-Math.pow(1-k,1.4);b.x=lerp(B.from.x,B.G.x,kk);b.y=lerp(B.from.y,B.G.y,kk);b.h=lerp(B.from.h,26,kk);
     if(k>=1){u.airH=0;u.kick=undefined;u.kickWarp=null;M.bike=null;G3.bikeCam=0;b.x=B.G.x;b.y=B.G.y;b.h=0;goalScored(u.team);M.flash.sub='BICYCLE KICK';}}}
-function bikeTail(dt){const B=M.bike;if(!B||!B.released)return;B.t+=dt;bikePose(B,dt);
+function bikeTail(dt){const B=M.bike;if(!B||!B.released)return;B.c=(B.c||0)+dt;B.t=B.c<.95?B.c/.95:1+(B.c-.95)/1.8;bikePose(B,dt);
   if(B.t>=2.0){const u=B.u;u.airH=0;u.kickWarp=null;u.kick=undefined;M.bike=null;}}
 // ---- ADAPTATION: the more his team is losing, the more he reads the game; at a critical moment he finds the missing piece ----
 function adaptTick(dt){
@@ -13999,8 +14002,8 @@ function mxPlan(c,o,dt){let b0;const S=c.mxS||(c.mxS={});
   if(C&&C.type==='shot'&&mine(C.shooter)){const t=C.t,K=SH.KICK,out=1-abSst(K+.75,K+1.05,t);
     if(C.sp==='pen'&&t<K-.45){return {n:'soccerIdle',t:t,w:1,loop:true};}
     return {n:'strike',t:Math.max(0,t-K+.47),w:abSst(K-.62,K-.4,t)*out,loop:false};}
-  // bicycle kick: the Mixamo scissor kick (contact about .9 s in) stretched over the 2 s bicycle sequence
-  if(M.bike&&mine(M.bike.u)){const B=M.bike,bt=B.t,ct=bt<1?bt*.9:.9+(bt-1)*1.85;return {n:'scissor',t:Math.min(2.74,ct),w:abSst(0,.12,bt)*(1-abSst(1.88,2.0,bt)),loop:false,noY:1};}
+  // bicycle kick: the Mixamo scissor kick at its own speed; the bicycle clock (B.c) is the clip time, contact at .95 s
+  if(M.bike&&mine(M.bike.u)){const B=M.bike,bc=B.c||0;return {n:'scissor',t:Math.min(2.74,bc),w:abSst(0,.1,bc)*(1-abSst(2.55,2.74,bc)),loop:false};}   // played at the file's own speed, with its own jump height
   // set-piece taker waits in the soccer stance
   if(!C&&M.sp&&M.sp.taker&&mine(M.sp.taker)&&!(A&&A.kick)){S.pi=(S.pi||0)+dt;return {n:'soccerIdle',t:S.pi,w:.95,loop:true};}
   // live skill moves: the Mixamo dribble clips follow the move's own progress (the 360 roulette keeps the game's spin)
