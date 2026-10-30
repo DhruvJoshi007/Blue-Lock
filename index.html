@@ -4928,7 +4928,7 @@ function genDesign(teamName,kit,num,role,seed){
 // 4-4-2: [role, bx (own goal -> opponent goal), by (across)]
 const F442=[['GK',.02,.5],['RB',.21,.86],['CB',.16,.62],['CB',.16,.38],['LB',.21,.14],['RM',.43,.86],['CM',.37,.6],['CM',.37,.4],['LM',.43,.14],['ST',.6,.62],['ST',.6,.38]];
 const SLOTNUM=[1,2,4,5,3,7,6,8,11,10,9],BENCHROLE=['GK','CB','CM','RM','ST'];
-function squad(key,teamName,kit,named,seed){
+function squad(key,teamName,kit,named,seed){named=plPack(key,named);
   const used=new Set(Object.values(named).map(n=>n.num));let spare=12;const free=n=>{if(!used.has(n)){used.add(n);return n;}while(used.has(spare))spare++;used.add(spare);return spare;};
   const crq=(key==='aob'||key==='kur')&&typeof CREATED!=='undefined'?CREATED.slice():[],crSlot={};
   for(let i=F442.length-1;i>0&&crq.length;i--)if(!named[i])crSlot[i]=crq.shift();
@@ -14105,6 +14105,14 @@ fxOvShot=function(c,s){const t=c.t,p=c.shooter,por=W<H*.8,tc=fxTC(p.team);letter
   for(const p of PL){const face={eyes:p.eyes,brows:p.eyes==='sharp'?'angry':'soft',nose:'small',mouth:'flat',jaw:p.build.bulk>1.1?'square':'narrow',eyeColor:p.eye};
     DESIGNS[p.key]=D(p.name,p.team,p.role,p.skin,p.hair,p.build,face,{kit:p.kit,num:p.num,look:p.look});if(!ROSTER.includes(p.key))ROSTER.push(p.key);}}
 
+function plPack(key,named){
+  const ours=key==='aob'||key==='kur',N={...named};
+  const P=ours?{0:'Gagamaru_Gin_1',1:'Karasu_Tabito_6',2:'Yukimiya_Kenyu_5',3:'Aryu_Jyubei_2',4:'Niko_Ikki_3',5:'Raichi_Jingo_22',6:'Reo_Mikage_14',7:'Hiori_Yo_16',8:'Bachira_Meguru_8',9:'Barou_Shoei_13',10:'Chigiri_Hyoma_4'}
+    :{0:'Fukaku_Gen_1_U20_GK',1:'Darai_Miroku_4_U20',2:'Niou_Kazuma_3_U20',3:'Oliver_Aiku_2_U20',4:'Hayate_Haru_7_U20',5:'Sae_Itoshi_10_U20',6:'Otoya_Eita_9',7:'Rin_Itoshi_10',8:'Kunigami_Rensuke_50',9:'Shidou_Ryusei_13_U20'};
+  for(const i in N)if(/^(r\d+|s\d+|rgk|sgk)$/.test(N[i].design||''))delete N[i];
+  const used=new Set(Object.values(N).map(n=>+n.num));let keep=ours&&typeof CREATED!=='undefined'?CREATED.length:0;
+  for(let i=10;i>=0;i--){if(N[i])continue;if(keep>0&&i>0){keep--;continue;}const id=P[i],d=DESIGNS['bl_'+id];if(!d||used.has(+d.num))continue;used.add(+d.num);N[i]={design:'bl_'+id,num:d.num};}
+  return N;}
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
