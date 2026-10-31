@@ -14353,6 +14353,50 @@ function pmBuild(id,tok){const sp=PS27[id];if(!sp)return;const nagiBase=id.start
     try{if(!nagiBase){let head=null;root.traverse(o=>{if(o.name==='mixamorig:Head_06')head=o;});if(head){const hw=new THREE.Vector3();head.getWorldScale(hw);const ucm=hh/(tgt*100),ls=ucm/((hw.x/grp.scale.x)||1),box=new THREE.Group();box.scale.setScalar(ls);head.add(box);pmLocks(box,sp);}}}catch(e){console.warn('locks',e);}
     if(PMV.m)PMV.sc.remove(PMV.m);PMV.m=grp;PMV.sc.add(grp);PMV.cam.position.set(0,tgt*.55,tgt*2.4);PMV.sc.children.forEach(o=>{if(o.isAmbientLight)o.intensity=2.6;if(o.isDirectionalLight)o.intensity=1.3;});PMV.cam.lookAt(0,tgt*.5,0);},e=>console.warn('glTF',e));}
 
+
+// ==== v90: Dap Shot opening, the 10 s header duel (Otoya's diving header, Darai's shoulder charge, Niou's clearance, Isagi's call) ====
+const DD={};
+function ddCast(){const K=(k,num,gk)=>({...(KITS[k]||KITS.bl),num,name:''});const mk=(key,design,kit,num)=>{CAST[key]=[design,K(kit,num)];return key;};
+  const bl=(id,num,kit)=>mk('dd_'+id,DESIGNS['bl_'+id]?'bl_'+id:'ren',kit,num);
+  DD.otoya=bl('Otoya_Eita_9',9,M.home.kit&&KITS[M.home.kit]?M.home.kit:'bl');DD.darai=bl('Darai_Miroku_4_U20',4,'u20');DD.niou=bl('Niou_Kazuma_3_U20',3,'u20');DD.haya=bl('Hayate_Haru_7_U20',7,'u20');DD.fuka=bl('Fukaku_Gen_1_U20_GK',1,'u20GK');
+  DD.nagi=mk('dd_ren','ren',M.home.kit&&KITS[M.home.kit]?M.home.kit:'bl',9);DD.isagi=mk('dd_kaito','kaito',M.home.kit&&KITS[M.home.kit]?M.home.kit:'bl',11);}
+// the pack's keyframes (t, ball, torso pitch, hips, knees, arms) mapped onto the pitch: story x = 70 - (z+18), story z = x
+function ddShots(){ddCast();const PI=Math.PI,set=G3.stage==='day'?'day':G3.stage==='night'?'night':(M.ch===1?'night':'day'),sh=[];
+  const cast=['otoya','darai','niou','haya','fuka','nagi','isagi'].map(k=>DD[k]);const base={cast,toon:0,lc:false,noFade:true,crowd:.9};
+  const A=k=>stA(DD[k]),P=(k,x,z,yaw,R,ex,h)=>{wuRaw(A(k),R);stP(A(k),x,z,yaw,{pose:R?'raw':'stand',ex:ex||'neutral'},h||0);};
+  const B=(tp,lh,lk,rh,rk,la,ra)=>({bx:tp,lLx:-lh,kL:lk,lRx:-rh,kR:rk,aLx:-(la||0),aRx:-(ra||0),aLz:.5,aRz:.5,ikL:0,ikR:0,eL:.3,eR:.3});
+  const sm=(t,a,b)=>ease(clamp((t-a)/(b-a),0,1));
+  // 0-3.5: the dive
+  sh.push({dur:3.5,noFade:true,lines:null,draw:t=>panelBG('#05070c'),s3:{...base,set,
+    d3(t,dt){const e=sm(t,.2,1.6),x0=62.2;
+      P('otoya',lerp(60.6,x0+.6,e),lerp(.2,1.1,e),PI/2,{...B(lerp(.2,1.15,e),.35,.4,.45,.5,.8,.8),hy:-.2*e},'determined',lerp(0,.35,Math.sin(PI*clamp(e,0,1))));
+      P('darai',lerp(63.2,62.4,sm(t,.4,1.8)),lerp(3.2,1.7,sm(t,.4,1.8)),PI,B(lerp(.2,.45,sm(t,.5,1.5)),.6,.7,.4,.3,.9,.4),'angry');
+      P('niou',65.5,.4,-PI/2,B(.35,.5,.6,.5,.4,-.5,.6),'focus');P('haya',56.5,-6.5,PI/2,B(.2,.1,.2,.1,.2),'focus');P('fuka',69,0,-PI/2,{ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.3,kL:.5,lRx:-.3,kR:.5,hy:-.12},'focus');
+      P('nagi',49.5,0,PI/2,B(.15,.2,.25,.2,.2),'neutral');P('isagi',46,-5,PI/2,B(.15,.2,.25,.2,.2),'focus');
+      const bt=sm(t,.9,1.9);stBall(lerp(61.8,66.6,bt),lerp(1.15,1.9,Math.sin(PI*bt*.8)),lerp(1.2,.4,bt),.4);
+      stC(58.4,1.2,5.4,63.2,.9,.8,45);ST.focus.set(62,.8,1);},
+    ov(t){wuBug&&0;stStamp('THE BOX · CROSS INTO THE AREA',t);cnSub('Otoya','With what we trained!',t-.3,2.2);}}});
+  // 3.5-6.5: Niou's charge and clearance
+  sh.push({dur:3,noFade:true,lines:null,draw:t=>panelBG('#05070c'),s3:{...base,set,
+    d3(t,dt){const j=sm(t,.15,1.0),up=Math.sin(PI*clamp((t-.1)/1.4,0,1)),hd=sm(t,.8,1.1);
+      P('niou',lerp(66,64,j),.4,-PI/2,B(lerp(.35,-.25,j),lerp(.5,-.4,j),lerp(.6,.8,j),lerp(.5,.95,j),lerp(.4,1.3,j),-.7,-.7),'angry',up*.9);
+      P('otoya',63.2,1.2,PI/2,B(.8,.2,.6,-.2,.8,.4,.5),'shock',.12);P('darai',62.6,1.8,PI,B(.2,.1,.2,.1,.2),'angry');P('haya',56,-6,PI/2,B(.3,.4,.5,.4,.4),'focus');P('fuka',69,0,-PI/2,{ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.3,kL:.5,lRx:-.3,kR:.5,hy:-.12},'focus');P('nagi',50.2,0,PI/2,B(.18,.3,.4,.3,.3),'neutral');P('isagi',46.5,-5,PI/2,B(.18,.3,.4,.3,.3),'focus');
+      const bx=lerp(66.4,lerp(63.8,56,hd),Math.min(1,t/1.0)),by=hd>0?lerp(1.95,5.4,hd):1.95*Math.min(1,.4+t);stBall(bx,by,lerp(.4,-.4,hd),-.6);
+      stC(lerp(61,60.2,t/3),.9,lerp(-1.8,-1.2,t/3),64.4,lerp(1.4,2.2,j),.6,40);ST.focus.set(64,1.4,.5);},
+    ov(t){stStamp('NIOU · POWER HEADER CLEARANCE',t);cnSub('Niou','RAAAGH!!',t-.2,1.8);if(t>.15&&t<1.8){const s=sc(),k=clamp(t*5,0,1)*(1-clamp((t-1.5)/.3,0,1));ctx.save();ctx.globalAlpha=k;bigText('RAAAGH!!',W*.72,H*.3,Math.min(60*s,W/9),'#ffd34a');ctx.restore();}}}});
+  // 6.5-10: the ball hangs, Otoya and Isagi in split panels, then the call to Nagi
+  sh.push({dur:3.5,noFade:true,lines:null,draw:t=>panelBG('#05070c'),s3:{...base,set,
+    d3(t,dt){P('otoya',61.4,-3,PI,B(.15,.1,.2,.1,.2,.1,.4),'angry');P('niou',64,.4,-PI/2,B(.1,0,.15,0,.15),'angry');P('darai',57,-2,-PI/2+.4,B(.5,.85,1.0,.7,.4,.8,.8),'focus');P('haya',55,-4,-PI/2,B(.5,.75,.4,.85,1.05),'focus');P('fuka',69,0,-PI/2,{ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.3,kL:.5,lRx:-.3,kR:.5,hy:-.12},'focus');
+      P('nagi',49.6,0,PI/2,B(.22,.45,.5,.4,.35,.4,.4),'neutral');P('isagi',47,-4.2,PI/2,B(.2,.2,.3,.2,.3,.8,.2),'determined');
+      stBall(lerp(56,51.5,sm(t,0,3)),lerp(5.4,.4,sm(t,0,3.2)),lerp(-.4,0,sm(t,0,3)),-.4);
+      const e=sm(t,0,3.5);stC(lerp(44,46,e),lerp(15,9,e),lerp(8,5,e),lerp(55,51,e),1,0,lerp(56,46,e));ST.focus.set(52,1,0);},
+    ov(t){stStamp('THE BALL HANGS OVER THE BOX',t);const s=sc(),w=Math.min(W*.46,300*s+30),h=Math.round(54*s+16),y=H*.62,k=clamp(t*3,0,1);ctx.save();ctx.globalAlpha=k;
+      [['OTOYA','Tch... not enough.','#7dffb0',W*.04],['ISAGI','They’re tough. But we’re not done...','#59e1ff',W-W*.04-w]].forEach(([n,tx,c,x])=>{ctx.fillStyle='rgba(6,10,16,.84)';ctx.fillRect(x,y,w,h);ctx.fillStyle=c;ctx.fillRect(x,y,4,h);smallText(n,x+14,y+h*.3,Math.round(11*s+4),c,'left',FS,800);smallText(tx,x+14,y+h*.68,Math.round(8*s+4),'#eef3f8','left',FS,700,w-24);});ctx.restore();
+      if(t>2.3){const q=clamp((t-2.3)*3,0,1);fxCaption&&0;bigText('NAGI!',W/2,H*.26,Math.min(80*s,W/7),'#59e1ff');}}}});
+  return sh;}
+{const _su=startUltCine;startUltCine=function(){const a=arguments,self=this;if(!M||M.noDuel||M.duelDone||!stOK())return _su.apply(self,a);let sh;try{sh=ddShots();}catch(e){console.warn('duel off',e);return _su.apply(self,a);}
+  M.duelDone=1;const m=M;playCutscene(sh,()=>{if(M!==m)return;mode='match';show(null);syncUI();M.duelDone=0;try{_su.apply(self,a);}catch(e){console.warn('dap after duel',e);}});};}
+
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
