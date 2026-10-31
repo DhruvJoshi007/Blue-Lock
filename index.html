@@ -6181,7 +6181,7 @@ function render3DMenu(dt){
 function render3DRoster(dt){
   G3.active=false;setStage('roster');beginActors();const key=ROSTER[G3.rosterI],d=DESIGNS[key];
   const a=getActor('roster-'+key,d,{...KITS[d.kit],num:d.num});a.root.position.set(0,0,0);G3.rosterYaw=(G3.rosterYaw||0)+dt*.5;a.root.rotation.y=G3.dbgYaw!=null?G3.dbgYaw:G3.rosterYaw;const cel=G3.rosterCel&&clock-G3.rosterCel.t0<4.5?G3.rosterCel:null;if(cel){a.root.rotation.y=0;if(!cel.ex&&typeof setExpr==='function'){cel.ex=1;setExpr(a,cel.type==='armsCross'||cel.type==='shush'?'grin':'shout',3);}}
-  animChar(a,cel?{pose:'celebrate',celebrate:cel.type,celebT:cel.t0}:{pose:null,...(G3.dbgKick||{})},dt,G3.dbgSpd||0);
+  animChar(a,cel?{pose:'celebrate',celebrate:cel.type,celebT:cel.t0}:{pose:null,...(G3.dbgKick||{})},dt,G3.dbgSpd||0);if(!cel&&!G3.dbgKick&&a.holder&&a.baseY!=null){const hp=a.holder.position;hp.x=0;hp.z=0;hp.y=a.baseY;a.root.position.set(0,0,0);}
   endActors();if(G3.mark){for(const k of ['r','k','m','ar'])G3.mark[k].visible=false;}G3.ball.position.set(0,-5,0);
   const h=d.build.h;const nar=W<560;setCam(new THREE.Vector3(nar?0:1.1,(nar?1.45:1.25)*h,nar?3.9:3.1),new THREE.Vector3(nar?0:.38,(nar?1.25:1.05)*h,0),38,dt,6,!G3.rosterCut);G3.rosterCut=true;
   if(G3.dbgCam){const q=G3.dbgCam;G3.cam.position.set(q[0],q[1],q[2]);G3.cam.lookAt(q[3],q[4],q[5]);G3.cam.fov=q[6]||38;G3.cam.updateProjectionMatrix();}
@@ -10741,7 +10741,7 @@ function dzPatch(sh,m){
   const kind=m.userData.dzKind,K=DZK[kind]||DZK.kit,skin=K[0]==='S';Object.assign(sh.uniforms,DZU);if(m.userData.dzU)Object.assign(sh.uniforms,m.userData.dzU);
   let L=THREE.ShaderChunk.lights_physical_pars_fragment.replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dzN = dot( geometry.normal, directLight.direction ); float dotNL = dzBand( dzN );');
   if(skin)L=L.replace('reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );','$&\n reflectedLight.directDiffuse += directLight.color * material.diffuseColor * vec3(1.,.38,.26) * .6 * smoothstep(-.36,-.04,dzN) * (1.-smoothstep(-.04,.3,dzN));');
-  const hdr=`uniform vec3 dzRim;uniform vec3 dzRimDir;uniform float dzHi;\nfloat dzBand(float x){return smoothstep(-.035,.035,x+${K[2]})*.8+smoothstep(.5,.56,x)*.2;}\n`;
+  const hdr=`uniform vec3 dzRim;uniform vec3 dzRimDir;uniform float dzHi;\nfloat dzBand(float x){return smoothstep(-.03,.03,x-.1+${K[2]}*.5)*.8+smoothstep(.6,.64,x)*.2;}\n`;
   const post=`\n${kind==='shoe'||kind==='eye'?'':'reflectedLight.directSpecular*=0.;reflectedLight.indirectSpecular*=.2;'}
   reflectedLight.indirectDiffuse*=${K[1]};
   {float dzF=1.-saturate(dot(geometry.normal,geometry.viewDir));float dzR=smoothstep(.58,.66,dzF)*(.3+.7*saturate(dot(geometry.normal,dzRimDir)))${kind==='eye'?'*0.':''};
@@ -11198,7 +11198,7 @@ function dzAuto(c,o,F){if(!o)return null;if(o.fall>0)return 'pain';const st=o.sl
   if(o.pose==='cheer'||o.pose==='celebrate')return 'shout';if(o.pose==='dejected'||o.pose==='handsHead')return 'sad';if(o.pose==='shout')return 'shout';if(o.drib)return o.drib.role==='ren'?'determined':'focus';
   if(o.stam!=null&&o.stam<.45)return 'tired';if(c.spd>5.2)return 'determined';return null;}
 function dzFrame(){if(DZ.f===clock)return;DZ.f=clock;const r=G3.renderer;if(r){const h=r.getContext().drawingBufferHeight;if(h)DZU.dzOlH.value=h;}
-  const st=G3.stage,night=st==='night';DZU.dzRim.value.setRGB(night?.42:st==='roster'?.3:.55,night?.55:st==='roster'?.7:.52,night?.95:st==='roster'?.95:.45);DZU.dzAmb.value=night?.82:1;
+  const st=G3.stage,night=st==='night';DZU.dzRim.value.setRGB(0,night||st==='roster'?.9:.68,night||st==='roster'?1:.8);DZU.dzAmb.value=night?.82:1;
   DZU.dzOlPx.value=lowQ()?1.25:1.45;}
 function faceUpdate(c,o,dt){const F=c&&c.dzF;if(!F)return;dt=dt>0?Math.min(dt,.1):0;dzFrame();
   const inMatch=(mode==='match'||mode==='paused'||mode==='howto'||mode==='result')&&M&&G3.active,cine=!!(M&&M.cine);
@@ -14564,6 +14564,27 @@ function autoCalibrateRigSigns(THREE_,c,opts){
   const L=window.__calib;L.push(out);if(L.length>80)L.shift();
   return out;}
 window.autoCalibrateRigSigns=autoCalibrateRigSigns;
+Object.assign(DZEYE,{
+  lazy:{hT:.40,pT:.72,hB:.24,pB:.95,tilt:.05,rI:.40,lash:.20,bg:.08},      // Nagi: slender, half closed
+  droopy:{hT:.50,pT:.62,hB:.30,pB:.85,tilt:-.02,rI:.44,lash:.17,bg:.10},   // Hiori
+  predator:{hT:.54,pT:.78,hB:.28,pB:1.05,tilt:.30,rI:.45,lash:.26,bg:.06},   // Rin, Sae: sharp, dark lower lash
+  phoenix:{hT:.50,pT:.74,hB:.24,pB:1.0,tilt:.22,rI:.43,lash:.22,bg:.07},   // Chigiri: slender
+  king:{hT:.52,pT:.8,hB:.30,pB:1.0,tilt:.28,rI:.46,lash:.26,bg:.05},       // Barou, Niou: scowl
+  slit:{hT:.34,pT:.8,hB:.18,pB:1.1,tilt:.14,rI:.34,lash:.2,bg:.07},        // Otoya, Shidou: narrow slit
+  cat:{hT:.66,pT:.58,hB:.42,pB:.9,tilt:.16,rI:.52,lash:.17,bg:.12},        // Bachira: wide but cat-like
+  heavy:{hT:.46,pT:.6,hB:.3,pB:.9,tilt:.08,rI:.42,lash:.34,bg:.09},        // Aryu: heavy lids, long lashes
+  wide:{hT:.70,pT:.6,hB:.46,pB:.85,tilt:.10,rI:.50,lash:.17,bg:.14}        // Gagamaru, Tokimitsu, Zantetsu
+});
+// name fragment -> [iris hex, eye shape]. Oliver's heterochromia needs a second iris colour the face shader does not have, so he gets his left (green) eye.
+const ANIME_SPEC={'nagi':['#2c3540','lazy'],'isagi':['#0f3868','sharp'],'rin itoshi':['#00a896','predator'],'bachira':['#f4d03f','cat'],'chigiri':['#e63946','phoenix'],'barou':['#d90429','king'],
+ 'otoya':['#606c38','slit'],'karasu':['#5a189a','narrow'],'yukimiya':['#ffb703','narrow'],'reo':['#7b2cbf','sharp'],'gagamaru':['#212529','wide'],'aryu':['#111111','heavy'],'niko':['#1d3557','narrow'],
+ 'hiori':['#00b4d8','droopy'],'raichi':['#fb8500','king'],'kunigami':['#ff70a6','sharp'],'zantetsu':['#3a86ff','wide'],'tokimitsu':['#43aa8b','wide'],'kurona':['#ff006e','predator'],'shidou':['#ff007f','slit'],
+ 'sae':['#2a9d8f','predator'],'oliver':['#52b788','sharp'],'sendou':['#457b9d','sharp'],'darai':['#1f1f1f','narrow'],'hayate':['#bc6c25','narrow'],'niou':['#2b2d42','king'],'fukaku':['#343a40','narrow']};
+window.__animeSpecApplied=[];
+function animeSpecApply(){try{for(const k in DESIGNS){const d=DESIGNS[k];if(!d||!d.name)continue;const nm=String(d.name).toLowerCase();
+  let hit=null;for(const f in ANIME_SPEC){if(nm.includes(f)){hit=f;break;}}if(!hit)continue;if(/^rin$/.test(hit))continue;
+  const sp=ANIME_SPEC[hit];d.face=d.face||{};d.face.eyeColor=sp[0];d.face.eyes=sp[1];if(d.eye!=null)d.eye=sp[0];window.__animeSpecApplied.push(k+':'+sp[1]+':'+sp[0]);}}catch(e){console.warn('anime spec',e);}}
+animeSpecApply();
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
