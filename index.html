@@ -14747,7 +14747,7 @@ function todApply(S){if(!S||(S.kind!=='day'&&S.kind!=='night'))return;const name
 function todSet(name){if(!TOD.order.includes(name))return;TOD.cur=name;try{localStorage.setItem('twin.tod',name);}catch(e){}G3.stage=null;const b=$('b-tod');if(b)b.textContent='Time: '+name[0].toUpperCase()+name.slice(1);}
 try{const b=$('b-tod');if(b){b.textContent='Time: '+TOD.cur[0].toUpperCase()+TOD.cur.slice(1);b.onclick=()=>{todSet(TOD.order[(TOD.order.indexOf(TOD.cur)+1)%4]);};}}catch(e){console.warn('tod ui',e);}
 window.__tod={TOD,TOD_P,todSet,todApply,get stages(){return G3.stages;}};
-const EMS={scale:1.57,cx:-5.5,cz:2.3,y0:6.3,mode:'classic',ready:false,loading:false,scene:null,box:null,building:false,err:null,url:'stadium_emirates.glb'};
+const EMS={scale:1.57,cx:-5.5,cz:2.3,y0:6.3,mode:'classic',ready:false,loading:false,scene:null,box:null,building:false,err:null,url:'stadium_emirates.wasm'};
 try{const v=localStorage.getItem('twin.stad');if(v==='emirates'||v==='classic')EMS.mode=v;}catch(e){}
 function emUse(kind){return EMS.mode==='emirates'&&EMS.ready&&!!EMS.scene&&(kind==='day'||kind==='night');}
 // four-step cel ramp for the stadium material
