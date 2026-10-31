@@ -5445,7 +5445,7 @@ function updateCine(dt){
   const c=M.cine;const b=M.ball;cineRep(c);
   if(c.type==='flow'){flowUpdate(c,dt);return;}if(c.type==='chain'){chainUpdate(c,dt);return;}
   if(c.type==='drib'){c.t+=dt;updateDrib(c,dt);fxCineHook('drib',c);return;}
-  if(c.type==='setpiece'){refCineUpdate(c,dt);return;}if(c.type==='read'){readUpdate(c,dt);return;}if(c.type==='ult'){ultUpdate(c,dt*.55);return;}if(c.type==='tele'||c.type==='clutch'||c.type==='gkduel'||c.type==='vision'){microUpdate(c,dt);return;}
+  if(c.type==='setpiece'){refCineUpdate(c,dt);return;}if(c.type==='read'){readUpdate(c,dt);return;}if(c.type==='ult'){ultUpdate(c,dt*.66);return;}if(c.type==='tele'||c.type==='clutch'||c.type==='gkduel'||c.type==='vision'){microUpdate(c,dt);return;}
   if(c.hs>0)c.hs-=dt;c.rateNow=cineRate(c);c.t+=dt*c.rateNow;
   if(c.type==='shot'){
     const p=c.shooter,t=c.t;
@@ -9545,8 +9545,8 @@ function abFallDetect(c,s,o){const f=o.fall||0;
   s.pf=f;}
 const abFD={trip:abF_TRIP,stumble:abF_STUM,lose:abF_LOSE,ank:abF_ANK,flat:abF_FLAT};
 function abFallPose(c,s,o,dt){const F=s.fall;if(!F)return '';F.t+=dt;const act=(o.fall||0)>0,D=F.kind==='flat'?1.2:F.F0+.35;
-  let u=F.t/D;if(F.kind==='flat'){u=act?Math.min(u,.6):.6+(F.t-F.tr)/1.2*.4;if(act)F.tr=F.t;}
-  if(u>=1){s.fall=null;return '';}abPtrack(abFD[F.kind],u,s.A);const w=abSst(0,.06,F.t)*(1-abSst(.82,1,u));abPmask(s.P,s.A,w,abMK_ALL);s.lookW*=1-w*.7;
+  let u=F.t/D;if(F.kind==='flat'){const lie=(o.fall||0)>.7;u=lie?Math.min(u,.3):Math.min(1,.3+.7*(F.t-F.tr)/.45);if(lie)F.tr=F.t;}
+  if(u>=1||F.t>3.2){s.fall=null;return '';}abPtrack(abFD[F.kind],u,s.A);const w=abSst(0,.06,F.t)*(1-abSst(.82,1,u));abPmask(s.P,s.A,w,abMK_ALL);s.lookW*=1-w*.7;
   s.down=Math.max(s.down,F.kind==='ank'||F.kind==='flat'?abSst(.15,.3,u):0);return 'fall';}
 
 // ---------- goalkeeper: ready crouch, shuffle, dive, catch & hold, distribution ----------
@@ -9990,7 +9990,7 @@ function fxJP(){if(FXC.jp!=null)return FXC.jp;try{const c=document.createElement
 // ---------- C1: GPU pools (points, streaks, rings, ribbon trails) ----------
 const FX_TONE='\n#include <tonemapping_fragment>\n#include <encodings_fragment>\n}';
 const FX_PVS=`attribute vec4 aC;attribute vec3 aP;uniform float uScale;varying vec4 vC;varying float vT;varying float vR;
-void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aP.x*uScale/max(.05,-mv.z),0.,320.);vC=aC;vT=aP.y;vR=aP.z;}`;
+void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aP.x*uScale/max(.05,-mv.z),0.,190.);vC=aC;vT=aP.y;vR=aP.z;}`;
 const FX_PFS=`uniform sampler2D map;varying vec4 vC;varying float vT;varying float vR;
 void main(){vec2 p=gl_PointCoord-.5;float c=cos(vR),s=sin(vR);p=vec2(c*p.x-s*p.y,s*p.x+c*p.y);if(abs(p.x)>.49||abs(p.y)>.49)discard;
 vec2 uv=(vec2(mod(vT,4.),floor(vT/4.+.01))+p+.5)*.25;uv.y=1.-uv.y;vec4 t=texture2D(map,uv);gl_FragColor=vec4(vC.rgb*t.rgb,vC.a*t.a);`+FX_TONE;
@@ -10944,7 +10944,7 @@ function dzDecalGeo(V){
   const pos=[],uv=[],prt=[],idx=[];
   // part: 0 mouth, 1 brow, 2 eye. dzP.zw = patch-local offset (mouth/brow, head units) or normalised [-1,1] coords with +x toward the outer corner (eye)
   const patch=(cx,cy,hx,hy,nx,ny,off,part,side)=>{const base=pos.length/3;
-    for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){const fx=i/nx,fy=j/ny;const x=cx+(fx*2-1)*hx,y=cy+(fy*2-1)*hy;let z=hit(x,y);if(z==null)z=hit(cx,cy)||R.eyeZ;
+    for(let j=0;j<=ny;j++)for(let i=0;i<=nx;i++){const fx=i/nx,fy=j/ny;let x=cx+(fx*2-1)*hx,y=cy+(fy*2-1)*hy;let z=hit(x,y);if(z==null){let t=.9;while(t>.05&&z==null){const x2=cx+(x-cx)*t,y2=cy+(y-cy)*t;z=hit(x2,y2);if(z!=null){x=x2;y=y2;}t-=.1;}if(z==null)z=hit(cx,cy)||R.eyeZ;}
       pos.push(x,y,z+off);uv.push(side<0?1-fx:fx,fy);prt.push(part,side,part===2?(fx*2-1)*side:(fx*2-1)*hx,part===2?fy*2-1:(fy*2-1)*hy);}
     for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const a=base+j*(nx+1)+i,b=a+1,c=a+nx+1,d=c+1;idx.push(a,b,d,a,d,c);}};
   V.eyeC=[];
@@ -15004,6 +15004,25 @@ function dribAware(dt){try{if(!M||mode!=='match'||M.cine||M.freeze||M.koWait)ret
     let best=null,bd=1e9;for(const p of M.players){if(p.team===o.team||p.off||p.isGK)continue;const d=Math.hypot(p.x-o.x,p.y-o.y);if(d<bd){bd=d;best=p;}}
     if(best&&bd<14*PXM){const lk=s.lk;lk.ox=(best.x-PW/2)*S3;lk.oy=1.35;lk.oz=(best.y-PH/2)*S3;window.__gz={who:best.num,d:+(bd/PXM).toFixed(1)};}}}catch(e){}
   return r;};}
+window.__vfx={ema:.0167,acc:0,acc2:0,k:1,drop:0,seen:0};
+function vfxBudget(){try{const V=window.__vfx,c=M&&M.cine;if(!c)return 1;const t=c.type;if(t!=='shot'&&t!=='ult'&&t!=='combo'&&t!=='defense'&&t!=='read'&&t!=='gkduel')return 1;
+  let k=lowQ()?.35:.5;if(V.ema>.024)k*=.6;return k;}catch(e){return 1;}}
+{const _fe=fxE;fxE=function(S,x,y,z,vx,vy,vz,life,s0,s1,col,a,ti,dg,gr,fl){const k=vfxBudget();if(k<1){const V=window.__vfx;V.seen++;V.acc+=k;if(V.acc<1){V.drop++;return -1;}V.acc-=1;}return _fe.apply(this,arguments);};}
+{const _fs=fxS;fxS=function(){const k=vfxBudget();if(k<1){const V=window.__vfx;V.acc2+=k;if(V.acc2<1){V.drop++;return;}V.acc2-=1;}return _fs.apply(this,arguments);};}
+{let last=performance.now();setInterval(()=>{},1000);const step=()=>{const n=performance.now(),d=Math.min(.1,(n-last)/1000);last=n;window.__vfx.ema+=(d-window.__vfx.ema)*.1;requestAnimationFrame(step);};requestAnimationFrame(step);}
+{const _ai=abIdle;abIdle=function(c,s,o,dt,an,sit){_ai.apply(this,arguments);
+  try{if(abInMatch(o))return;const base=!o.pose||o.pose==='stand'||o.pose==='sit'||o.pose==='slump';const P=s.P,t=clock+s.seed*1.7,ph=s.seed*6.28,gk=o.isGK;
+    const hold=sit||o.pose==='sit'||o.pose==='slump';
+    if(base){P[abCI.aLz]-=.1;P[abCI.aRz]-=.1;P[abCI.eL]+=.3+.1*Math.sin(t*.6+ph);P[abCI.eR]+=.3+.1*Math.sin(t*.55+ph*2);
+    P[abCI.aLx]-=.1+.04*Math.sin(t*.4+ph);P[abCI.aRx]-=.1+.04*Math.sin(t*.43+ph);}
+    else{P[abCI.aLz]+=.03*Math.sin(t*.9+ph);P[abCI.aRz]+=.03*Math.sin(t*.8+ph*2);P[abCI.wL]+=.12*Math.sin(t*1.1+ph);P[abCI.wR]+=.12*Math.sin(t*1.0+ph);}
+    const br=Math.sin(t*1.6);P[abCI.sx]+=.02*br;P[abCI.shL]+=.03*br;P[abCI.shR]+=.03*br;
+    P[abCI.ny]+=.22*Math.sin(t*.37+ph)*Math.sin(t*.21+ph*.5);P[abCI.nx]+=.05*Math.sin(t*.29+ph);
+    P[abCI.sz]+=.025*Math.sin(t*.31+ph);P[abCI.sy]+=.04*Math.sin(t*.23+ph*1.3);
+    if(!hold){P[abCI.hox]+=.03*Math.sin(t*.26+ph);P[abCI.hpz]-=.03*Math.sin(t*.26+ph);}
+  }catch(e){}};}
+{const _kh=koHold;koHold=function(){const was=M&&M.koFace;_kh.apply(this,arguments);try{if(M&&M.koWait&&M.koFace&&!was){for(const p of M.home.players){if(p.isGK||p.off)continue;const a=fxActor(p);if(a){const st=abS(a);st.tele=true;a.yaw=Math.atan2(p.fx,p.fy);}}if(typeof G3.userYaw==='number')G3.yaw=G3.userYaw;}}catch(e){}};}
+window.__abS=abS;
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
