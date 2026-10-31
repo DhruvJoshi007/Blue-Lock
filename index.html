@@ -6411,7 +6411,7 @@ function ultCamV2(c,dt){
   if(!fxAFX()&&G3.fx.shake>.002){const sh=G3.fx.shake,tt=clock*31;G3.cam.position.x+=Math.sin(tt*1.3)*sh;G3.cam.position.y+=Math.sin(tt*1.7+1)*sh*.7;}}
 function ultFX(c,dt){const t=c.t,j=c.j,B=G3.ball.position;
   if(t<c.tS){FXC.tTint=[.82,.92,1,.06];FXC.tDesat=j>-.1&&j<.75?.2:.05;}else if(t<c.tN+.2){FXC.tTint=[.9,.95,1,.04];FXC.tSpeed=.35;}
-  if(t>1.2){const H=ultHead(c.u);if(Math.random()<dt*14)fxE(FXC.ps,H.x+rnd(-.08,.08),H.y+.05,H.z+rnd(-.08,.08),rnd(-.1,.1),rnd(.05,.25),rnd(-.1,.1),.5,.06,.02,fxCol('#59a8ff',2.4),1,12,0,0,8);fxAuraSet(c.u,'#8fd0ff',t<c.tS?.7:1);}
+  if(t>1.2){const H=ultHead(c.u);if(Math.random()<dt*14)fxE(FXC.ps,H.x+rnd(-.08,.08),H.y+.05,H.z+rnd(-.08,.08),rnd(-.1,.1),rnd(.05,.25),rnd(-.1,.1),.5,.06,.02,fxCol('#59a8ff',2.4),1,12,0,0,8);fxAuraSet(c.u,dapTheme(c.u).aura,t<c.tS?.7:1);}
   if(t>c.tS&&t<c.tN+.2&&Math.random()<.9)fxE(FXC.ps,B.x,B.y,B.z,rnd(-.3,.3),rnd(0,.4),rnd(-.3,.3),.35,.18,.04,fxCol('#bfe0ff',2.4),1,12,0,0,8);}
 function ultOvV2(c,s){const t=c.t,j=c.j,por=W<H*.8,top=fxTopY(),blue='#59a8ff';letterbox(t,blue);
   if(t<.9){const k=clamp(t/.25,0,1);ctx.save();ctx.globalAlpha=.85*clamp(1-(t-.5)/.4,0,1);fxInkText('ULTIMATE',W/2,H*.42,lerp(8,Math.min(30*s,W/12),fxBackE(k)),blue,{rot:-.04});
@@ -6427,7 +6427,7 @@ function ultOvV2(c,s){const t=c.t,j=c.j,por=W<H*.8,top=fxTopY(),blue='#59a8ff';l
   if(t>c.tS&&!c.snd.o3){c.snd.o3=1;fxOno('DON',W*.24,H*.3,{size:Math.min(90*s,W/7),life:.8});}
   if(t>c.tN&&!c.snd.o4){c.snd.o4=1;fxOno('ZUBAN',W*.26,H*.3,{size:Math.min(84*s,W/7),life:.6});}
   if(t>c.tN+.4&&t<c.tN+1.15){const k=clamp((t-c.tN-.4)/.3,0,1),gx=W*.5,gy=H*.5;comicBurst(gx,gy,lerp(40,Math.min(220*s,W*.32),fxBackE(k)),'rgba(89,168,255,.95)',18,7);fxInkText('GOAL!!',gx,gy,lerp(20,Math.min(104*s,W/6),fxBackE(k)),'#ffffff',{rot:-.07});}
-  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,'#2f6bff',k,{size:Math.min(44*s,W/12)});
+  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,dapTheme(c.u).cap,k,{size:Math.min(44*s,W/12)});
     if(t>c.tN+1.95)smallText('"...Mendokusai. But that was fun."',W/2,H*.86,15*s+3,'#eef3f8','center',FB,600);}}
 // HUD chip + touch button
 let ultBtnLast=null;
@@ -6508,7 +6508,7 @@ function adaptHud(s){if(!M||mode!=='match'||!M.adapt)return;const A=M.adapt,x=16
 
 // ==== v14: fouls + penalties, AI slide tackles you can jump over, keeper rush/chip/parry, sprint plant, Flow State ====
 const AURA_COL={ren:'#8fd0ff',kaito:'#2f6bff',bachira:'#ffd23a'};
-const auraCol=p=>AURA_COL[p&&p.design]||'#59e1ff';
+const auraCol=p=>dapTheme(p).aura;
 function flowAct(){const t=M.time;M.flowActs=(M.flowActs||[]).filter(x=>t-x<10);M.flowActs.push(t);
   if(M.flowActs.length>=3&&!M.flow){M.flow=true;M.flowWoke=1;M.toast={t:0,text:'FLOW STATE · +15% speed',skill:1};sfx('crowd');}}
 // p fouls o: free kick where it happened, penalty if it was inside p's own box
@@ -6707,9 +6707,9 @@ function shotPathOv(c){const L=c.trl;if(!L||L.length<2||c.t<SH.KICK)return;
 // ---- glowing eyes (flow state): additive sprites on the eye bones, plus the white tiger emblem ----
 function fxEyeG(p,on){const a=p&&fxActor(p);if(!a||!a.bones)return;
   if(!a.eyeG){const arr=[];for(const n of ['LeftEye','RightEye']){const b=a.bones[n];if(!b)continue;
-    const sp=eyeFlare('#8fd2ff');
+    const sp=eyeFlare(dapTheme(p).eye);
     sp.renderOrder=40;sp.visible=false;b.add(sp);arr.push(sp);}a.eyeG=arr;}
-  const k=on?1+.2*Math.sin(clock*11):0;for(const sp of a.eyeG){sp.visible=!!on;if(on){const ws=sp.parent.getWorldScale(FXC.v[1]).x||1,s=.11*k/ws;sp.scale.set(s,s*.25,s);sp.material.opacity=.9;}}}
+  {const ec=LIN(dapTheme(p).eye);for(const sp of a.eyeG)if(sp.material&&sp.material.color)sp.material.color.copy(ec);}  const k=on?1+.2*Math.sin(clock*11):0;for(const sp of a.eyeG){sp.visible=!!on;if(on){const ws=sp.parent.getWorldScale(FXC.v[1]).x||1,s=.11*k/ws;sp.scale.set(s,s*.25,s);sp.material.opacity=.9;}}}
 let TIGER_CV=null;
 function buildTiger(){const S=512,cv=document.createElement('canvas');cv.width=cv.height=S;const g=cv.getContext('2d');let sd=11;const R=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
   const cx=256,cy=270,mx=x=>2*cx-x;
@@ -7338,7 +7338,7 @@ function ultOv(c,s){const t=c.t,j=c.j,por=W<H*.8,top=fxTopY(),blue='#59a8ff';let
   if(0&&t>c.tS+.04&&t<c.tN+.4){const a=.4*clamp((t-c.tS-.04)/.12,0,1)*(1-clamp((t-c.tN-.1)/.3,0,1));flowTiger(c.u,a,s,clamp((t-c.tS)/.1,0,1));}
   if(t<.9){const k=clamp(t/.25,0,1);ctx.save();ctx.globalAlpha=.85*clamp(1-(t-.5)/.4,0,1);fxInkText('ULTIMATE',W/2,H*.42,lerp(8,Math.min(30*s,W/12),fxBackE(k)),blue,{rot:-.04});
     fxInkText('DAP SHOT',W/2,H*.53,lerp(8,Math.min(78*s,W/7),fxBackE(clamp((t-.12)/.25,0,1))),'#ffffff',{rot:-.06});ctx.restore();}
-  if(t>1.1&&!c.snd.v0&&c.mate){c.snd.v0=1;if(!vcPlay('imove'))voxSay('Take this!','kaito');}if(t>1.58&&t<2.3){const k=clamp((t-1.58)/.15,0,1);ctx.save();ctx.globalAlpha=1-clamp((t-2.1)/.2,0,1);fxInkText('SAVED!',W*.62,H*.3,lerp(10,Math.min(64*s,W/9),fxBackE(k)),'#ffd23f',{rot:.05});ctx.restore();}
+  if(t>1.1&&!c.snd.v0&&c.mate){c.snd.v0=1;dapPassVo(c);}if(t>1.58&&t<2.3){const k=clamp((t-1.58)/.15,0,1);ctx.save();ctx.globalAlpha=1-clamp((t-2.1)/.2,0,1);fxInkText('SAVED!',W*.62,H*.3,lerp(10,Math.min(64*s,W/9),fxBackE(k)),'#ffd23f',{rot:.05});ctx.restore();}
   if(j>-.75&&j<.1){const v=clamp((j+.75)/.2,0,1)*clamp((.1-j)/.15,0,1);const g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.25,W/2,H/2,Math.hypot(W,H)*.6);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,`rgba(0,6,20,${.7*v})`);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     const pw=por?W-36:Math.min(W*.5,520),ph=pw/4.2;ctx.save();ctx.globalAlpha=v;fxCutPanel(por?18:W-pw-W*.05,top+8,pw,ph,ph*.22,{p:c.u,mode:'eyes',col:'#1a3a8a',glow:blue,k:clamp((j+.75)/.2,0,1),from:1});
     if(!c.snd.v1){c.snd.v1=1;voxSay('Hm... it is coming to me. Troublesome.','ren');}smallText('"Hm... it is coming to me. Troublesome."',por?W/2:W-Math.min(W*.5,520)/2-W*.05,top+8+ph+16,14*s+2,'#eef3f8','center',FB,600);ctx.restore();}
@@ -7353,34 +7353,34 @@ function ultOv(c,s){const t=c.t,j=c.j,por=W<H*.8,top=fxTopY(),blue='#59a8ff';let
   if(t>c.tS&&!c.snd.o3){c.snd.o3=1;fxOno('DON',W*.24,H*.3,{size:Math.min(90*s,W/7),life:.8});}
   if(t>c.tN&&!c.snd.o4){c.snd.o4=1;fxOno('ZUBAN',W*.26,H*.3,{size:Math.min(84*s,W/7),life:.6});}
   if(t>c.tN+.4&&t<c.tN+1.15){const k=clamp((t-c.tN-.4)/.3,0,1),gx=W*.5,gy=H*.5;comicBurst(gx,gy,lerp(40,Math.min(220*s,W*.32),fxBackE(k)),'rgba(89,168,255,.95)',18,7);fxInkText('GOAL!!',gx,gy,lerp(20,Math.min(104*s,W/6),fxBackE(k)),'#ffffff',{rot:-.07});}
-  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,'#2f6bff',k,{size:Math.min(44*s,W/12)});
+  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,dapTheme(c.u).cap,k,{size:Math.min(44*s,W/12)});
     }
   if(j>1.36&&!c.snd.v2){c.snd.v2=1;vcPlay('hello');}if(j>1.36&&t<c.tN+3)smallText('"Nice to meet you, Japan. I am Nagi Seishiro."',W/2,H*.86,15*s+3,'#eef3f8','center',FB,600);}
 
 // ---- the ultimate aura: builds through the jump, explodes at the strike ----
 function ultMaxAura(c,j,dt){const u=c.u,t=c.t,pk=t>c.tS-.08&&t<c.tS+.35,S=c.snd;
-  try{fxAuraSet(u,pk?'#bfe3ff':'#59a8ff',pk?.22:.16);
+  const TH=dapTheme(u);try{fxAuraSet(u,pk?TH.peak:TH.ult,pk?.22:.16);
     if(!FXC.on)return;const U=fxAPos(u),h=u.airH||0,q=FXC.q;
-    for(let i=0;i<(Math.random()<.3*q?1:0);i++){const an=Math.random()*PI2,r=rnd(.3,pk?1.6:.9);fxE(FXC.ps,U.x+Math.cos(an)*r,h+rnd(0,1.9),U.z+Math.sin(an)*r,-Math.cos(an)*.6,rnd(1.5,4),-Math.sin(an)*.6,rnd(.35,.7),rnd(.03,.06),.02,fxCol('#59a8ff',1.6),.8,12,0,0,8);}
-    if(j>1.44&&!S.au0){S.au0=1;fxRing(U.x,.06,U.z,'#59a8ff',1.2,.3,4.5,.5,.3);fxKick({bloom:.6,radial:.5});}
-    if(t>=c.tS&&!S.au1){S.au1=1;fxRing(U.x,h+.9,U.z,'#cfe8ff',1.2,.3,5,.4,.3);fxRing(U.x,.06,U.z,'#9fd4ff',1.4,.4,12,.9,.4);
-      fxSparks(U.x,h+.9,U.z,8,7,'#ffffff');fxSparks(U.x,h+.9,U.z,6,6,'#59a8ff');fxKick({flash:.06,bloom:.3,aberr:.2,radial:.4,shake:.1});}}catch(e){}}
-function ultStrikeAura(c){const t=c.t;if(!(t>c.tS-.42&&t<c.tS+.14))return;const u=c.u,h=1+(u.airH||0)*.9,P=fxP(u.x,u.y,h);if(P.behind)return;
+    for(let i=0;i<(Math.random()<.3*q?1:0);i++){const an=Math.random()*PI2,r=rnd(.3,pk?1.6:.9);fxE(FXC.ps,U.x+Math.cos(an)*r,h+rnd(0,1.9),U.z+Math.sin(an)*r,-Math.cos(an)*.6,rnd(1.5,4),-Math.sin(an)*.6,rnd(.35,.7),rnd(.03,.06),.02,fxCol(TH.ult,1.6),.8,12,0,0,8);}
+    if(j>1.44&&!S.au0){S.au0=1;fxRing(U.x,.06,U.z,TH.ult,1.2,.3,4.5,.5,.3);fxKick({bloom:.6,radial:.5});}
+    if(t>=c.tS&&!S.au1){S.au1=1;fxRing(U.x,h+.9,U.z,TH.peak,1.2,.3,5,.4,.3);fxRing(U.x,.06,U.z,TH.ring,1.4,.4,12,.9,.4);
+      fxSparks(U.x,h+.9,U.z,8,7,'#ffffff');fxSparks(U.x,h+.9,U.z,6,6,TH.ult);fxKick({flash:.06,bloom:.3,aberr:.2,radial:.4,shake:.1});}}catch(e){}}
+function ultStrikeAura(c){const t=c.t;if(!(t>c.tS-.42&&t<c.tS+.14))return;const u=c.u,h=1+(u.airH||0)*.9,P=fxP(u.x,u.y,h);if(P.behind)return;const A=dapAuraRGB(u);
   const k=clamp((t-(c.tS-.42))/.12,0,1)*clamp((c.tS+.14-t)/.1,0,1),bk=1.6/S3,Q=fxP(u.x-u.fx*bk,u.y-u.fy*bk,h+.5);let dx=Q.x-P.x,dy=Q.y-P.y;const L=Math.hypot(dx,dy)||1;dx/=L;dy/=L;const nx=-dy,ny=dx,sz=Math.min(W,H);
   ctx.save();ctx.globalCompositeOperation='lighter';
-  const band=ctx.createLinearGradient(0,P.y+sz*.06-sz*.035,0,P.y+sz*.06+sz*.035);band.addColorStop(0,'rgba(40,110,255,0)');band.addColorStop(.5,`rgba(210,235,255,${.38*k})`);band.addColorStop(1,'rgba(40,110,255,0)');
+  const band=ctx.createLinearGradient(0,P.y+sz*.06-sz*.035,0,P.y+sz*.06+sz*.035);band.addColorStop(0,`rgba(${A.edge},0)`);band.addColorStop(.5,`rgba(${A.mid},${.38*k})`);band.addColorStop(1,`rgba(${A.edge},0)`);
   ctx.fillStyle=band;ctx.fillRect(0,P.y+sz*.025,W,sz*.07);
   const hz=ctx.createLinearGradient(0,0,W,0);hz.addColorStop(0,'rgba(0,0,0,0)');hz.addColorStop(.5,`rgba(255,255,255,${.25*k})`);hz.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=hz;ctx.fillRect(0,P.y+sz*.055,W,sz*.012);
   ctx.lineCap='round';
   for(let i=0;i<9;i++){const o=(i-4)/4,off=o*sz*.09,len=sz*(.32+.18*Math.sin(i*2.3)),wv=Math.sin(clock*9+i*1.7)*sz*.03;
     const x0=P.x+dx*sz*.06+nx*off*.5,y0=P.y+dy*sz*.06+ny*off*.5,x1=P.x+dx*len*.5+nx*(off+wv),y1=P.y+dy*len*.5+ny*(off+wv),x2=P.x+dx*len+nx*(off*1.4-wv),y2=P.y+dy*len+ny*(off*1.4-wv);
-    const g=ctx.createLinearGradient(x0,y0,x2,y2);g.addColorStop(0,`rgba(90,160,255,${.3*k})`);g.addColorStop(.6,`rgba(30,70,200,${.16*k})`);g.addColorStop(1,'rgba(10,30,120,0)');
+    const g=ctx.createLinearGradient(x0,y0,x2,y2);g.addColorStop(0,`rgba(${A.strA},${.3*k})`);g.addColorStop(.6,`rgba(${A.strB},${.16*k})`);g.addColorStop(1,`rgba(${A.out},0)`);
     ctx.strokeStyle=g;ctx.lineWidth=sz*(.035-.02*Math.abs(o));ctx.beginPath();ctx.moveTo(x0,y0);ctx.quadraticCurveTo(x1,y1,x2,y2);ctx.stroke();}
   ctx.restore();}
-function ultAuraOv(c,s){const t=c.t,j=c.j;ultStrikeAura(c);if(!(j>1.25&&t<c.tN+.4))return;const u=c.u,P=fxP(u.x,u.y,1+(u.airH||0));if(P.behind)return;
+function ultAuraOv(c,s){const t=c.t,j=c.j;ultStrikeAura(c);if(!(j>1.25&&t<c.tN+.4))return;const u=c.u,P=fxP(u.x,u.y,1+(u.airH||0));if(P.behind)return;const A=dapAuraRGB(u);
   const pk=clamp(1-Math.abs(t-c.tS)/.3,0,1),a=clamp((j-1.25)/.3,0,1)*(t>c.tN?clamp((c.tN+.4-t)/.4,0,1):1),R=Math.min(W,H)*(.32+.25*pk)*(1+.05*Math.sin(clock*30));
-  ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(P.x,P.y,R*.05,P.x,P.y,R);g.addColorStop(0,`rgba(255,255,255,${.06*a+.08*pk})`);g.addColorStop(.35,`rgba(89,168,255,${.08*a})`);g.addColorStop(1,'rgba(0,30,90,0)');
-  ctx.fillStyle=g;ctx.fillRect(P.x-R,P.y-R,R*2,R*2);ctx.strokeStyle=`rgba(200,230,255,${.14*a})`;ctx.lineWidth=1.5;
+  ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(P.x,P.y,R*.05,P.x,P.y,R);g.addColorStop(0,`rgba(255,255,255,${.06*a+.08*pk})`);g.addColorStop(.35,`rgba(${A.halo},${.08*a})`);g.addColorStop(1,`rgba(${A.out},0)`);
+  ctx.fillStyle=g;ctx.fillRect(P.x-R,P.y-R,R*2,R*2);ctx.strokeStyle=`rgba(${A.ray},${.14*a})`;ctx.lineWidth=1.5;
   for(let i=0;i<22;i++){const an=i/22*PI2+clock*2,r0=R*.35,r1=R*(.8+.4*Math.sin(i*5.1+clock*20));ctx.beginPath();ctx.moveTo(P.x+Math.cos(an)*r0,P.y+Math.sin(an)*r0);ctx.lineTo(P.x+Math.cos(an)*r1,P.y+Math.sin(an)*r1);ctx.stroke();}
   ctx.restore();}
 
@@ -7462,7 +7462,7 @@ const VOXP={ren:{pitch:.8,rate:.9},kaito:{pitch:1.1,rate:1.05},Nagi:{pitch:.8,ra
 function voxVoice(){if(VOX.picked)return VOX.voice;const vs=speechSynthesis.getVoices();if(!vs.length)return null;VOX.picked=true;
   VOX.voice=vs.find(v=>/en(-|_)(GB|US)/i.test(v.lang)&&/male|daniel|alex|guy|david/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang))||vs[0];return VOX.voice;}
 function voxSay(text,who,keep){if(muted||!window.speechSynthesis||!text||vcBusy()||/^(ren|kaito|Nagi|Isagi)$/.test(who))return;try{const S=speechSynthesis;if(S.speaking&&!keep)S.cancel();
-  const u=new SpeechSynthesisUtterance(String(text).replace(/["*_]/g,'').replace(/\.\.\./g,', '));const v=voxVoice();if(v)u.voice=v;const p=VOXP[who]||{};u.pitch=p.pitch||1;u.rate=p.rate||1;u.volume=1;S.speak(u);VOX.last=text;}catch(e){}}
+  const u=new SpeechSynthesisUtterance(String(text).replace(/["*_]/g,'').replace(/\.\.\./g,', '));const v=dapVoicePick(who)||voxVoice();if(v)u.voice=v;const p=VOXP[who]||dapVoiceProf(who);u.pitch=p.pitch||1;u.rate=p.rate||1;u.volume=1;S.speak(u);VOX.last=text;}catch(e){}}
 function voxLine(L){if(!L||!L.who||L.who==='Objective')return;voxSay(L.text,L.who);}
 
 // ---------- drift phonk for matches (original, made in the browser): cowbell riff, gliding distorted 808, trap hats, half-time clap ----------
@@ -12828,10 +12828,10 @@ function ultCam(c,dt){
   if(window.__camO){const o=window.__camO({U,Hd,B,F:FG,s,c,V,t,j});if(o){pos=o[0];look=o[1];fov=o[2]||fov;k=999;}}
   setCam(pos,look,fov,dt,k,cut);
   if(!fxAFX()&&G3.fx.shake>.002){const sh=G3.fx.shake,tt=clock*31;G3.cam.position.x+=Math.sin(tt*1.3)*sh;G3.cam.position.y+=Math.sin(tt*1.7+1)*sh*.7;}}
-function ultOv(c,s){const t=c.t,j=c.j,blue='#59a8ff';letterbox(t,blue);ultAuraOv(c,s);
+function ultOv(c,s){const t=c.t,j=c.j,blue=dapTheme(c.u).ult;letterbox(t,blue);ultAuraOv(c,s);
   if(t<.9){const k=clamp(t/.25,0,1);ctx.save();ctx.globalAlpha=.85*clamp(1-(t-.5)/.4,0,1);fxInkText('ULTIMATE',W/2,H*.42,lerp(8,Math.min(30*s,W/12),fxBackE(k)),blue,{rot:-.04});
     fxInkText('DAP SHOT',W/2,H*.53,lerp(8,Math.min(78*s,W/7),fxBackE(clamp((t-.12)/.25,0,1))),'#ffffff',{rot:-.06});ctx.restore();}
-  if(t>1.1&&!c.snd.v0&&c.mate){c.snd.v0=1;if(!vcPlay('imove'))voxSay('Take this!','kaito');}
+  if(t>1.1&&!c.snd.v0&&c.mate){c.snd.v0=1;dapPassVo(c);}
   if(j>-.9&&j<-.2){const v=clamp((j+.9)/.12,0,1)*clamp((-.2-j)/.1,0,1);
     if(!c.snd.v1){c.snd.v1=1;voxSay('Hm... it is coming to me. Troublesome.','ren');}ctx.save();ctx.globalAlpha=v;smallText('"Hm... it is coming to me. Troublesome."',W/2,H*.86,15*s+3,'#eef3f8','center',FB,600);ctx.restore();}
   if(j>-.02&&!c.snd.o6){c.snd.o6=1;fxOno('PITA',W*.66,H*.6,{size:Math.min(48*s,W/10),life:.8,rot:-.06,shake:0});}
@@ -12842,8 +12842,8 @@ function ultOv(c,s){const t=c.t,j=c.j,blue='#59a8ff';letterbox(t,blue);ultAuraOv
   if(t>c.tS&&!c.snd.o3){c.snd.o3=1;fxOno('DON',W*.24,H*.3,{size:Math.min(90*s,W/7),life:.8});}
   if(t>c.tN&&!c.snd.o4){c.snd.o4=1;fxOno('ZUBAN',W*.26,H*.3,{size:Math.min(84*s,W/7),life:.6});}
   if(t>c.tN+.4&&t<c.tN+1.15){const k=clamp((t-c.tN-.4)/.3,0,1),gx=W*.5,gy=H*.5;comicBurst(gx,gy,lerp(40,Math.min(220*s,W*.32),fxBackE(k)),'rgba(89,168,255,.95)',18,7);fxInkText('GOAL!!',gx,gy,lerp(20,Math.min(104*s,W/6),fxBackE(k)),'#ffffff',{rot:-.07});}
-  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,'#2f6bff',k,{size:Math.min(44*s,W/12)});
-    if(!c.snd.v2){c.snd.v2=1;if(!vcPlay('hello'))voxSay('Nice to meet you, Japan. I am Nagi Seishiro.','ren');}
+  if(t>c.tN+1.15){const k=clamp((t-c.tN-1.2)/.3,0,1),nm=(designFor(c.u)||{}).name||'NAGI';fxCaption(nm.toUpperCase(),'ULTIMATE · DAP SHOT',W*.06,H*.74,dapTheme(c.u).cap,k,{size:Math.min(44*s,W/12)});
+    if(!c.snd.v2){c.snd.v2=1;if(c.u&&c.u.design!=='ren')dapVoCast(c,'Nice to meet you, Japan. I am Nagi Seishiro.');else if(!vcPlay('hello'))voxSay('Nice to meet you, Japan. I am Nagi Seishiro.','ren');}
     smallText('"Nice to meet you, Japan. I am Nagi Seishiro."',W/2,H*.86,15*s+3,'#eef3f8','center',FB,600);}}
 
 // ==== W1 rules.js: fast accurate ground passes, own-half "shot" = clearance, offside polish + AI line play ====
@@ -14649,7 +14649,39 @@ function dapSubs(c){if(c.subsDyn)return c.subsDyn;const st=dapWho(c.u,'Nagi'),pa
 function dapCard(c){const nm=(i,dflt)=>{if(c.castDef&&c.castDef[i]){const w=dapWho(c.D[i].o,dflt);return w.full+(w.num!=null&&w.num!==''?' #'+w.num:'');}return dflt;};
   return nm(0,'Darai Miroku #4')+'   '+nm(1,'Hayate Haru #7')+'   Fukaku Gen #1';}
 // a swapped star has no recorded clip: the lines are spoken by the browser voice, with his own name at the end
-function dapVoCast(c,txt){try{const st=dapWho(c.u,'Nagi');voxSay(String(txt).replace('Nagi Seishiro!',st.full+'!'),'cast',true);}catch(e){}}
+function dapVoCast(c,txt){try{const st=dapWho(c.u,'Nagi');voxSay(String(txt).replace('Nagi Seishiro',st.full),c.u.design,true);}catch(e){}}
+// ---- character themes: aura / eye colours and a speech profile, by the player's call name ----
+const DAP_TH={Nagi:['#8fd0ff',null,.8,.9],Isagi:['#2f6bff',null,1.1,1.05],Rin:['#22d3c5',null,.85,.95],Sae:['#12a89f',null,.78,.9],Bachira:['#ffd23a',null,1.32,1.15],
+  Chigiri:['#ff4a4a',null,.95,1.08],Barou:['#a53dff',null,.68,.88],Reo:['#c07bff',null,1.0,1.0],Kunigami:['#ff8a2a',null,.82,.95],Hiori:['#6fe0a0',null,1.05,.98],Raichi:['#ffe14a',null,1.2,1.12],
+  Niko:['#ff9bd0',null,1.15,1.05],Aryu:['#7cc4ff',null,.95,1.0],Gagamaru:['#ff7a2a',null,.72,.92],Karasu:['#9aa0ff',null,.9,.95],Yukimiya:['#e6f3ff',null,1.0,.95],Otoya:['#ffb347',null,1.1,1.1],
+  Shidou:['#ff2f5f',null,1.22,1.2],Oliver:['#6ee0ff',null,.9,1.0]};
+function dapHex(r,g,b){const h=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');return '#'+h(r)+h(g)+h(b);}
+function dapRgbOf(hex){const n=parseInt(String(hex).slice(1),16);return [(n>>16)&255,(n>>8)&255,n&255];}
+function dapMix(a,b,k){return [a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k,a[2]+(b[2]-a[2])*k];}
+const DAP_THC={};
+function dapTheme(p){const key=p&&p.design?p.design:'';if(DAP_THC[key])return DAP_THC[key];
+  let th;try{
+    if(key==='ren')th={aura:'#8fd0ff',ult:'#59a8ff',peak:'#bfe3ff',ring:'#9fd4ff',eye:'#8fd2ff',cap:'#2f6bff'};
+    else if(key==='kaito')th={aura:'#2f6bff',ult:'#2f6bff',peak:'#9fc0ff',ring:'#6f9bff',eye:'#6f9bff',cap:'#2f6bff'};
+    else{const w=dapWho(p,'');const e=DAP_TH[w.last];const base=e?e[0]:(w.key?dapHex(...dapHsl(dzHash(w.full)%360)):'#59e1ff');const B=dapRgbOf(base),W3=[255,255,255];
+      th={aura:base,ult:base,peak:dapHex(...dapMix(B,W3,.6)),ring:dapHex(...dapMix(B,W3,.35)),eye:dapHex(...dapMix(B,W3,.25)),cap:base};}
+  }catch(e){th={aura:'#59e1ff',ult:'#59a8ff',peak:'#bfe3ff',ring:'#9fd4ff',eye:'#8fd2ff',cap:'#2f6bff'};}
+  return DAP_THC[key]=th;}
+function dapHsl(h){const c=new THREE.Color();c.setHSL(h/360,.85,.58);return [c.r*255,c.g*255,c.b*255];}
+// canvas overlay colours (r,g,b strings): Nagi keeps the original blues
+function dapAuraRGB(u){const th=dapTheme(u);if(u&&u.design==='ren')return {edge:'40,110,255',mid:'210,235,255',strA:'90,160,255',strB:'30,70,200',out:'10,30,120',halo:'89,168,255',ray:'200,230,255'};
+  const B=dapRgbOf(th.ult),W3=[255,255,255],K=[0,0,0],r=a=>a.map(Math.round).join(',');
+  return {edge:r(dapMix(B,K,.15)),mid:r(dapMix(B,W3,.8)),strA:r(dapMix(B,W3,.15)),strB:r(dapMix(B,K,.4)),out:r(dapMix(B,K,.7)),halo:r(B),ray:r(dapMix(B,W3,.7))};}
+// speech: pitch and rate by character, and a stable browser voice per character
+function dapVoiceProf(who){try{const d=DESIGNS[who];if(!d||!d.name)return {};const w=dapWho({design:who},'');const e=DAP_TH[w.last];if(e)return {pitch:e[2],rate:e[3]};const h=dzHash(d.name);return {pitch:.8+(h%46)/100,rate:.92+((h>>8)%20)/100};}catch(e){return {};}}
+const DAP_VC={};
+function dapVoicePick(who){try{if(VOXP[who]||!window.speechSynthesis)return null;const d=DESIGNS[who];if(!d||!d.name)return null;if(DAP_VC[who])return DAP_VC[who];
+  const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));if(vs.length<2)return null;
+  const male=vs.filter(v=>/male|daniel|alex|guy|david|james|mark|george|fred|ryan|thomas|aaron|arthur|oliver/i.test(v.name)&&!/female|zira|samantha|susan|hazel|karen|moira|fiona|victoria|tessa/i.test(v.name));
+  const L=male.length?male:vs;return DAP_VC[who]=L[dzHash(d.name)%L.length];}catch(e){return null;}}
+// the passer's line: Isagi keeps his recorded clip, anyone else speaks it in their own voice
+function dapPassVo(c){try{const m=c.mate;if(m&&m.design==='kaito'){if(!vcPlay('imove'))voxSay('Take this!','kaito');}else if(m)voxSay('Take this!',m.design);}catch(e){}}
+window.__dapTh={dapTheme,dapAuraRGB,dapVoiceProf,dapVoicePick,DAP_TH};
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
