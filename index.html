@@ -334,6 +334,7 @@ button{font:inherit;cursor:pointer}
         <button class="btn" id="b-dapcast">Dap cast</button>
         <button class="btn" id="b-tod">Time: Afternoon</button>
         <button class="btn" id="b-stad">Stadium: Classic</button>
+        <button class="btn" id="b-move">Movement: Arcade</button>
         <button class="btn" id="b-mlen">Match length</button>
         <button class="btn" id="b-restart">Restart chapter</button>
         <button class="btn" id="b-title">Title screen</button>
@@ -5230,7 +5231,7 @@ function updateMatchBase(dt){if(M&&M.live&&mode==='match')dt*=.6;
     const sp=u.speed*(adaptOn()?ADAPT.FAST:1)*(M.flow?1.15:1)*(u.boostT>0?1.22:1)*(b.owner===u?(sprinting()?1.48:.78):(sprinting()?1.6:.5))*(.82+.18*u.stam);u.dribCd-=dt;
     if(u.lungeT>0){u.lungeT-=dt;const dm=Math.pow(.03,dt);u.vx*=dm;u.vy*=dm;const oo=b.owner;if(oo&&oo.team!==u.team&&dist(u,oo)<(M.flowWoke?62:48)){const fc=((oo.x-u.x)*u.fx+(oo.y-u.y)*u.fy)>-12;const ok=tryTackle(u,oo,(M.ch===6?.92:.62)*(fc?1:.6));u.lungeT=0;if(ok){if(M.ch===6){startDefenseCine(u,'TACKLE');return;}}else{u.fall=.18;}}}else{const am=Math.hypot(ax.x,ax.y),sv=Math.hypot(u.vx,u.vy);
       if(!(u.plantT>0)&&sv>u.speed*1.05&&am>.3&&(ax.x*u.vx+ax.y*u.vy)/(am*sv)<-.45){u.plantT=.4;u.slideT=clock;}
-      const pl=u.plantT>0;if(pl)u.plantT-=dt;const SD=sprintCtl(u,am,dt),mv=am>.05&&!pl,k=1-Math.exp(-dt*(pl?6:mv?SD.k:12));u.vx+=((pl?0:ax.x*sp*SD.m)-u.vx)*k;u.vy+=((pl?0:ax.y*sp*SD.m)-u.vy)*k;}
+      const pl=u.plantT>0;if(pl)u.plantT-=dt;const SD=sprintCtl(u,am,dt),mv=am>.05&&!pl,k=1-Math.exp(-dt*(pl?6:mv?SD.k*MOVE.f:12*MOVE.d));u.vx+=((pl?0:ax.x*sp*SD.m)-u.vx)*k;u.vy+=((pl?0:ax.y*sp*SD.m)-u.vy)*k;}
     if(!tankMode()&&Math.hypot(ax.x,ax.y)>.2){const m=Math.hypot(ax.x,ax.y);u.fx=ax.x/m;u.fy=ax.y/m;}
     if(b.owner===u){
       if(hit('ult')&&ultState()===2){if(aimBegin(u,0,'ult'))return;startUltCine();return;}
@@ -8027,7 +8028,8 @@ function gkDive(g,dt){
   const b=M.ball,T=g.team;{const pv=g.pbv||(g.pbv={x:0,y:0}),bs=Math.hypot(b.vx,b.vy),ps=Math.hypot(pv.x,pv.y);if(!b.owner&&bs>260&&ps>260&&b.lastTeam!==T&&!(g.diveT>0)&&!(g.wf>M.time)&&(b.vx*pv.x+b.vy*pv.y)/(bs*ps)<.82&&(b.vx*(T.dir>0?-1:1))>0){g.wf=M.time+1;g.diveT=1.1;g.diveDir=Math.sign(pv.y)||1;g.vy=pv.y*.35;g.vx=0;g.cool=.9;M.toast={t:0,text:'DEFLECTION · KEEPER WRONG-FOOTED!',skill:1};}pv.x=b.vx;pv.y=b.vy;}if(g.saveT>0)g.saveT-=dt;if(g.diveT>0){g.diveT-=dt;g.vx*=.9;g.vy*=.92;return true;}
   if(b.owner||b.lastTeam===T)return false;const gx=T.dir>0?0:PW;const vx=b.vx;if(vx*(gx-b.x)<=0||Math.abs(vx)<260)return false;
   if(M.freeze>0)return false;const tt=(g.x-b.x)/vx;if(tt<0||tt>.7)return false;const yy=b.y+b.vy*tt,dy=yy-g.y;if(Math.abs(dy)>80)return false;g.saveT=.7;if(Math.abs(dy)<16)return false;
-  g.diveT=1.1;g.diveDir=Math.sign(dy);g.vy=dy/Math.max(.25,tt);g.vx=0;g.cool=0;b.gkTried=null;return true;
+  {const nowT=M.time;if(!(nowT-(g.rtLast==null?-9:g.rtLast)<.25)){g.rtOn=nowT;g.rtD=GKT.react+Math.random()*GKT.jit;}g.rtLast=nowT;if(nowT-g.rtOn<g.rtD)return false;g.rtLast=-9;}
+  g.diveT=1.1;g.diveDir=Math.sign(dy);g.vy=clamp(dy/Math.max(.25,tt),-GKT.vmax,GKT.vmax);g.vx=0;g.cool=0;b.gkTried=null;return true;
 }
 function ownerArrow(c){
   if(!G3.ownArr){const m=new THREE.Mesh(new THREE.ConeGeometry(.22,.42,3),new THREE.MeshBasicMaterial({color:'#ffd34a',toneMapped:false,depthTest:false,transparent:true}));m.rotation.x=Math.PI;m.renderOrder=999;G3.scene.add(m);G3.ownArr=m;}
@@ -14789,6 +14791,14 @@ function A_stadiumEm(env,kind,S){
 try{const b=$('b-stad');if(b){b.textContent='Stadium: '+(EMS.mode==='emirates'?'Emirates':'Classic');b.onclick=()=>emSet(EMS.mode==='emirates'?'classic':'emirates');}}catch(e){console.warn('stad ui',e);}
 if(EMS.mode==='emirates')setTimeout(()=>emLoad(),2500);
 window.__ems={EMS,emSet,emLoad,emRefresh};
+// keeper reflex: seconds before a keeper commits to a dive (plus random jitter) and his fastest sideways dive in px/s (about 9 m/s)
+const GKT={react:.12,jit:.08,vmax:150};
+// movement feel: scales how fast velocity follows input (f = acceleration, d = deceleration when no input)
+const MOVE_P={arcade:{f:1,d:1,label:'Arcade'},balanced:{f:.55,d:.7,label:'Balanced'}};
+const MOVE={mode:'arcade',f:1,d:1};
+function moveSet(m){const P=MOVE_P[m]||MOVE_P.arcade;MOVE.mode=MOVE_P[m]?m:'arcade';MOVE.f=P.f;MOVE.d=P.d;try{localStorage.setItem('twin.move',MOVE.mode);}catch(e){}const b=$('b-move');if(b)b.textContent='Movement: '+P.label;}
+try{moveSet(localStorage.getItem('twin.move')||'arcade');const b=$('b-move');if(b)b.onclick=()=>moveSet(MOVE.mode==='arcade'?'balanced':'arcade');}catch(e){console.warn('move ui',e);}
+window.__feel={GKT,MOVE,MOVE_P,moveSet};
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
