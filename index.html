@@ -247,7 +247,7 @@ button{font:inherit;cursor:pointer}
         <kbd>Enter</kbd><span>Next line in a cutscene · <kbd>Esc</kbd> skip or pause</span>
       </div>
       <p>The full controls appear before every match.</p>
-      <p class="credits">Ball model: “football/soccer ball” by <a href="https://sketchfab.com/MAD_DUDE" target="_blank" rel="noopener">MAD_DUDE</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/footballsoccer-ball-5311ede6883c4fb39f366f86559f58de" target="_blank" rel="noopener">Sketchfab</a>. Players are built from three CC-BY-4.0 Sketchfab models, merged onto one rig and recoloured: “<a href="https://sketchfab.com/3d-models/bachira-no-es-mio-b724c7e09652410d85be50de71643341" target="_blank" rel="noopener">Bachira no es mio</a>” by <a href="https://sketchfab.com/Donaexplosiva12" target="_blank" rel="noopener">El_yujinas</a> (body, face, kit), “<a href="https://sketchfab.com/3d-models/seishiro-nagi-official-blue-lock-model-12a92d5b590a498996fd2fd4dd37d34b" target="_blank" rel="noopener">Seishiro Nagi - Official Blue Lock Model</a>” by <a href="https://sketchfab.com/YumeOfficial" target="_blank" rel="noopener">Yume Official</a> (messy hair), and “<a href="https://sketchfab.com/3d-models/isagi-free-fire-original-rig-4ebf879314534e58adcb9df6e7019f3c" target="_blank" rel="noopener">Isagi free fire original rig</a>” by <a href="https://sketchfab.com/rocklee.ff" target="_blank" rel="noopener">rocklee.ff</a> (straight hair). Spin-dribble motion capture: “<a href="https://sketchfab.com/3d-models/soccer-dribble-cd888c68bf784776953a1f66792ca61d" target="_blank" rel="noopener">soccer dribble</a>” by <a href="https://sketchfab.com/ayoubboulehmi67" target="_blank" rel="noopener">paintoheaven</a> (CC-BY-4.0). White tiger aura: “White Tiger (RIGGED ANIMATED)” by <a href="https://sketchfab.com/CGJAY1111" target="_blank" rel="noopener">CGJAY1111</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/white-tiger-rigged-animated-9dd099d283e54f99b7cbd40b531b1a29" target="_blank" rel="noopener">Sketchfab</a>, rendered as a ghost face. Isagi model: “Isagi Training Uniform Free Fire Edit” by rocklee.ff123 (Sketchfab, CC-BY-4.0). Fan project for personal use; Blue Lock characters belong to their owners.</p>
+      <p class="credits">Ball model: “football/soccer ball” by <a href="https://sketchfab.com/MAD_DUDE" target="_blank" rel="noopener">MAD_DUDE</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/footballsoccer-ball-5311ede6883c4fb39f366f86559f58de" target="_blank" rel="noopener">Sketchfab</a>. Players are built from three CC-BY-4.0 Sketchfab models, merged onto one rig and recoloured: “<a href="https://sketchfab.com/3d-models/bachira-no-es-mio-b724c7e09652410d85be50de71643341" target="_blank" rel="noopener">Bachira no es mio</a>” by <a href="https://sketchfab.com/Donaexplosiva12" target="_blank" rel="noopener">El_yujinas</a> (body, face, kit), “<a href="https://sketchfab.com/3d-models/seishiro-nagi-official-blue-lock-model-12a92d5b590a498996fd2fd4dd37d34b" target="_blank" rel="noopener">Seishiro Nagi - Official Blue Lock Model</a>” by <a href="https://sketchfab.com/YumeOfficial" target="_blank" rel="noopener">Yume Official</a> (messy hair), and “<a href="https://sketchfab.com/3d-models/isagi-free-fire-original-rig-4ebf879314534e58adcb9df6e7019f3c" target="_blank" rel="noopener">Isagi free fire original rig</a>” by <a href="https://sketchfab.com/rocklee.ff" target="_blank" rel="noopener">rocklee.ff</a> (straight hair). Spin-dribble motion capture: “<a href="https://sketchfab.com/3d-models/soccer-dribble-cd888c68bf784776953a1f66792ca61d" target="_blank" rel="noopener">soccer dribble</a>” by <a href="https://sketchfab.com/ayoubboulehmi67" target="_blank" rel="noopener">paintoheaven</a> (CC-BY-4.0). White tiger aura: “White Tiger (RIGGED ANIMATED)” by <a href="https://sketchfab.com/CGJAY1111" target="_blank" rel="noopener">CGJAY1111</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/white-tiger-rigged-animated-9dd099d283e54f99b7cbd40b531b1a29" target="_blank" rel="noopener">Sketchfab</a>, rendered as a ghost face. Isagi model: “Isagi Training Uniform Free Fire Edit” by rocklee.ff123 (Sketchfab, CC-BY-4.0). Stadium: “EMIRATES STADIUM” by PeeJaa (<a href="https://sketchfab.com/3d-models/emirates-stadium-c16874e295b84031877b5ac10f9db23f" target="_blank" rel="noopener">Sketchfab</a>, CC-BY-4.0). Fan project for personal use; Blue Lock characters belong to their owners.</p>
     </div>
   </div>
 
@@ -332,6 +332,8 @@ button{font:inherit;cursor:pointer}
         <button class="btn" id="b-subs">Substitutions</button>
         <button class="btn" id="b-controls">Controls</button>
         <button class="btn" id="b-dapcast">Dap cast</button>
+        <button class="btn" id="b-tod">Time: Afternoon</button>
+        <button class="btn" id="b-stad">Stadium: Classic</button>
         <button class="btn" id="b-mlen">Match length</button>
         <button class="btn" id="b-restart">Restart chapter</button>
         <button class="btn" id="b-title">Title screen</button>
@@ -6141,7 +6143,7 @@ function cineCam(c,dt){fxCineCam(c,dt);}
 function dvF(p){return Math.abs(p.fx||0)>.25?p.fx:(p.team.dir)}
 function dvS(p){return Math.sign(dvF(p))||1}
 function render3DMatch(dt){
-  G3.active=true;setStage(M.ch===1?'night':'day');beginActors();const c=M.cine,b=M.ball;
+  G3.active=true;setStage(todKind());beginActors();const c=M.cine,b=M.ball;
   for(const p of M.players){if(p.off)continue;const a=getActor('p'+M.players.indexOf(p),designFor(p),kitFor(p));
     let dive=0;if(c&&c.type==='ult'){const ud=ultGkDive(p,a);if(ud!=null)dive=ud;}if(p.isGK&&p.diveT>0)dive=p.diveDir*dvS(p)*ease(clamp((1.1-p.diveT)/.35,0,1));if(c&&c.type==='shot'&&!c.rush&&p===c.gk&&c.t>SH.DIVE){const dz=Math.sign(c.gkTo.y-c.gkFrom.y)||1;dive=dz*dvS(p)*ease((c.t-SH.DIVE)/.5)*(c.out==='wide'?.4:1);}
     const pose=p.pose||((M.flash&&M.flash.col==='#ffc04a'&&p.team===M.home)?'cheer':null);
@@ -8452,7 +8454,8 @@ function A_pre(dt,CM){
 // ---------- A: stage cache ----------
 function A_setStage(kind){
   A_tmp();const sc=G3.scene;if(!G3.stages)G3.stages={};if(G3.env)sc.remove(G3.env);
-  const qk=lowQ()?'L':'H';let S=G3.stages[kind];if(!S||S.qk!==qk){if(S){try{sc.remove(S.env);gpuDisposeTree(S.env);if(S.envMap&&S.envMap.dispose)S.envMap.dispose();}catch(e){console.warn('stage dispose',e);}}S=A_build(kind);S.qk=qk;G3.stages[kind]=S;}
+  const qk=lowQ()?'L':'H';let S=G3.stages[kind];const eu=emUse(kind);if(S&&!!S.em!==eu)S.qk='x';if(!S||S.qk!==qk){if(S){try{sc.remove(S.env);gpuDisposeTree(S.env);if(S.envMap&&S.envMap.dispose)S.envMap.dispose();}catch(e){console.warn('stage dispose',e);}}EMS.building=eu;try{S=A_build(kind);}finally{EMS.building=false;}S.qk=qk;S.em=eu;G3.stages[kind]=S;}
+  try{todApply(S);}catch(e){console.warn('tod',e);}
   G3.env=S.env;sc.add(S.env);sc.background=S.bg;sc.fog=S.fog;sc.environment=S.envMap||null;
   G3.sun=S.sun;G3.sunOff=S.sunOff;G3.crowd=S.crowd||null;if(G3.blobs)G3.blobs.count=0;S.bPrev=null;
 }
@@ -8464,7 +8467,7 @@ function A_build(kind){
   S.fog=roster?null:new THREE.Fog(LIN(night?'#0e1a30':train?'#d4e2ea':'#c4dcef'),night?80:train?70:130,night?340:train?380:400);
   A_lights(env,kind,S);
   if(roster)A_roster(env,S);
-  else{A_pitch(env,kind,S);if(train)A_training(env,S);else A_stadium(env,kind,S);}
+  else{A_pitch(env,kind,S);if(train)A_training(env,S);else if(EMS.building)A_stadiumEm(env,kind,S);else A_stadium(env,kind,S);}
   try{A_merge(env,S);}catch(e){console.warn('merge off',e);}
   if(!low&&!G3.Q.sw){try{S.envMap=A_envMap(kind,sky,S);}catch(e){console.warn('env map off',e);}}
   A_CUR=null;return S;
@@ -8501,7 +8504,7 @@ function A_lights(env,kind,S){
 function A_envMap(kind,sky,S){
   const r=G3.renderer,s=new THREE.Scene(),night=kind==='night',train=kind==='training',roster=kind==='roster',tmp=[];
   const add=(g,c,x,y,z,rx,side)=>{const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:c,side:side||THREE.FrontSide}));m.position.set(x,y,z);if(rx!=null)m.rotation.x=rx;s.add(m);tmp.push(m);return m;};
-  const sk=new THREE.Mesh(sky.geometry,sky.material.clone());sk.material.color.setScalar(roster?.5:night?1:1.1);s.add(sk);
+  const sk=new THREE.Mesh(sky.geometry,sky.material.clone());if(sk.material.color)sk.material.color.setScalar(roster?.5:night?1:1.1);s.add(sk);
   add(new THREE.CircleGeometry(150,32),roster?new THREE.Color(.012,.014,.02):LIN(night?'#103018':train?'#3c7a34':'#2f6a30').multiplyScalar(night?.6:1),0,0,0,-Math.PI/2);
   if(!roster&&!train)add(new THREE.CylinderGeometry(78,66,24,32,1,true),LIN(night?'#161d2c':'#7a8594'),0,9,0,null,THREE.BackSide);
   if(night){for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const q=add(new THREE.PlaneGeometry(12,7),new THREE.Color(16,16,17),sx*76,42,sz*58,null,THREE.DoubleSide);q.lookAt(0,0,0);}
@@ -8514,7 +8517,7 @@ function A_envMap(kind,sky,S){
 
 // ---------- A: sky ----------
 function A_dirPix(d,w,h){const th=Math.acos(clamp(d.y,-1,1)),ph=Math.atan2(d.z,-d.x);return [((ph/PI2)%1+1)%1*w,th/Math.PI*h];}
-function A_sky(kind){
+function A_sky(kind){if(kind==='day'||kind==='night')return todSkyMesh(kind);
   const low=lowQ(),Wd=low?1024:2048,Hd=Wd/2,R=srand(kind.length*31+7);const sun=kind==='training'?new THREE.Vector3(52,22,-36).normalize():new THREE.Vector3(-26,48,30).normalize();
   const tex=canvasTex(Wd,Hd,(x,w,h)=>{
     const g=x.createLinearGradient(0,0,0,h);
@@ -8812,7 +8815,7 @@ function A_beamMat(col,i){return new THREE.ShaderMaterial({uniforms:{uC:{value:L
   fragmentShader:'uniform vec3 uC;uniform float uI,uT;varying vec3 vN,vV,vW;varying float vY;void main(){float f=pow(abs(dot(normalize(vN),normalize(vV))),2.);float n=.85+.15*sin(vW.x*.7+vW.y*.9+uT*.6)*sin(vW.z*.8-uT*.4);gl_FragColor=vec4(uC*uI*f*n*pow(vY,1.4),1.);}',
   blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,side:THREE.DoubleSide,fog:false});}
 function A_floods(env,kind,S,bw){
-  const night=kind==='night',lampT=A_lampTex(),mastM=M3(night?'#2c3440':'#7b8592',{m:.5,r:.45}),pm=new THREE.MeshBasicMaterial({map:lampT,toneMapped:false,fog:false});pm.color.setScalar(night?5:.85);
+  const night=kind==='night',lampT=A_lampTex(),mastM=M3(night?'#2c3440':'#7b8592',{m:.5,r:.45}),pm=new THREE.MeshBasicMaterial({map:lampT,toneMapped:false,fog:false});pm.color.setScalar(night?5:.85);S.lampM=pm;S.lampBase=night?5:.85;
   for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const cx=sx*(bw.hx-bw.rc),cz=sz*(bw.hz-bw.rc),rr=bw.rc+bw.oB+5,x=cx+sx*rr*.7071,z=cz+sz*rr*.7071,Hh=bw.roofY+17;
     const mast=mesh(cyl(.45,.85,Hh,10),mastM,x,Hh/2,z);mast.castShadow=false;env.add(mast);
     const hd=new THREE.Group();hd.position.set(x,Hh+1.7,z);hd.lookAt(0,0,0);env.add(hd);const f=mesh(box(9.2,5.4,.5),M3('#20262f',{m:.4,r:.5}),0,0,-.3);f.castShadow=false;hd.add(f);hd.add(new THREE.Mesh(G('lampP',()=>new THREE.PlaneGeometry(8.7,4.9)),pm));
@@ -11208,7 +11211,7 @@ function dzAuto(c,o,F){if(!o)return null;if(o.fall>0)return 'pain';const st=o.sl
   if(o.pose==='cheer'||o.pose==='celebrate')return 'shout';if(o.pose==='dejected'||o.pose==='handsHead')return 'sad';if(o.pose==='shout')return 'shout';if(o.drib)return o.drib.role==='ren'?'determined':'focus';
   if(o.stam!=null&&o.stam<.45)return 'tired';if(c.spd>5.2)return 'determined';return null;}
 function dzFrame(){if(DZ.f===clock)return;DZ.f=clock;const r=G3.renderer;if(r){const h=r.getContext().drawingBufferHeight;if(h)DZU.dzOlH.value=h;}
-  const st=G3.stage,night=st==='night';DZU.dzRim.value.setRGB(0,night||st==='roster'?.9:.68,night||st==='roster'?1:.8);DZU.dzAmb.value=night?.82:1;
+  const st=G3.stage,night=st==='night';{const rm=todRim(st);DZU.dzRim.value.setRGB(rm[0],rm[1],rm[2]);DZU.dzAmb.value=rm[3];}
   DZU.dzOlPx.value=lowQ()?1.25:1.45;}
 function faceUpdate(c,o,dt){const F=c&&c.dzF;if(!F)return;dt=dt>0?Math.min(dt,.1):0;dzFrame();
   const inMatch=(mode==='match'||mode==='paused'||mode==='howto'||mode==='result')&&M&&G3.active,cine=!!(M&&M.cine);
@@ -14682,6 +14685,110 @@ function dapVoicePick(who){try{if(VOXP[who]||!window.speechSynthesis)return null
 // the passer's line: Isagi keeps his recorded clip, anyone else speaks it in their own voice
 function dapPassVo(c){try{const m=c.mate;if(m&&m.design==='kaito'){if(!vcPlay('imove'))voxSay('Take this!','kaito');}else if(m)voxSay('Take this!',m.design);}catch(e){}}
 window.__dapTh={dapTheme,dapAuraRGB,dapVoiceProf,dapVoicePick,DAP_TH};
+// ---- time-of-day presets (sRGB hex; sun direction from azimuth and elevation in degrees) ----
+const TOD={cur:'afternoon',order:['morning','afternoon','evening','night']};
+try{const v=localStorage.getItem('twin.tod');if(v&&TOD.order.includes(v))TOD.cur=v;}catch(e){}
+const TOD_P={
+ morning:{az:150,el:13,sunC:'#ffb27a',zen:'#6f8fd0',hor:'#ffb99a',gnd:'#8a7a72',haze:'#ff9f86',band:'#c0709a',bandK:.25,cloud:.55,cLit:'#ffd2b4',cShade:'#b58aa6',stars:0,size:.06,
+   sun:'#ffc08e',sunI:1.45,hemiS:'#ffdccb',hemiG:'#4c5a3c',hemiI:.6,fog:'#f0c4aa',fn:100,ff:360,rad:2.2,lamp:.45,flick:0,rim:[1,.74,.5,.95]},
+ afternoon:{az:131,el:58,sunC:'#fff4dc',zen:'#1f5cb4',hor:'#bfe0f6',gnd:'#869c88',haze:'#e8f4ff',band:'#ffffff',bandK:0,cloud:.45,cLit:'#ffffff',cShade:'#9db4d6',stars:0,size:.05,
+   sun:'#fff6e6',sunI:2.1,hemiS:'#e4f2ff',hemiG:'#4c6a3c',hemiI:.64,fog:'#c4dcef',fn:130,ff:400,rad:.5,lamp:.85,flick:0,rim:[0,.68,.8,1]},
+ evening:{az:40,el:5,sunC:'#ff7a28',zen:'#2c2466',hor:'#ff6a30',gnd:'#5a3a48',haze:'#ff8a50',band:'#7a3aa0',bandK:.6,cloud:.5,cLit:'#ff9a60',cShade:'#5a3a78',stars:.15,size:.075,
+   sun:'#ff8d3d',sunI:1.7,hemiS:'#ffa882',hemiG:'#3a2f3a',hemiI:.5,fog:'#b8705e',fn:90,ff:330,rad:1.6,lamp:2.4,flick:1,rim:[1,.62,.22,.9]},
+ night:{az:0,el:0,sunC:'#cfdcff',zen:'#01020a',hor:'#0f1c3a',gnd:'#04060b',haze:'#1a2a50',band:'#000000',bandK:0,cloud:.18,cLit:'#4a5a88',cShade:'#10162a',stars:1,size:.028,
+   keep:1,lamp:5,flick:0,rim:[0,.9,1,.82]}};
+function todKind(){return (M&&M.ch===1)||TOD.cur==='night'?'night':'day';}
+function todRim(st){if(st==='roster')return [0,.9,1,1];if(st==='night')return [0,.9,1,.82];if(st==='training')return [0,.68,.8,1];const P=TOD_P[TOD.cur==='night'?'afternoon':TOD.cur];return P.rim;}
+const TOD_VS='varying vec3 vD;void main(){vD=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
+const TOD_FS=`varying vec3 vD;uniform float uTime,uSize,uCloud,uStars,uBandK;uniform vec3 uSun,uSunC,uZen,uHor,uGnd,uHaze,uBand,uCLit,uCShade;
+float hs(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float ns(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);return mix(mix(mix(hs(i),hs(i+vec3(1,0,0)),f.x),mix(hs(i+vec3(0,1,0)),hs(i+vec3(1,1,0)),f.x),f.y),mix(mix(hs(i+vec3(0,0,1)),hs(i+vec3(1,0,1)),f.x),mix(hs(i+vec3(0,1,1)),hs(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fb(vec3 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*ns(p);p=p*2.03+vec3(7.1,3.3,1.7);a*=.5;}return s;}
+void main(){vec3 d=normalize(vD);float h=d.y;
+ vec3 col=mix(uHor,uZen,pow(clamp(h,0.,1.),.45));
+ col=mix(col,uGnd,smoothstep(0.,-.2,h));
+ col=mix(col,uBand,smoothstep(.0,.3,h)*smoothstep(.75,.2,h)*uBandK);
+ float sd=max(dot(d,uSun),0.);
+ col+=uSunC*(pow(sd,7.)*.3*(1.-clamp(h,0.,1.)*.6)+pow(sd,2.)*.05);
+ col+=uHaze*exp(-abs(h)*8.)*.55;
+ float ang=acos(clamp(dot(d,uSun),-1.,1.));
+ float disc=smoothstep(uSize,uSize*.8,ang);
+ float cor=exp(-ang*ang/(uSize*uSize*26.))*.8+exp(-ang/(uSize*8.))*.16;
+ col+=uSunC*(disc*7.+cor);
+ if(h>0.){vec2 uv=d.xz/(h+.14);vec3 q=vec3(uv*1.15+vec2(uTime*.013,uTime*.005),uTime*.011);
+  float n=fb(q),cv=smoothstep(1.-uCloud,1.-uCloud+.3,n*1.18);
+  float sh=clamp((n-fb(q+vec3(uSun.x,uSun.z,0.)*.07))*3.2+.5,0.,1.);
+  vec3 cc=mix(uCShade,uCLit,sh)+uSunC*pow(sd,8.)*.3;
+  col=mix(col,cc,cv*smoothstep(0.,.2,h)*.9);}
+ if(uStars>0.&&h>0.){vec3 sp=d*240.;vec3 ip=floor(sp);float r=hs(ip);vec3 fr=fract(sp)-.5;float st=smoothstep(.32,.0,length(fr))*step(.994,r);
+  float tw=.55+.45*sin(uTime*(2.+r*7.)+r*60.);col+=vec3(.85,.92,1.)*st*tw*1.5*uStars*smoothstep(0.,.12,h);}
+ gl_FragColor=vec4(col,1.);
+ #include <encodings_fragment>
+}`;
+function todSkyMesh(kind){const C=h=>LIN(h),U={uTime:{value:0},uSize:{value:.05},uCloud:{value:.4},uStars:{value:0},uBandK:{value:0},uSun:{value:new THREE.Vector3(0,1,0)},
+   uSunC:{value:C('#fff')},uZen:{value:C('#1f5cb4')},uHor:{value:C('#bfe0f6')},uGnd:{value:C('#869c88')},uHaze:{value:C('#e8f4ff')},uBand:{value:C('#fff')},uCLit:{value:C('#fff')},uCShade:{value:C('#9db4d6')}};
+  const m=new THREE.Mesh(new THREE.SphereGeometry(380,48,24),new THREE.ShaderMaterial({uniforms:U,vertexShader:TOD_VS,fragmentShader:TOD_FS,side:THREE.BackSide,depthWrite:false,fog:false}));
+  m.renderOrder=-10;m.frustumCulled=false;m.userData.tod=true;const S0=A_CUR;m.userData.stage=S0;
+  m.onBeforeRender=()=>{U.uTime.value=clock;const S=m.userData.stage;if(S&&S.lampM&&S.todFlick){const f=Math.sin(clock*37)*Math.sin(clock*23.7)>.6?.35:1;S.lampM.color.setScalar(S.todLamp*(.72+.28*Math.sin(clock*1.3))*f);}};
+  return m;}
+function todApply(S){if(!S||(S.kind!=='day'&&S.kind!=='night'))return;const name=S.kind==='night'?'night':(TOD.cur==='night'?'afternoon':TOD.cur),P=TOD_P[name];S.todName=name;
+  let sky=null;S.env.traverse(o=>{if(o.userData&&o.userData.tod)sky=o;});
+  if(!S.tod0)S.tod0={fog:S.fog?{c:S.fog.color.clone(),n:S.fog.near,f:S.fog.far}:null,bg:S.bg?S.bg.clone():null};
+  let dir=S.sunDir.clone();
+  if(!P.keep){const az=P.az*Math.PI/180,el=P.el*Math.PI/180;dir.set(Math.cos(el)*Math.cos(az),Math.sin(el),Math.cos(el)*Math.sin(az));
+    S.sunDir=dir.clone();S.sunOff=dir.clone().multiplyScalar(62);S.lx=null;S.ly=null;if(S.sun){S.sun.position.copy(S.sunOff);S.sun.color.copy(LIN(P.sun));S.sun.intensity=P.sunI;if(S.sun.shadow)S.sun.shadow.radius=P.rad;}
+    S.env.traverse(o=>{if(o.isHemisphereLight){o.color.copy(LIN(P.hemiS));o.groundColor.copy(LIN(P.hemiG));o.intensity=P.hemiI*(!lowQ()&&!G3.Q.sw?.75:1);}});
+    if(S.fog){S.fog.color.copy(LIN(P.fog));S.fog.near=P.fn;S.fog.far=P.ff;}if(S.bg)S.bg=LIN(P.hor);
+    if(S.flareSrc&&S.flareSrc[0]&&S.flareSrc[0].p&&S.flareSrc.length===1)S.flareSrc[0].p.copy(dir).multiplyScalar(300);}
+  if(sky){const u=sky.material.uniforms;u.uSun.value.copy(dir);u.uSunC.value.copy(LIN(P.sunC));u.uZen.value.copy(LIN(P.zen));u.uHor.value.copy(LIN(P.hor));u.uGnd.value.copy(LIN(P.gnd));u.uHaze.value.copy(LIN(P.haze));
+    u.uBand.value.copy(LIN(P.band));u.uBandK.value=P.bandK||0;u.uCloud.value=P.cloud;u.uCLit.value.copy(LIN(P.cLit));u.uCShade.value.copy(LIN(P.cShade));u.uStars.value=P.stars;u.uSize.value=P.size;}
+  if(S.lampM){S.todFlick=!!P.flick;S.todLamp=P.lamp;if(!P.flick)S.lampM.color.setScalar(P.lamp);}
+  G3.todName=name;}
+function todSet(name){if(!TOD.order.includes(name))return;TOD.cur=name;try{localStorage.setItem('twin.tod',name);}catch(e){}G3.stage=null;const b=$('b-tod');if(b)b.textContent='Time: '+name[0].toUpperCase()+name.slice(1);}
+try{const b=$('b-tod');if(b){b.textContent='Time: '+TOD.cur[0].toUpperCase()+TOD.cur.slice(1);b.onclick=()=>{todSet(TOD.order[(TOD.order.indexOf(TOD.cur)+1)%4]);};}}catch(e){console.warn('tod ui',e);}
+window.__tod={TOD,TOD_P,todSet,todApply,get stages(){return G3.stages;}};
+const EMS={scale:1.57,cx:-5.5,cz:2.3,y0:6.3,mode:'classic',ready:false,loading:false,scene:null,box:null,building:false,err:null,url:'stadium_emirates.glb'};
+try{const v=localStorage.getItem('twin.stad');if(v==='emirates'||v==='classic')EMS.mode=v;}catch(e){}
+function emUse(kind){return EMS.mode==='emirates'&&EMS.ready&&!!EMS.scene&&(kind==='day'||kind==='night');}
+// four-step cel ramp for the stadium material
+function emRamp(){if(EMS.ramp)return EMS.ramp;const d=new Uint8Array([70,70,70,255,140,140,140,255,205,205,205,255,255,255,255,255]);const t=new THREE.DataTexture(d,4,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return EMS.ramp=t;}
+// everything of the model inside the game pitch rectangle (and under 10 m) is clipped away: its own pitch is a few huge triangles that cut through ours
+function emClip(){if(EMS.clip)return EMS.clip;const hx=PW*S3/2+3,hz=PH*S3/2+3,P=(x,y,z,c)=>new THREE.Plane(new THREE.Vector3(x,y,z),c);return EMS.clip=[P(1,0,0,-hx),P(-1,0,0,-hx),P(0,0,1,-hz),P(0,0,-1,-hz),P(0,1,0,-10)];}
+function emLoad(){if(EMS.ready||EMS.loading)return Promise.resolve(EMS.ready);EMS.loading=true;EMS.err=null;
+  return fetch(new URL(EMS.url,location.href).href).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();}).then(buf=>new Promise((ok,bad)=>{
+    if(!THREE.GLTFLoader)return bad(new Error('no GLTFLoader'));new THREE.GLTFLoader().parse(buf,'',ok,bad);})).then(g=>{
+    const root=g.scene,ramp=emRamp(),conv=new Map();
+    root.traverse(o=>{if(!o.isMesh)return;o.castShadow=false;o.receiveShadow=true;o.frustumCulled=true;
+      const ms=Array.isArray(o.material)?o.material:[o.material],out=ms.map(m=>{if(!m)return m;if(conv.has(m))return conv.get(m);
+        const t=new THREE.MeshToonMaterial({map:m.map||null,color:m.map?0xffffff:(m.color||0xffffff),gradientMap:ramp,side:THREE.DoubleSide,transparent:!!m.transparent,alphaTest:m.alphaTest||0});t.clippingPlanes=emClip();t.clipIntersection=true;
+        if(t.map){t.map.anisotropy=4;}conv.set(m,t);m.dispose();return t;});
+      o.material=Array.isArray(o.material)?out:out[0];});
+    root.updateMatrixWorld(true);EMS.box=new THREE.Box3().setFromObject(root);EMS.scene=root;EMS.ready=true;EMS.loading=false;
+    console.info('emirates stadium ready',EMS.box.min.toArray().map(v=>+v.toFixed(1)),EMS.box.max.toArray().map(v=>+v.toFixed(1)));
+    if(EMS.mode==='emirates')emRefresh();return true;}).catch(e=>{EMS.loading=false;EMS.err=String(e&&e.message||e);console.warn('emirates stadium failed, classic stays',e);return false;});}
+// drop every cached day/night stage built for the other stadium (geometry, materials, textures, env map) and make the next frame rebuild
+function emRefresh(){try{const sc=G3.scene;for(const k of ['day','night']){const S=G3.stages&&G3.stages[k];if(!S||!!S.em===emUse(k))continue;
+    if(G3.env===S.env)sc.remove(S.env);else sc.remove(S.env);gpuDisposeTree(S.env);if(S.envMap&&S.envMap.dispose)S.envMap.dispose();delete G3.stages[k];}
+  G3.stage=null;}catch(e){console.warn('emRefresh',e);}}
+function emSet(mode){EMS.mode=mode==='emirates'?'emirates':'classic';try{localStorage.setItem('twin.stad',EMS.mode);}catch(e){}
+  const b=$('b-stad');if(b)b.textContent='Stadium: '+(EMS.mode==='emirates'?(EMS.ready?'Emirates':EMS.loading?'Emirates (loading)':EMS.err?'Emirates (failed)':'Emirates'):'Classic');
+  if(EMS.mode==='emirates'&&!EMS.ready)emLoad().then(()=>emSet('emirates'));else emRefresh();}
+// builds the stage with the model: goals and corner flags from the classic stage, floodlight masts on synthetic bowl dimensions, no classic bowl or boards
+function A_stadiumEm(env,kind,S){
+  const night=kind==='night';buildGoal(env,0);buildGoal(env,1);
+  for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const x=sx*PW/2*S3,z=sz*PH/2*S3;env.add(mesh(cyl(.025,.025,1.6,6),M3('#f4f4f4'),x,.8,z));
+    const fl=new THREE.Mesh(G('flagA',()=>{const g=new THREE.PlaneGeometry(.4,.27,4,1);g.translate(.2,0,0);return g;}),M3(night?'#ffc04a':'#59e1ff',{r:.8}));fl.material.side=THREE.DoubleSide;fl.position.set(x,1.45,z);fl.userData={ph:sx*2+sz,r0:Math.atan2(-x,-z)+Math.PI/2};env.add(fl);S.cflags.push(fl);}
+  try{G3.renderer.localClippingEnabled=true;}catch(e){}const g=new THREE.Group();g.name='emirates';const m=EMS.scene.clone(true);g.add(m);
+  // the model's pitch (long axis X) is centred at raw (-5.5, 2.3) and sits 6.1 above its terrain: put that point at the game pitch centre, a hair below our pitch
+  const bx=EMS.box,size=bx.getSize(new THREE.Vector3()),ctr=bx.getCenter(new THREE.Vector3()),k=EMS.scale||1.3;
+  g.scale.setScalar(k);m.position.set(-EMS.cx,-EMS.y0,-EMS.cz);
+  env.add(g);S.emG=g;
+  const hx=size.x*k/2,hz=size.z*k/2,bw={hx:hx*.82,hz:hz*.82,rc:16,oB:6,oRi:8,roofY:Math.min(52,size.y*k*.7)};S.bw=bw;A_floods(env,kind,S,bw);
+  S.flare=A_flareMesh();env.add(S.flare);S.flareSrc=night?S.lights.map(p=>({p,i:.5})):[{p:S.sunDir.clone().multiplyScalar(300),i:.8}];
+}
+try{const b=$('b-stad');if(b){b.textContent='Stadium: '+(EMS.mode==='emirates'?'Emirates':'Classic');b.onclick=()=>emSet(EMS.mode==='emirates'?'classic':'emirates');}}catch(e){console.warn('stad ui',e);}
+if(EMS.mode==='emirates')setTimeout(()=>emLoad(),2500);
+window.__ems={EMS,emSet,emLoad,emRefresh};
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
