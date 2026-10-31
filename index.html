@@ -331,6 +331,7 @@ button{font:inherit;cursor:pointer}
         <button class="btn primary" id="b-resume">Resume</button>
         <button class="btn" id="b-subs">Substitutions</button>
         <button class="btn" id="b-controls">Controls</button>
+        <button class="btn" id="b-dapcast">Dap cast</button>
         <button class="btn" id="b-mlen">Match length</button>
         <button class="btn" id="b-restart">Restart chapter</button>
         <button class="btn" id="b-title">Title screen</button>
@@ -346,6 +347,16 @@ button{font:inherit;cursor:pointer}
       <p id="sb-hint">Pick a player on the pitch, then a player on the bench. Low stamina makes players slower.</p>
       <div class="subgrid"><div><h3>On the pitch</h3><div id="sb-on" class="sblist"></div></div><div><h3>Bench</h3><div id="sb-off" class="sblist"></div></div></div>
       <div class="row"><button class="btn primary" id="sb-done">Back</button></div>
+    </div>
+  </div>
+
+  <div id="dapcast" class="overlay" hidden>
+    <div class="card howcard">
+      <div class="eyebrow">Dap Shot</div>
+      <h2>Cast</h2>
+      <p>Choose who plays each part in the Dap Shot cutscene. Match play is not affected.</p>
+      <div id="dc-body" class="hgrid"></div>
+      <div class="row"><button class="btn" id="dc-reset">Default cast</button><button class="btn primary" id="dc-close">Done</button></div>
     </div>
   </div>
 
@@ -13921,7 +13932,7 @@ function d5Band(k){const H=k.head,m=k.band;if(!H||!m)return;const q=H.getWorldQu
   m.position.copy(H.getWorldPosition(new THREE.Vector3())).addScaledVector(up,D5.bandUp).addScaledVector(fw,.01);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),up);m.scale.set(1.05,.95,1);}
 // the two defenders as Darai Miroku #4 (dark green-black hair, headband) and Hayate Haru #7 (spiky blonde) for the length of the cut
 const D5_DEF=[{st:'straight',hair:'#386159',band:'#e8e8ea',eye:'#333833'},{st:'messy',hair:'#e0d99e',eye:'#949e38'}];
-function d5Defs(c,on){c.D.forEach((d,i)=>{const a=fxActor(d.o),L=D5_DEF[i];if(!a||!a.nMesh||!L)return;const U=a.nMat&&a.nMat.userData&&a.nMat.userData.nU;
+function d5Defs(c,on){c.D.forEach((d,i)=>{const a=fxActor(d.o),L=D5_DEF[i];if(!a||!a.nMesh||!L||(c.castDef&&c.castDef[i]))return;const U=a.nMat&&a.nMat.userData&&a.nMat.userData.nU;
   if(on){if(a.__d5d)return;const k=a.__d5d={geo:a.nMesh.geometry,olg:a.nOl&&a.nOl.geometry,hair:U&&U.nHair?U.nHair.value.clone():null,ref:U&&U.nHairRef?U.nHairRef.value:null,eye:U&&U.nEye?U.nEye.value.clone():null};
     const g=N.geo&&N.geo[L.st];if(g&&!(a.design&&a.design.model)){a.nMesh.geometry=g;if(a.nOl)a.nOl.geometry=g;}
     if(U){if(U.nHair)U.nHair.value=NLIN(L.hair);if(U.nHairRef&&N.hairRef&&N.hairRef[L.st])U.nHairRef.value=N.hairRef[L.st];if(U.nEye)U.nEye.value=NLIN(L.eye);}
@@ -14610,6 +14621,25 @@ function gpuDisposeTree(root){const n={g:0,m:0,t:0};if(!root)return n;const seen
   });}catch(e){console.warn('dispose tree',e);}
   window.__disposed=(window.__disposed||0)+n.g+n.m+n.t;return n;}
 window.__gpuDispose=gpuDisposeTree;
+const DAPC={key:'twin.dapcast',roles:[['star','Star (Nagi\'s part)'],['rival1','Rival 1 (Darai\'s part)'],['rival2','Rival 2 (Hayate\'s part)'],['passer','Passer (first shot)']]};
+function dapCastGet(){let c={};try{c=JSON.parse(localStorage.getItem(DAPC.key)||'{}')||{};}catch(e){}const o={};for(const [k] of DAPC.roles){const v=c[k];o[k]=typeof v==='string'&&DESIGNS[v]?v:'';}return o;}
+function dapCastSet(o){try{localStorage.setItem(DAPC.key,JSON.stringify(o));}catch(e){}}
+function dapCastOptions(){return ROSTER.map(k=>[k,DESIGNS[k]]).filter(([k,d])=>d&&d.name&&d.num!==''&&d.num!=null&&!/coach/i.test(d.role||'')).map(([k,d])=>[k,d.name+' #'+d.num]);}
+function dapCastUI(){const body=$('dc-body');if(!body)return;const cur=dapCastGet(),opts=dapCastOptions();body.innerHTML='';
+  for(const [k,label] of DAPC.roles){const sec=document.createElement('div');sec.className='hsec';const h=document.createElement('h3');h.textContent=label;sec.append(h);
+    const sel=document.createElement('select');sel.id='dc-'+k;sel.style.cssText='width:100%;padding:8px;background:#0b1424;color:#eaf3ff;border:1px solid #2a4a7a;border-radius:6px;font:inherit';
+    const d0=document.createElement('option');d0.value='';d0.textContent='Default';sel.append(d0);
+    for(const [v,t] of opts){const o=document.createElement('option');o.value=v;o.textContent=t;if(cur[k]===v)o.selected=true;sel.append(o);}
+    sel.onchange=()=>{const n=dapCastGet();n[k]=sel.value;dapCastSet(n);};sec.append(sel);body.append(sec);}}
+$('b-dapcast').onclick=()=>{dapCastUI();$('dapcast').hidden=false;};
+$('dc-close').onclick=()=>{$('dapcast').hidden=true;};
+$('dc-reset').onclick=()=>{dapCastSet({});dapCastUI();};
+// apply at the start of the cutscene, undo at its end; the actors are rebuilt for the new design the next time they are drawn
+{const _su=startUltCine;startUltCine=function(){const r=_su.apply(this,arguments);try{const c=M&&M.cine;if(c&&c.type==='ult'&&c.v===5&&!c.castBack){const cast=dapCastGet(),back=[];c.castDef=[];
+    const put=(p,key,i)=>{if(!p||!key||!DESIGNS[key]||p.design===key)return false;back.push([p,p.design,p.num]);p.design=key;const n=DESIGNS[key].num;if(n!==''&&n!=null)p.num=n;return true;};
+    put(c.u,cast.star);put(c.mate,cast.passer);c.D.forEach((d,i)=>{c.castDef[i]=put(d.o,i?cast.rival2:cast.rival1);});
+    c.castBack=back;if(back.length)window.__dapCast=back.map(b=>b[0].design);}}catch(e){console.warn('dap cast',e);}return r;};}
+{const _ue=ultEnd;ultEnd=function(c){try{if(c&&c.castBack){for(const [p,d,n] of c.castBack){p.design=d;p.num=n;}c.castBack=null;}}catch(e){console.warn('dap cast undo',e);}return _ue.apply(this,arguments);};}
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
