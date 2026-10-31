@@ -9100,11 +9100,11 @@ function abFingers(c,k,cu,pt,th){const S=k?'RightHand':'LeftHand',B=c.bones,q=ab
     for(let j=1;j<=3;j++){const n=S+abFNG[f]+j,b=B[n];if(!b)continue;q.setFromAxisAngle(abG.vX,a*abFJ[j-1]*1.75);b.quaternion.copy(RIG.restLocal[n]).multiply(q);}}
   for(let j=1;j<=3;j++){const n=S+'Thumb'+j,b=B[n];if(!b)continue;q.setFromAxisAngle(abG.vX,th*[.35,.55,.5][j-1]);b.quaternion.copy(RIG.restLocal[n]).multiply(q);}}
 function abApplyRig(c){
-  const rd=abG.rd;if(!rd||!rd.ok||!c.bones)return;if(!c.abQ)c.abQ={};
+  const rd=abG.rd;if(!rd||!rd.ok||!c.bones)return;if(!c.abQ)c.abQ={};if(!c.sgn&&!c.sgnBusy)autoCalibrateRigSigns(THREE,c);const SG=c.sgn||abSG1;
   const s=c.ab,q=abG.q,E=abG.e,h=c.hips.rotation,sp=c.spine.rotation,hd=c.head.rotation;
   const DH=q[0],DY=q[1],T=q[2],U=q[3],DS=q[4],DC=q[5],DA=q[6],DF=q[7],DL=q[8],D2=q[9];
   DH.setFromEuler(E.set(h.x,h.y,h.z,'YXZ'));abSet(c,'Hips',DH);DY.setFromAxisAngle(abG.vY,h.y);
-  for(let i=0;i<3;i++){const f=abSPF[i];T.setFromEuler(E.set(sp.x*f,sp.y*f,sp.z*f,'YXZ'));DS.multiplyQuaternions(DH,T);abSet(c,abSPN[i],DS);}
+  for(let i=0;i<3;i++){const f=abSPF[i];T.setFromEuler(E.set(sp.x*f*SG.spine,sp.y*f,sp.z*f,'YXZ'));DS.multiplyQuaternions(DH,T);abSet(c,abSPN[i],DS);}
   T.setFromEuler(E.set(hd.x*.4,hd.y*.4,hd.z*.4,'YXZ'));U.multiplyQuaternions(DS,T);abSet(c,'Neck',U);abFollow(c,'Neck1');abFollow(c,'Neck2');
   T.setFromEuler(E.set(hd.x,hd.y,hd.z,'YXZ'));U.multiplyQuaternions(DS,T);abSet(c,'Head',U);
   // eyes: skipped for good if another package drives the eye bones (their quaternion changed since our last write); gaze stays in c.ab.eyY/eyP
@@ -9119,8 +9119,8 @@ function abApplyRig(c){
       const fk=s?(s.fistK||0):0,sc=1+.22*fk,ln=1-.4*fk;const v=[sc,sc,sc];v[c.fax]=ln;hb.scale.set(v[0],v[1],v[2]);}}
     if(!s||s.lod<2)abFingers(c,k,s?s.cu[k]:.35,s?s.pt[k]:0,s?s.th[k]:.3);}
   for(let k=0;k<2;k++){const S=k?'Right':'Left',l=k?c.legR:c.legL,lr=l.leg.rotation,br=l.boot.rotation;
-    T.setFromEuler(E.set(lr.x,lr.y,lr.z,'ZXY'));U.multiplyQuaternions(DY,T);abSet(c,S+'UpLeg',U);
-    T.setFromAxisAngle(abG.vX,l.knee.rotation.x);DL.multiplyQuaternions(U,T);abSet(c,S+'Leg',DL);
+    T.setFromEuler(E.set(lr.x*SG.hip,lr.y,lr.z,'ZXY'));U.multiplyQuaternions(DY,T);abSet(c,S+'UpLeg',U);
+    T.setFromAxisAngle(abG.vX,l.knee.rotation.x*SG.knee);DL.multiplyQuaternions(U,T);abSet(c,S+'Leg',DL);
     T.setFromEuler(E.set(br.x,br.y,br.z-lr.z*.85,'YXZ'));D2.multiplyQuaternions(DL,T);abSet(c,S+'Foot',D2);
     T.setFromAxisAngle(abG.vX,-(s?s.toe[k]:0));U.multiplyQuaternions(D2,T);abSet(c,S+'ToeBase',U);}
   c.holder.position.set(c.hips.position.x,c.baseY+(c.hips.position.y-.92),c.hips.position.z);
@@ -14496,6 +14496,7 @@ const dbgText=()=>{const m=M,u=m&&m.user,b=m&&m.ball;if(!m)return 'no match';con
   if(b)L.push('ball '+fmt(b.x)+','+fmt(b.y)+' h '+fmt(b.h)+' v '+fmt(b.vx)+','+fmt(b.vy)+' owner '+(b.owner?(b.owner.num||'?')+(b.owner.isGK?'(GK)':''):'-')+' target '+(b.target?(b.target.num||'?'):'-'));
   if(g)L.push('opp GK '+fmt(g.x)+','+fmt(g.y)+' hold '+fmt(g.hold)+' dive '+fmt(g.diveT)+' dist '+(g.dk?g.dk.k+'@'+fmt(g.dk.t):'-'));
   try{const r=G3&&G3.renderer;if(r){const i=r.info;L.push('gl calls '+i.render.calls+' tris '+i.render.triangles+' geo '+i.memory.geometries+' tex '+i.memory.textures+(window.__leak?'  LEAK? '+window.__leak:''));}if(window.__errlog&&window.__errlog.length)L.push('last error: '+window.__errlog[window.__errlog.length-1]);L.push('nan fixes '+(window.__nanFix||0)+'  gl lost '+(window.__glLost||0));}catch(e){}
+  try{const q=window.__calib||[];if(q.length){const bad=q.filter(o=>!o.ok||o.hip<0||o.knee<0||o.spine<0).length;L.push('rig calib '+q.length+' rigs, flipped/unsure '+bad);}}catch(e){}
   return L.join('\n');};
 {try{const el=document.createElement('pre');el.id='dbgOv';el.style.cssText='position:fixed;left:8px;top:64px;z-index:99999;margin:0;padding:6px 8px;font:11px/1.35 monospace;color:#9fffd0;background:rgba(0,0,0,.72);pointer-events:none;display:none;max-width:60vw;white-space:pre;overflow:hidden';document.body.appendChild(el);
   let on=false,acc=0,last=performance.now(),fps=0;window.__dbgText=dbgText;
@@ -14512,6 +14513,57 @@ window.addEventListener('unhandledrejection',e=>{window.__errlog.push('promise: 
 {const hist=[];setInterval(()=>{try{const r=G3&&G3.renderer;if(!r)return;const m=r.info.memory,n=m.geometries+m.textures;hist.push(n);if(hist.length>8)hist.shift();
   if(hist.length>=8&&hist.every((v,i)=>i===0||v>=hist[i-1])&&hist[7]-hist[0]>40){if(!window.__leak)console.warn('possible GPU leak: geometries+textures grew by',hist[7]-hist[0]);window.__leak='+'+(hist[7]-hist[0]);}else window.__leak=0;}catch(e){}},2000);}
 
+const abSG1={hip:1,knee:1,spine:1};
+window.__calib=[];
+// Convention (matches every pose table and baked curve): forward leg = NEGATIVE hip pitch, knee bend = POSITIVE (shin swings back),
+// forward spine lean = POSITIVE. The probe drives each channel on the real skeleton, measures where the foot/head go along the
+// character's own forward axis (toe minus ankle at rest) and stores +1/-1 per channel in c.sgn. opts.sim = {hip,knee,spine} (-1) fakes an
+// inverted rig for testing the detector. Bones and proxies are restored exactly afterwards.
+function autoCalibrateRigSigns(THREE_,c,opts){
+  const out={hip:1,knee:1,spine:1,ok:false,d:{}};
+  try{
+    if(!c||!c.bones||!c.holder||!abG.rd||!abG.rd.ok){c.sgn=out;return out;}
+    c.sgnBusy=true;c.sgn={hip:1,knee:1,spine:1};
+    const sim=Object.assign({hip:1,knee:1,spine:1},(opts&&opts.sim)||{}),B=c.bones;
+    const names=Object.keys(B),saveQ=names.map(n=>B[n].quaternion.clone()),saveP=c.holder.position.clone();
+    const px=[c.hips.rotation,c.spine.rotation,c.head.rotation,c.legL.leg.rotation,c.legR.leg.rotation,c.legL.knee.rotation,c.legR.knee.rotation,c.legL.boot.rotation,c.legR.boot.rotation].map(r=>r.clone());
+    const saveEye=c.abEyeQ?c.abEyeQ.clone():null,eyeOff=c.abEyeOff;
+    const prs=[c.hips.rotation,c.spine.rotation,c.head.rotation,c.legL.leg.rotation,c.legR.leg.rotation,c.legL.knee.rotation,c.legR.knee.rotation,c.legL.boot.rotation,c.legR.boot.rotation];
+    const inv=new THREE_.Matrix4(),v=new THREE_.Vector3(),hp=new THREE_.Vector3();
+    const at=n=>{const b=B[n];if(!b)return null;b.getWorldPosition(v);return v.clone().applyMatrix4(inv);};
+    const run=(hip,kn,sp)=>{prs.forEach(r=>r.set(0,0,0));
+      c.legL.leg.rotation.x=c.legR.leg.rotation.x=hip*sim.hip;c.legL.knee.rotation.x=c.legR.knee.rotation.x=kn*sim.knee;c.spine.rotation.x=sp*sim.spine;
+      abApplyRig(c);c.holder.updateWorldMatrix(true,true);inv.copy(c.holder.matrixWorld).invert();
+      return {foot:at('LeftFoot'),knee:at('LeftLeg'),head:at('Head'),toe:at('LeftToeBase'),hipL:at('LeftUpLeg'),hipR:at('RightUpLeg')};};
+    const base=run(0,0,0);
+    let fw=null;
+    if(base.toe&&base.foot){fw=base.toe.clone().sub(base.foot);fw.y=0;}
+    if((!fw||fw.lengthSq()<1e-6)&&base.hipL&&base.hipR){fw=new THREE_.Vector3().crossVectors(base.hipL.clone().sub(base.hipR),new THREE_.Vector3(0,1,0));fw.y=0;}
+    if(fw&&fw.lengthSq()>1e-6){
+      fw.normalize();
+      const a=run(-.6,0,0),b2=run(0,.9,0),d3=run(0,0,.5);
+      const dh=a.foot.clone().sub(base.foot).dot(fw);           // forward hip swing must move the ankle forward
+      const dk=b2.foot.clone().sub(base.foot).dot(fw);          // knee bend must swing the ankle back
+      const ds=d3.head.clone().sub(base.head).dot(fw);          // positive spine pitch must lean the head forward
+      out.d={hip:+dh.toFixed(3),knee:+dk.toFixed(3),spine:+ds.toFixed(3)};
+      const eps=.01;let ok=true;
+      if(Math.abs(dh)>eps)out.hip=dh>0?1:-1;else ok=false;
+      if(Math.abs(dk)>eps)out.knee=dk<0?1:-1;else ok=false;
+      if(Math.abs(ds)>eps)out.spine=ds>0?1:-1;else ok=false;
+      out.ok=ok;
+    }
+    // restore everything exactly
+    names.forEach((n,i)=>B[n].quaternion.copy(saveQ[i]));c.holder.position.copy(saveP);
+    prs.forEach((r,i)=>r.copy(px[i]));
+    if(saveEye)c.abEyeQ.copy(saveEye);c.abEyeOff=eyeOff;
+    c.holder.updateMatrixWorld(true);
+    c.sgn={hip:out.hip,knee:out.knee,spine:out.spine};
+    c.sgnBusy=false;
+  }catch(e){c.sgnBusy=false;c.sgn=c.sgn||{hip:1,knee:1,spine:1};out.err=String(e&&e.message||e);if(window.__errlog)window.__errlog.push('calibrate: '+out.err);}
+  window.__calibLast=c;out.name=(c.design&&c.design.name)||'?';
+  const L=window.__calib;L.push(out);if(L.length>80)L.shift();
+  return out;}
+window.autoCalibrateRigSigns=autoCalibrateRigSigns;
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
