@@ -6076,7 +6076,7 @@ function setStage(kind){
 // ---------- actors ----------
 function getActor(key,design,kit){
   let a=G3.actors.get(key);
-  const dk=design.name+JSON.stringify(kit)+RIG.ready+(typeof N!=='undefined'&&N.cm?Object.keys(N.cm).length:0);if(!a||a.dkey!==dk){if(a)G3.scene.remove(a.root);a=RIG.ready?buildRigCharacter(design,kit):buildCharacter(design,kit);a.dkey=dk;G3.scene.add(a.root);G3.actors.set(key,a);}
+  const dk=design.name+JSON.stringify(kit)+RIG.ready+(typeof N!=='undefined'&&N.cm?Object.keys(N.cm).length:0);if(!a||a.dkey!==dk){if(a){G3.scene.remove(a.root);gpuDisposeTree(a.root);}a=RIG.ready?buildRigCharacter(design,kit):buildCharacter(design,kit);a.dkey=dk;G3.scene.add(a.root);G3.actors.set(key,a);}
   a.design=design;a.root.visible=true;a.used=true;return a;
 }
 function beginActors(){for(const a of G3.actors.values())a.used=false;}
@@ -7908,7 +7908,7 @@ function crSaveCur(){const c={...CRD};delete c.dirty;delete c.d;delete c.tb;c.na
   CRD={...c,dirty:false};crStore();crRegister();crUI();$('cr-note').textContent=c.name+' saved. They join your team in every match.';}
 function renderCreator(dt){
   G3.active=false;setStage('roster');beginActors();
-  if(CRD.dirty&&clock-(CRD.tb||0)>.12){CRD.dirty=false;CRD.tb=clock;const o=G3.actors.get('creator');if(o){G3.scene.remove(o.root);G3.actors.delete('creator');}CRD.d=crDesign(CRD);}
+  if(CRD.dirty&&clock-(CRD.tb||0)>.12){CRD.dirty=false;CRD.tb=clock;const o=G3.actors.get('creator');if(o){G3.scene.remove(o.root);gpuDisposeTree(o.root);G3.actors.delete('creator');}CRD.d=crDesign(CRD);}
   const d=CRD.d||(CRD.d=crDesign(CRD));const a=getActor('creator',d,{...KITS.kuro,num:CRD.num});a.root.position.set(0,0,0);
   G3.rosterYaw=(G3.rosterYaw||0)+dt*.5;a.root.rotation.y=G3.dbgYaw!=null?G3.dbgYaw:G3.rosterYaw;animChar(a,{pose:null},dt,G3.dbgSpd||0);
   endActors();if(G3.mark){for(const k of ['r','k','m','ar'])G3.mark[k].visible=false;}G3.ball.position.set(0,-5,0);
@@ -8441,7 +8441,7 @@ function A_pre(dt,CM){
 // ---------- A: stage cache ----------
 function A_setStage(kind){
   A_tmp();const sc=G3.scene;if(!G3.stages)G3.stages={};if(G3.env)sc.remove(G3.env);
-  const qk=lowQ()?'L':'H';let S=G3.stages[kind];if(!S||S.qk!==qk){S=A_build(kind);S.qk=qk;G3.stages[kind]=S;}
+  const qk=lowQ()?'L':'H';let S=G3.stages[kind];if(!S||S.qk!==qk){if(S){try{sc.remove(S.env);gpuDisposeTree(S.env);if(S.envMap&&S.envMap.dispose)S.envMap.dispose();}catch(e){console.warn('stage dispose',e);}}S=A_build(kind);S.qk=qk;G3.stages[kind]=S;}
   G3.env=S.env;sc.add(S.env);sc.background=S.bg;sc.fog=S.fog;sc.environment=S.envMap||null;
   G3.sun=S.sun;G3.sunOff=S.sunOff;G3.crowd=S.crowd||null;if(G3.blobs)G3.blobs.count=0;S.bPrev=null;
 }
@@ -14496,6 +14496,7 @@ const dbgText=()=>{const m=M,u=m&&m.user,b=m&&m.ball;if(!m)return 'no match';con
   if(g)L.push('opp GK '+fmt(g.x)+','+fmt(g.y)+' hold '+fmt(g.hold)+' dive '+fmt(g.diveT)+' dist '+(g.dk?g.dk.k+'@'+fmt(g.dk.t):'-'));
   try{const r=G3&&G3.renderer;if(r){const i=r.info;L.push('gl calls '+i.render.calls+' tris '+i.render.triangles+' geo '+i.memory.geometries+' tex '+i.memory.textures+(window.__leak?'  LEAK? '+window.__leak:''));}if(window.__errlog&&window.__errlog.length)L.push('last error: '+window.__errlog[window.__errlog.length-1]);L.push('nan fixes '+(window.__nanFix||0)+'  gl lost '+(window.__glLost||0));}catch(e){}
   try{const q=window.__calib||[];if(q.length){const bad=q.filter(o=>!o.ok||o.hip<0||o.knee<0||o.spine<0).length;L.push('rig calib '+q.length+' rigs, flipped/unsure '+bad);}}catch(e){}
+  try{L.push('disposed '+(window.__disposed||0)+' GPU objects');}catch(e){}
   return L.join('\n');};
 {try{const el=document.createElement('pre');el.id='dbgOv';el.style.cssText='position:fixed;left:8px;top:64px;z-index:99999;margin:0;padding:6px 8px;font:11px/1.35 monospace;color:#9fffd0;background:rgba(0,0,0,.72);pointer-events:none;display:none;max-width:60vw;white-space:pre;overflow:hidden';document.body.appendChild(el);
   let on=false,acc=0,last=performance.now(),fps=0;window.__dbgText=dbgText;
@@ -14595,6 +14596,20 @@ function warmRun(next){
   if(kind==='trial'||!M||window.__warmSeen||M.noWarm){window.__flow.push('howto:'+kind);return _sh.apply(this,arguments);}
   const a=arguments;warmRun(()=>{mode='match';window.__flow.push('howto:'+a[0]);_sh.apply(null,a);});};}
 CHAPTERS[0].start=()=>{startMatch(1);M.warmPending=false;warmRun(()=>playCutscene(SC.prologue,()=>{window.__flow.push('prologue-end');mode='match';showHowTo('duo');}));};
+// dispose is always safe in three.js: anything still in use is simply re-uploaded on the next draw
+function gpuDisposeTree(root){const n={g:0,m:0,t:0};if(!root)return n;const seen=new Set();
+  const tex=v=>{if(v&&v.isTexture&&!seen.has(v)){seen.add(v);try{v.dispose();}catch(e){}n.t++;}};
+  try{root.traverse(o=>{
+    if(o.geometry&&!seen.has(o.geometry)){seen.add(o.geometry);o.geometry.dispose();n.g++;}
+    if(o.isSkinnedMesh&&o.skeleton&&!seen.has(o.skeleton)){seen.add(o.skeleton);try{o.skeleton.dispose();}catch(e){}}
+    const ms=Array.isArray(o.material)?o.material:o.material?[o.material]:[];
+    for(const m of ms){if(!m||seen.has(m))continue;seen.add(m);for(const k in m)tex(m[k]);
+      if(m.uniforms)for(const k in m.uniforms)tex(m.uniforms[k]&&m.uniforms[k].value);
+      if(m.userData&&m.userData.dzU)for(const k in m.userData.dzU)tex(m.userData.dzU[k]&&m.userData.dzU[k].value);
+      m.dispose();n.m++;}
+  });}catch(e){console.warn('dispose tree',e);}
+  window.__disposed=(window.__disposed||0)+n.g+n.m+n.t;return n;}
+window.__gpuDispose=gpuDisposeTree;
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
