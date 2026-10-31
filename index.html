@@ -13768,7 +13768,7 @@ function ultUpdate(c,dt){
   // keep everyone else out of the shots
   for(const p of M.players){if(p===u||p===mate||p.isGK||p.off||c.D.some(d=>d.o===p))continue;const dx=p.x-c.O.x,dy=p.y-c.O.y,l=Math.hypot(dx,dy)||1;if(l<420){p.x+=dx/l*Math.min(420-l,dt*500);p.y+=dy/l*Math.min(420-l,dt*500);}}
   // lines (spoken where there is a voice; Nagi's own words come from the real clip)
-  for(const [ts,off,du,txt] of D5_VO){const key='vo'+ts;if(t>=ts&&!S[key]){S[key]=1;vcSeg('hello',off,du);}}
+  for(const [ts,off,du,txt] of D5_VO){const key='vo'+ts;if(t>=ts&&!S[key]){S[key]=1;if(c.u&&c.u.design!=='ren')dapVoCast(c,txt);else vcSeg('hello',off,du);}}
   for(const L5 of D5_SUBS){const key='sb'+L5[0];if(t>=L5[0]&&!S[key]){S[key]=1;if(L5[4])voxSay(L5[2],'Defender');}}
   if(t>=D5_END){c.t=D5_END;endCine();}
 }
@@ -13887,11 +13887,11 @@ function ultOv(c,s){if(c.v!==5)return;const t=c.t,T=D5T;
   // split-screen dividers, slanted like the anime's
   const P=c.panels;if(P&&P.length>1){const n=P.length,w=W/n;ctx.save();ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(4,W*.006);for(let i=1;i<n;i++){ctx.beginPath();ctx.moveTo(i*w+10,0);ctx.lineTo(i*w-10,H);ctx.stroke();}ctx.restore();}
   letterbox(t+.3,null);
-  if(t>=T.run&&t<T.run+2.4){const k=clamp((t-T.run)/.2,0,1)*clamp((T.run+2.4-t)/.2,0,1);if(k>0){ctx.save();ctx.globalAlpha=k;smallText('Darai Miroku #4   Hayate Haru #7   Fukaku Gen #1',W/2,H*.8,11*s+3,'#eef3f8','center',FB,600);ctx.restore();}}
+  if(t>=T.run&&t<T.run+2.4){const k=clamp((t-T.run)/.2,0,1)*clamp((T.run+2.4-t)/.2,0,1);if(k>0){ctx.save();ctx.globalAlpha=k;smallText(dapCard(c),W/2,H*.8,11*s+3,'#eef3f8','center',FB,600);ctx.restore();}}
   if(t>=T.split&&t<T.net){const w=W/3,k1=clamp((t-12.8)/.12,0,1)*clamp((13.95-t)/.1,0,1),k2=clamp((t-13.95)/.1,0,1)*clamp((T.net-t)/.1,0,1);
     if(k1>0){ctx.save();ctx.globalAlpha=k1;fxInkText("I won't let you shoot.",w*.5,H*.2,Math.min(26*s,w/9),'#ffffff',{rot:-.05});ctx.restore();}
     if(k2>0){ctx.save();ctx.globalAlpha=k2;fxInkText('Nope.',w*1.5,H*.8,lerp(10,Math.min(40*s,w/5),fxBackE(clamp((t-13.95)/.25,0,1))),'#ffffff',{rot:-.04});ctx.restore();}}
-  for(const L5 of D5_SUBS){if(L5[0]>=12.7&&L5[0]<15.2)continue;const k=clamp((t-L5[0])/.12,0,1)*clamp((L5[1]-t)/.12,0,1);if(k>0)d5Sub(L5[2],L5[3],k,s);}
+  for(const L5 of dapSubs(c)){if(L5[0]>=12.7&&L5[0]<15.2)continue;const k=clamp((t-L5[0])/.12,0,1)*clamp((L5[1]-t)/.12,0,1);if(k>0)d5Sub(L5[2],L5[3],k,s);}
   if(t>17.95&&!c.snd.o1){c.snd.o1=1;fxOno('GYU',W*.66,H*.4,{size:Math.min(48*s,W/10),life:1.0,rot:-.06,shake:0});}
   if(t>21.85&&!c.snd.o2){c.snd.o2=1;fxOno('PON',W*.62,H*.36,{size:Math.min(44*s,W/11),life:.9,rot:.06,shake:0});}
   if(t>T.eye&&t<T.ballP)d5Eye(c,t);
@@ -14640,6 +14640,16 @@ $('dc-reset').onclick=()=>{dapCastSet({});dapCastUI();};
     put(c.u,cast.star);put(c.mate,cast.passer);c.D.forEach((d,i)=>{c.castDef[i]=put(d.o,i?cast.rival2:cast.rival1);});
     c.castBack=back;if(back.length)window.__dapCast=back.map(b=>b[0].design);}}catch(e){console.warn('dap cast',e);}return r;};}
 {const _ue=ultEnd;ultEnd=function(c){try{if(c&&c.castBack){for(const [p,d,n] of c.castBack){p.design=d;p.num=n;}c.castBack=null;}}catch(e){console.warn('dap cast undo',e);}return _ue.apply(this,arguments);};}
+function dapWho(p,fb){const d=p&&DESIGNS[p.design];if(!d||!d.name)return {full:fb,last:fb,label:String(fb).toUpperCase(),key:null};const w=String(d.name).trim().split(/\s+/),CALL=['Isagi','Nagi','Rin','Sae','Bachira','Chigiri','Barou','Reo','Kunigami','Hiori','Raichi','Niko','Aryu','Gagamaru','Karasu','Yukimiya','Otoya','Shidou','Oliver','Darai','Hayate','Niou','Fukaku','Zantetsu','Tokimitsu','Kurona','Sendou'],nm=w.find(x=>CALL.includes(x))||w[w.length-1];return {full:d.name,last:nm,label:nm.toUpperCase(),key:p.design,num:d.num};}
+// subtitle table for this cutscene: speaker tags and the self-introduction use the players actually cast
+function dapSubs(c){if(c.subsDyn)return c.subsDyn;const st=dapWho(c.u,'Nagi'),pa=dapWho(c.mate,'Isagi');
+  return c.subsDyn=D5_SUBS.map(L=>{let [a,b,txt,who,v]=L;if(who==='NAGI')who=st.label;else if(who==='ISAGI')who=pa.label;
+    txt=txt.replace('"Nagi Seishiro!"','"'+st.full+'!"').replace('"Nagi!"','"'+st.last+'!"');return [a,b,txt,who,v];});}
+// rival name card: the cast rivals when swapped, otherwise the usual Darai and Hayate
+function dapCard(c){const nm=(i,dflt)=>{if(c.castDef&&c.castDef[i]){const w=dapWho(c.D[i].o,dflt);return w.full+(w.num!=null&&w.num!==''?' #'+w.num:'');}return dflt;};
+  return nm(0,'Darai Miroku #4')+'   '+nm(1,'Hayate Haru #7')+'   Fukaku Gen #1';}
+// a swapped star has no recorded clip: the lines are spoken by the browser voice, with his own name at the end
+function dapVoCast(c,txt){try{const st=dapWho(c.u,'Nagi');voxSay(String(txt).replace('Nagi Seishiro!',st.full+'!'),'cast',true);}catch(e){}}
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
