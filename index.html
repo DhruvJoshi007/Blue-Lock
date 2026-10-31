@@ -5245,7 +5245,7 @@ function updateMatchBase(dt){if(M&&M.live&&mode==='match')dt*=.6;
     const sp=u.speed*(adaptOn()?ADAPT.FAST:1)*(M.flow?1.15:1)*(u.boostT>0?1.22:1)*(M.rd?RD_K.mul:1)*(b.owner===u?(sprinting()?1.48*physT(u).sprK:.78):(sprinting()?1.6*physT(u).sprK:.5))*physSF(u);u.dribCd-=dt;
     if(u.lungeT>0){u.lungeT-=dt;const dm=Math.pow(.03,dt);u.vx*=dm;u.vy*=dm;const oo=b.owner;if(oo&&oo.team!==u.team&&dist(u,oo)<(M.flowWoke?62:48)){const fc=((oo.x-u.x)*u.fx+(oo.y-u.y)*u.fy)>-12;const ok=tryTackle(u,oo,(M.ch===6?.92:.62)*(fc?1:.6));u.lungeT=0;if(ok){if(M.ch===6){startDefenseCine(u,'TACKLE');return;}}else{u.fall=.18;}}}else{const am=Math.hypot(ax.x,ax.y),sv=Math.hypot(u.vx,u.vy);
       if(!(u.plantT>0)&&sv>u.speed*1.05&&am>.3&&(ax.x*u.vx+ax.y*u.vy)/(am*sv)<-.45){u.plantT=.4;u.slideT=clock;}
-      const pl=u.plantT>0;if(pl)u.plantT-=dt;const SD=sprintCtl(u,am,dt),mv=am>.05&&!pl,k=1-Math.exp(-dt*(pl?6:mv?SD.k*MOVE.f:12*MOVE.d));{const ovx=u.vx,ovy=u.vy;u.vx+=((pl?0:ax.x*sp*SD.m)-u.vx)*k;u.vy+=((pl?0:ax.y*sp*SD.m)-u.vy)*k;if(!pl)physLimit(u,ovx,ovy,dt);}}
+      const pl=u.plantT>0;if(pl)u.plantT-=dt;const SD=sprintCtl(u,am,dt),mv=am>.05&&!pl,k=1-Math.exp(-dt*(pl?6*(1-(window.__spec?window.__spec.skid:.4)):mv?SD.k*MOVE.f:12*MOVE.d));{const ovx=u.vx,ovy=u.vy;u.vx+=((pl?0:ax.x*sp*SD.m)-u.vx)*k;u.vy+=((pl?0:ax.y*sp*SD.m)-u.vy)*k;if(!pl)physLimit(u,ovx,ovy,dt);}}
     if(!tankMode()&&Math.hypot(ax.x,ax.y)>.2){const m=Math.hypot(ax.x,ax.y);u.fx=ax.x/m;u.fy=ax.y/m;}
     if(b.owner===u){
       if(hit('ult')&&ultState()===2){if(aimBegin(u,0,'ult'))return;startUltCine();return;}
@@ -5286,11 +5286,11 @@ function updateMatchBase(dt){if(M&&M.live&&mode==='match')dt*=.6;
     }
   }
   // integrate
-  koHold();rdTick(dt);
+  koHold();rdTick(dt);dribAware(dt);
   for(const p of M.players){if(p.off)continue;p.x+=p.vx*dt;p.y+=p.vy*dt;p.x=clamp(p.x,8,PW-8);p.y=clamp(p.y,8,PH-8);const v=Math.hypot(p.vx,p.vy);const r=Math.min(1.6,v/p.speed);physSync(p);p.stam=physStam(p,v,dt,r);if(!p.isUser&&!p.isGK&&v>25){const kf=Math.min(1,dt*9);p.fx+=(p.vx/v-p.fx)*kf;p.fy+=(p.vy/v-p.fy)*kf;const fl2=Math.hypot(p.fx,p.fy)||1;p.fx/=fl2;p.fy/=fl2;}if(p.isGK&&!(p.diveT>0)){const bx=M.ball.x-p.x,by=M.ball.y-p.y,bl=Math.hypot(bx,by)||1;let tx=p.team.dir,ty=clamp(by/bl,-.55,.55);const tl=Math.hypot(tx,ty);tx/=tl;ty/=tl;const kk=Math.min(1,dt*6);p.fx+=(tx-p.fx)*kk;p.fy+=(ty-p.fy)*kk;const fl=Math.hypot(p.fx,p.fy)||1;p.fx/=fl;p.fy/=fl;}}
   for(let i=0;i<M.players.length;i++)for(let j=i+1;j<M.players.length;j++){const a=M.players[i],c=M.players[j];if(a.off||c.off)continue;const dx=c.x-a.x,dy=c.y-a.y,d=Math.hypot(dx,dy);if(d>0&&d<20){const push=(20-d)/2;a.x-=dx/d*push;a.y-=dy/d*push;c.x+=dx/d*push;c.y+=dy/d*push;}}
   // ball
-  if(b.owner){const o=b.owner;const sp=Math.hypot(o.vx,o.vy);const tp=((o.gph||0)+.62)%1,tq=10.5+(sp>40?9*Math.pow(1-tp,2.2)*Math.min(1,sp/170):0),sr=sp<40?2.6*Math.sin(clock*1.7+(+o.num||0)):0;b.x=clamp(o.x+o.fx*tq-o.fy*sr,4,PW-4);b.y=clamp(o.y+o.fy*tq+o.fx*sr,4,PH-4);b.h=0;{const L=M.live;if(L&&L.bp&&L.u===o){b.x=L.bp.x;b.y=L.bp.y;b.h=L.bp.h;}}if(o.jumpT>0)b.h=Math.sin(Math.PI*clamp(1-o.jumpT/.72,0,1))*30;if(M.lob)lobBallPos(b,o);}
+  if(b.owner){const o=b.owner;const sp=Math.hypot(o.vx,o.vy);const tp=((o.gph||0)+.62)%1,tq=(window.__spec?window.__spec.ballPx:7.5)+(sp>40?6.5*Math.pow(1-tp,2.2)*Math.min(1,sp/170):0),sr=sp<40?2.6*Math.sin(clock*1.7+(+o.num||0)):0;b.x=clamp(o.x+o.fx*tq-o.fy*sr,4,PW-4);b.y=clamp(o.y+o.fy*tq+o.fx*sr,4,PH-4);b.h=0;{const L=M.live;if(L&&L.bp&&L.u===o){b.x=L.bp.x;b.y=L.bp.y;b.h=L.bp.h;}}if(o.jumpT>0)b.h=Math.sin(Math.PI*clamp(1-o.jumpT/.72,0,1))*30;if(M.lob)lobBallPos(b,o);}
   else{
     passHome(b,dt);b.x+=b.vx*dt;b.y+=b.vy*dt;if(b.air){b.air.t+=dt;const q=b.air.t/b.air.T;b.h=q<1?Math.sin(Math.PI*q)*b.air.pk+(b.air.h0||0)*(1-q):0;if(q>=1){if(b.air.land){b.vx*=.45;b.vy*=.45;}b.air=null;}}else b.h=0;
     if(b.curl){const v=Math.hypot(b.vx,b.vy)||1,cx=-b.vy/v*b.curl*dt*PD.curlK,cy=b.vx/v*b.curl*dt*PD.curlK;b.vx+=cx;b.vy+=cy;b.curl*=Math.pow(.25,dt);}
@@ -8688,22 +8688,24 @@ function A_fanGeo(low){const P=[],N=[],U=[],T=[],I=[];
   if(!low)add(new THREE.PlaneGeometry(.64,.16,2,1),6);
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(N,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));g.setAttribute('aPart',new THREE.Float32BufferAttribute(T,1));g.setIndex(I);return g;}
 function A_crowdMat(U){const m=new THREE.MeshLambertMaterial({color:0xffffff});
-  m.onBeforeCompile=sh=>{sh.uniforms.uT=A_T;sh.uniforms.uEx=U.uEx;sh.uniforms.uShk=A_SHK;
-    sh.vertexShader=`attribute float aPart;attribute vec4 aC;attribute vec3 aSh,aSk,aHr;uniform float uT,uEx,uShk;varying vec3 vCC;varying float vSc;
+  m.onBeforeCompile=sh=>{const CW=(window.__cwu=window.__cwu||{lit:{value:1},wv:{value:0}});sh.uniforms.uT=A_T;sh.uniforms.uEx=U.uEx;sh.uniforms.uShk=A_SHK;sh.uniforms.uLit=CW.lit;sh.uniforms.uWv=CW.wv;
+    sh.vertexShader=`attribute float aPart;attribute vec4 aC;attribute vec3 aSh,aSk,aHr;uniform float uT,uEx,uShk,uWv,uLit;varying vec3 vCC;varying float vSc,vAO;
 vec3 crR(vec3 q,float t){float c=cos(t),s=sin(t);return vec3(q.x,q.y*c+q.z*s,-q.y*s+q.z*c);}
 `+sh.vertexShader.replace('#include <beginnormal_vertex>',`
- float crP=aC.x*6.2832,crY=aC.y,crE=clamp(uEx*(.45+aC.z),0.,1.);float crJ=(crY>2.5?.32:.06)*crE*max(0.,sin(uT*(7.+aC.x*2.5)+crP));float crTh,crS=0.;
+ float crP=aC.x*6.2832,crY=aC.y;vec2 crIp=instanceMatrix[3].xz;float crWv=uWv*pow(.5+.5*sin(atan(crIp.y,crIp.x)*2.-uT*1.1),5.)*step(.12,aC.z);float crE=clamp(max(uEx*(.45+aC.z),crWv),0.,1.);crE=clamp(crE,0.,1.);float crJ=(crY>2.5?.32:.06)*crE*max(0.,sin(uT*(7.+aC.x*2.5)+crP));float crTh,crS=0.;
  if(crY<.5)crTh=mix(.1+.06*sin(uT*1.1+crP),2.7+.32*sin(uT*7.5+crP),smoothstep(.2,.75,crE));
  else if(crY<1.5)crTh=mix(step(.55,aC.z)*2.9,2.95,crE);
  else if(crY<2.5){crTh=mix(.12,1.3,smoothstep(0.,.4,crE+.15));crS=.12*sin(uT*11.+crP)*crE;}
  else crTh=mix(.12,2.55+.45*sin(uT*8.+crP),crE);
  crTh=mix(crTh,1.32+.14*sin(uT*10.+crP),uShk*step(.3,aC.w));crS=mix(crS,.1*sin(uT*13.+crP),uShk*step(.3,aC.w));
+ float crIdle=step(.88,aC.w)*pow(.5+.5*sin(uT*.33+crP*3.),10.);crTh=max(crTh,2.5*crIdle*(1.-crE));
+ float crWvE=step(.8,aC.w)*step(aC.w,.88)*step(crY,1.5);crTh=mix(crTh,1.9+.6*sin(uT*3.2+crP),crWvE*step(crE,.2)*step(.5,sin(uT*.18+crP*2.)));
  vec3 crT=position;vec3 objectNormal=normal;
  if(aPart>3.5&&aPart<5.5){float sd=aPart<4.5?-1.:1.;vec3 sp=vec3(sd*.26,1.,0.);crT=sp+crR(crT-sp,crTh);crT.x+=sd*(.06*sin(crTh)-crS*sin(crTh));objectNormal=crR(objectNormal,crTh);}
  if(aPart>5.5){float on=step(.5,crY)*step(crY,1.5)*step(2.2,crTh);crT=vec3(position.x,1.-.53*cos(crTh)+position.y-.03,.53*sin(crTh)+.03)*on;}
- crT.y+=crJ;crT.x+=.035*sin(uT*1.3+crP);
+ crT.y+=crJ;crT.x+=.035*sin(uT*1.3+crP)+.03*sin(uT*.43+crP*2.)*(1.-crE);crT.z+=.03*sin(uT*.61+crP*1.7)*(1.-crE);vAO=mix(.52,1.,smoothstep(.0,.6,position.y));
  vCC=aPart<1.5?aSh:aPart<2.5?aSk:aPart<3.5?aHr:aPart<5.5?(fract(aC.w*7.)<.45?aSk:aSh):aSh;vSc=aPart>5.5?uv.x*3.:-1.;`).replace('#include <begin_vertex>','vec3 transformed=crT;');
-    sh.fragmentShader='varying vec3 vCC;varying float vSc;\n'+sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb=vSc>=0.?mix(vCC,vec3(.85),step(.5,fract(vSc))):vCC;');};
+    sh.fragmentShader='varying vec3 vCC;varying float vSc,vAO;uniform float uLit;\n'+sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb=vSc>=0.?mix(vCC,vec3(.85),step(.5,fract(vSc))):vCC;diffuseColor.rgb*=vAO*uLit;');};
   return m;}
 function A_bowl(env,kind,S){
   const night=kind==='night',low=lowQ(),R=srand(night?11:23);
@@ -9243,7 +9245,7 @@ function abGait(c,s,o,dt,an){
       const u=fp/D,sn=Math.sin(Math.PI*clamp(u,0,1));if(k)stR=sn;else stL=sn;cmp=Math.max(cmp,sn);
       const h0=lerp(-.24,.05,wr)*g,to=lerp(.5,.85,wr)*g;pf=u<.3?lerp(h0,0,abSst(0,.3,u)):lerp(0,to,abSst(.55,1,u));}
     else{const u=(fp-D)/(1-D),hw=u*u*(3-2*u),hr=abSst(.1,.95,u),hp=lerp(hw,hr,wr);x=lerp(f.lx,Lx,hp);z=lerp(f.lz,Lz,hp);
-      const lift=lerp(.12,lerp(.34,.62,wsp),wr)*hs*Math.min(1,S/(.22*hs)+.3)*Math.max(g,s.restep?.7:0);
+      const lift=lerp(.12,lerp(.26,.44,wsp),wr)*hs*Math.min(1,S/(.22*hs)+.3)*Math.max(g,s.restep?.7:0);
       y=lift*Math.pow(Math.sin(Math.PI*Math.pow(u,lerp(1,.72,wr))),1.15);
       const to=lerp(.5,.85,wr)*g;pf=lerp(to,lerp(-.15,.08,wr)*g,abSst(0,.85,u))+wr*.3*Math.sin(Math.PI*u)*g;}
     if(side*x<.035*hs)x=side*.035*hs;
@@ -14985,6 +14987,18 @@ function shotCam3(c,dt){
   if(c&&c.type==='shot'&&!c.rep&&(!c.sp||c.t>=SH.KICK-.1)){try{shotCam3(c,dt);return;}catch(e){if(!window.__shotCamErr)window.__shotCamErr=String(e&&e.message||e);}}
   return _cc.apply(this,arguments);};}
 window.__shc={SHC,shotCam3};
+{const _cu=A_crowdUpd;A_crowdUpd=function(S,dt){_cu.apply(this,arguments);try{const W=window.__cwu;if(!W)return;
+  const ph=clock%46,amp=ph>30?Math.sin(Math.PI*(ph-30)/16):0;W.wv.value=Math.max(0,amp)*.85;
+  const L=S&&S.todLamp!=null?S.todLamp:(S&&S.kind==='night'?5:.85);W.lit.value=Math.min(1.45,Math.max(.88,.86+.1*L));}catch(e){}};}
+window.__g3=G3;
+window.__spec={leanDeg:18.5,headTiltDeg:10,armAmp:.75,strideHz:3.2,liftM:.35,plantDamp:.85,ballM:.45,ballPx:.45*PXM,skid:.4,avoid:.65,bufM:1.5,bufPx:1.5*PXM};
+function dribAware(dt){try{if(!M||mode!=='match'||M.cine||M.freeze||M.koWait)return;const o=M.ball.owner;if(!o||o===M.user||o.isGK||o.off)return;const K=window.__spec;
+  let nd=1e9,nx=0,ny=0;for(const p of M.players){if(p.team===o.team||p.off||p.isGK)continue;const dx=o.x-p.x,dy=o.y-p.y,d=Math.hypot(dx,dy);if(d<nd&&d>1){nd=d;nx=dx/d;ny=dy/d;}}
+  if(nd<140){const f=(1-nd/140)*K.avoid*420*dt;o.vx+=nx*f;o.vy+=ny*f;}
+  const B=K.bufPx,inMouthY=o.y>GY0-30&&o.y<GY1+30;
+  if(o.y<B)o.vy+=(1-o.y/B)*K.avoid*600*dt;else if(o.y>PH-B)o.vy-=(1-(PH-o.y)/B)*K.avoid*600*dt;
+  if(!inMouthY){if(o.x<B)o.vx+=(1-o.x/B)*K.avoid*600*dt;else if(o.x>PW-B)o.vx-=(1-(PW-o.x)/B)*K.avoid*600*dt;}
+}catch(e){}}
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
