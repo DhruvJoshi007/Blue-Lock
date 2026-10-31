@@ -5375,7 +5375,7 @@ function startShotCine(p,aimY){
 }
 function cineRate(c){
   if(c.hs>0)return .02;if(c.type==='duo')return c.t>2.98&&c.t<3.5?.38:c.t>1.62&&c.t<1.76?.5:1;if(c.type==='defense')return c.how==='TACKLE'&&c.vic?(c.t<.36?.5:c.t<.48?.1:c.t<.8?.32:c.t<1.95?.62:1):(c.t<.25?.6:c.t<.7?.28:c.t<1?.6:1);
-  if(c.type==='shot'){const t=c.t;return t>.95&&t<1.34?.28:t>=1.34&&t<2.1?.7:t>2.3&&t<2.66?.42:1;}
+  if(c.type==='shot'){const t=c.t;return t<.9?5:t<SH.KICK?2.6:t<1.34?.6:t<2.1?.7:t>2.3&&t<2.66?.42:1;}
   return 1;
 }
 function startComboCine(){M.cine={type:'combo',t:0,dur:2.1,quote:pick(['"They read each other\'s minds!"','"Nobody can split this pair!"','"That is telepathy, not football!"','"THE TWIN STARS!"'])};sfx('crowd');syncUI();fxEvent('combo',{c:M.cine});}
@@ -5421,7 +5421,7 @@ function updateCine(dt){
   if(c.type==='shot'){
     const p=c.shooter,t=c.t;
     if(t<SH.KICK){const A=fxCurve(FX_SHOTA,t)/S3,L=.17/S3;p.x=c.from.x+c.dir.x*A+c.dir.y*L;p.y=c.from.y+c.dir.y*A-c.dir.x*L;p.fx=c.dir.x;p.fy=c.dir.y;b.x=c.from.x;b.y=c.from.y;b.h=0;}
-    if(t>=SH.KICK-.075&&!c.kpre){c.kpre=1;p.kickT=clock;}
+    if(t>=SH.KICK-.9&&!c.kpre){c.kpre=1;p.kickT=clock;}
     if(t>=SH.KICK&&!c.kicked){c.kicked=true;if(!c.kpre)p.kickT=clock;sfx('bigkick');G3.impact=1;c.hs=lowQ()?.09:.16;fxCineHook('impact',c);}
     if(t>=SH.KICK){const u=clamp((t-SH.KICK)/(SH.ARR-SH.KICK),0,1);
       if(u<1||c.out==='wide'){const uu=c.out==='wide'?(t-SH.KICK)/(SH.ARR-SH.KICK):u;b.x=lerp(c.from.x,c.to.x,uu);b.y=lerp(c.from.y,c.to.y,uu);b.h=Math.sin(Math.PI*Math.pow(Math.min(1,uu),c.rush?1.45:1)*.92)*c.peak+(uu>1?0:0);if(uu>1)b.h=Math.max(0,b.h);const S=fxShotShape(c,Math.min(1,uu));b.x+=-c.dir.y*S.l;b.y+=c.dir.x*S.l;b.h=Math.max(0,b.h*S.h+S.dh);}
@@ -9260,7 +9260,7 @@ function abSolve(c,s){
       lx+=(R[0]-lx)*w;lz+=(R[1]-lz)*w;kn+=(R[2]-kn)*w;an+=(R[3]-an)*w;toe+=(R[4]-toe)*w;}
     l.leg.rotation.set(lx,ly,lz);l.knee.rotation.set(kn,0,0);l.boot.rotation.set(an,P[abCI.fyL+o]*sg,0);s.toe[k]=toe;}
   const bx=P[abCI.bx],bz=P[abCI.bz],bp=P[abCI.bp]*u;c.body.rotation.set(bx,P[abCI.yaw],bz);let px=P[abCI.bl]*u,py=P[abCI.by]*u,pz=P[abCI.bo]*u;
-  if(bp>0&&(bx||bz)){const v=abG.v1.set(0,bp,0).applyEuler(c.body.rotation);px-=v.x;py+=bp-v.y;pz-=v.z;}c.body.position.set(px,py,pz);
+  if(bp>0&&(bx||bz)){const v=abG.v1.set(0,bp,0).applyEuler(c.body.rotation);px-=v.x;py+=bp-v.y;pz-=v.z;}c.body.position.set(px,Math.max(0,py),pz);
   for(let k=0;k<2;k++){s.cu[k]=c.gk?P[abCI.cL+k]:lerp(P[abCI.cL+k],Math.max(P[abCI.cL+k],1.05),s.fistK||0);s.pt[k]=c.gk?P[abCI.pL+k]:Math.min(P[abCI.pL+k],.1);s.sh[k]=P[abCI.shL+k];s.wr[k]=P[abCI.wL+k];s.th[k]=c.gk?clamp(.25+P[abCI.cL+k]*.75-P[abCI.pL+k]*.2,0,1.1):lerp(clamp(.25+P[abCI.cL+k]*.75-P[abCI.pL+k]*.2,0,1.1),Math.max(.8,clamp(.25+P[abCI.cL+k]*.75-P[abCI.pL+k]*.2,0,1.1)),s.fistK||0);}
   s.eyY=P[abCI.eyY];s.eyP=P[abCI.eyP];
 }
@@ -10744,7 +10744,7 @@ function dzPatch(sh,m){
   const hdr=`uniform vec3 dzRim;uniform vec3 dzRimDir;uniform float dzHi;\nfloat dzBand(float x){return smoothstep(-.03,.03,x-.1+${K[2]}*.5)*.8+smoothstep(.6,.64,x)*.2;}\n`;
   const post=`\n${kind==='shoe'||kind==='eye'?'':'reflectedLight.directSpecular*=0.;reflectedLight.indirectSpecular*=.2;'}
   reflectedLight.indirectDiffuse*=${K[1]};
-  {float dzF=1.-saturate(dot(geometry.normal,geometry.viewDir));float dzR=smoothstep(.58,.66,dzF)*(.3+.7*saturate(dot(geometry.normal,dzRimDir)))${kind==='eye'?'*0.':''};
+  {float dzF=1.-saturate(dot(geometry.normal,geometry.viewDir));float dzR=smoothstep(.58,.66,dzF)*(.3+.7*saturate(dot(geometry.normal,dzRimDir)))${kind==='eye'?'*0.':kind==='face'?'*.35':''};
   reflectedLight.directDiffuse+=dzRim*dzR*(diffuseColor.rgb*.75+.1);
   ${K[0]==='H'?`float dzy=geometry.normal.y+sin(vUv.x*83.)*.03+sin(vUv.x*29.+1.3)*.035;
   float dzh=smoothstep(.2,.25,dzy)*(1.-smoothstep(.38,.44,dzy))*smoothstep(.2,.55,dot(geometry.normal,geometry.viewDir));
@@ -10926,18 +10926,17 @@ const DZMOUTH=['flat','smile','grin','shout','oh','frown','teeth','wince','firm'
 function dzAtlas(){if(DZ.atlas)return DZ.atlas;const S=1024,C=256;const cv=document.createElement('canvas');cv.width=cv.height=S;const x=cv.getContext('2d');
   const ink='#2a1418';x.lineCap='round';x.lineJoin='round';
   const cell=(i,f)=>{x.save();x.translate((i%4)*C+C/2,Math.floor(i/4)*C+C/2);f();x.restore();};
-  const mouthIn=(path,teethTop,tongue)=>{x.save();path();x.fillStyle='#4a1820';x.fill();x.clip();if(tongue){x.fillStyle='#e0606a';x.beginPath();x.ellipse(0,tongue[0],tongue[1],tongue[2],0,0,7);x.fill();}
-    if(teethTop!=null){x.fillStyle='#fbf7f2';x.fillRect(-130,-130,260,teethTop+130);}x.restore();path();x.strokeStyle=ink;x.lineWidth=7;x.stroke();};
+  const mouthIn=(path,teethTop,tongue)=>{x.save();path();x.fillStyle='#1a0505';x.fill();x.clip();if(false&&tongue){x.fillStyle='#e0606a';x.beginPath();x.ellipse(0,tongue[0],tongue[1],tongue[2],0,0,7);x.fill();}
+    if(teethTop!=null){x.fillStyle='#fbf7f2';x.beginPath();x.moveTo(-130,-130);x.lineTo(130,-130);x.lineTo(130,teethTop);x.lineTo(62,teethTop+9);x.lineTo(-62,teethTop+9);x.lineTo(-130,teethTop);x.closePath();x.fill();}x.restore();path();x.strokeStyle=ink;x.lineWidth=7;x.stroke();};
   const curve=(w,c,lw)=>{x.beginPath();x.moveTo(-w,-c*.2);x.quadraticCurveTo(0,c,w,-c*.2);x.strokeStyle=ink;x.lineWidth=lw;x.stroke();};
   // canvas y down = face down (texture flipY maps the canvas top to v=1 = up on the face)
-  cell(0,()=>{curve(26,3,7);});
+  cell(0,()=>{x.beginPath();x.moveTo(-24,0);x.lineTo(24,0);x.strokeStyle=ink;x.lineWidth=7;x.stroke();});
   cell(1,()=>{curve(36,14,7);x.lineWidth=5;x.beginPath();x.moveTo(-40,-6);x.lineTo(-34,0);x.moveTo(40,-6);x.lineTo(34,0);x.stroke();});
   cell(2,()=>mouthIn(()=>{x.beginPath();x.moveTo(-46,-6);x.quadraticCurveTo(0,-14,46,-6);x.quadraticCurveTo(28,38,0,40);x.quadraticCurveTo(-28,38,-46,-6);x.closePath();},6,[34,22,9]));
   cell(3,()=>mouthIn(()=>{x.beginPath();x.moveTo(-42,-30);x.quadraticCurveTo(0,-42,42,-30);x.quadraticCurveTo(54,40,0,66);x.quadraticCurveTo(-54,40,-42,-30);x.closePath();},-18,[48,30,16]));
   cell(4,()=>mouthIn(()=>{x.beginPath();x.ellipse(0,12,15,22,0,0,7);},null,[26,9,5]));
   cell(5,()=>{x.beginPath();x.moveTo(-30,16);x.quadraticCurveTo(0,-8,30,16);x.strokeStyle=ink;x.lineWidth=7;x.stroke();});
   cell(6,()=>mouthIn(()=>{x.beginPath();x.moveTo(-44,-6);x.lineTo(44,-9);x.lineTo(40,20);x.lineTo(-40,22);x.closePath();},40,null));
-  cell(6,()=>{x.strokeStyle='#8a7070';x.lineWidth=3;x.beginPath();x.moveTo(-40,7);x.lineTo(40,5);for(const t of [-22,0,22]){x.moveTo(t,-7);x.lineTo(t,20);}x.stroke();});
   cell(7,()=>{x.beginPath();x.moveTo(-36,4);for(let i=0;i<=8;i++)x.lineTo(-36+i*9,i%2?-6:6);x.strokeStyle=ink;x.lineWidth=6;x.stroke();});
   cell(8,()=>{x.beginPath();x.moveTo(-32,8);x.quadraticCurveTo(-26,0,0,0);x.quadraticCurveTo(26,0,32,8);x.strokeStyle=ink;x.lineWidth=8;x.stroke();});
   cell(9,()=>{x.beginPath();x.moveTo(-28,4);x.quadraticCurveTo(8,8,36,-12);x.strokeStyle=ink;x.lineWidth=7;x.stroke();x.lineWidth=5;x.beginPath();x.moveTo(36,-12);x.lineTo(42,-18);x.stroke();});
@@ -14585,6 +14584,17 @@ function animeSpecApply(){try{for(const k in DESIGNS){const d=DESIGNS[k];if(!d||
   let hit=null;for(const f in ANIME_SPEC){if(nm.includes(f)){hit=f;break;}}if(!hit)continue;if(/^rin$/.test(hit))continue;
   const sp=ANIME_SPEC[hit];d.face=d.face||{};d.face.eyeColor=sp[0];d.face.eyes=sp[1];if(d.eye!=null)d.eye=sp[0];window.__animeSpecApplied.push(k+':'+sp[1]+':'+sp[0]);}}catch(e){console.warn('anime spec',e);}}
 animeSpecApply();
+window.__flow=[];
+function warmRun(next){
+  let on=true;try{on=localStorage.getItem('twin.warm')!=='off';}catch(e){}
+  if(!on||window.__warmSeen||!M||!stOK()){next();return;}
+  let sh;try{sh=wuShots();}catch(e){console.warn('warm-up off',e);next();return;}
+  window.__warmSeen=1;const m=M;M.warmPending=false;M.freeze=0;window.__flow.push('warm-start');
+  playCutscene(sh,()=>{if(M!==m)return;try{sfx('whistle');}catch(e){}window.__flow.push('warm-end');next();});}
+{const _sh=showHowTo;showHowTo=function(kind){
+  if(kind==='trial'||!M||window.__warmSeen||M.noWarm){window.__flow.push('howto:'+kind);return _sh.apply(this,arguments);}
+  const a=arguments;warmRun(()=>{mode='match';window.__flow.push('howto:'+a[0]);_sh.apply(null,a);});};}
+CHAPTERS[0].start=()=>{startMatch(1);M.warmPending=false;warmRun(()=>playCutscene(SC.prologue,()=>{window.__flow.push('prologue-end');mode='match';showHowTo('duo');}));};
 stAttach();stP2();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
