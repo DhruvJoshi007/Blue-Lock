@@ -1,0 +1,11 @@
+{
+  "ball_properties": {
+    "massKg": 0.43,
+    "dragCoefficient": 0.25,
+    "bounceRestitution": 0.68,
+    "rollFrictionPerSec": 1.2,
+    "curveStrength": 1.45,
+    "curveReference": 1.45,
+    "maxSpeedMps": 35.0
+  }
+}

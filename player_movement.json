@@ -1,0 +1,16 @@
+{
+  "profile_name": "Blue Lock Arcade / Balanced Tuned",
+  "player_types": {
+    "striker_forward": { "topSpeedMps": 10.3, "sprintSpeedMps": 11.8, "accelMps2": 18.5, "decelMps2": 15.0, "turnRateDegPerSec": 360,
+      "stamina": { "max": 100, "drainPerSecSprint": 12.5, "recoverPerSecJog": 18.0, "minSpeedFactor": 0.75 } },
+    "midfielder": { "topSpeedMps": 9.8, "sprintSpeedMps": 11.0, "accelMps2": 16.0, "decelMps2": 14.0, "turnRateDegPerSec": 390,
+      "stamina": { "max": 100, "drainPerSecSprint": 10.0, "recoverPerSecJog": 20.0, "minSpeedFactor": 0.80 } },
+    "defender": { "topSpeedMps": 9.2, "sprintSpeedMps": 10.5, "accelMps2": 15.0, "decelMps2": 16.0, "turnRateDegPerSec": 320,
+      "stamina": { "max": 100, "drainPerSecSprint": 11.0, "recoverPerSecJog": 16.0, "minSpeedFactor": 0.70 } }
+  },
+  "typeBands": { "strikerMinDepth": 0.62, "defenderMaxDepth": 0.30 },
+  "modes": {
+    "arcade":   { "accel": 4.0, "decel": 4.0, "turn": 3.0, "stamina": 0.2, "rollFriction": 0.725, "airDrag": 0.8, "rushDistance": 2.3 },
+    "balanced": { "accel": 1.0, "decel": 1.0, "turn": 1.0, "stamina": 1.0, "rollFriction": 1.0,   "airDrag": 1.0, "rushDistance": 1.0 }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "gk_profile": "Standard U-20 / Blue Lock Match Keeper",
+  "reactionTime": { "meanMs": 150, "sdMs": 25 },
+  "reactionClampMs": { "min": 120, "max": 200 },
+  "diveSpeedMps": 9.0,
+  "reachMeters": 2.2,
+  "rushOutThresholds": { "maxDistanceMeters": 6.5, "ballSpeedMaxForRushMps": 18.0 },
+  "saveChanceMatrix": [
+    { "maxShotSpeedMps": 12.0, "maxDistanceMeters": 15.0, "baseSaveProbability": 0.92 },
+    { "maxShotSpeedMps": 22.0, "maxDistanceMeters": 10.0, "baseSaveProbability": 0.70 },
+    { "maxShotSpeedMps": 30.0, "maxDistanceMeters": 5.0, "baseSaveProbability": 0.40 }
+  ],
+  "fallbackSaveProbability": 0.30,
+  "uncommittedSaveFactor": 0.55
+}
