@@ -14999,6 +14999,11 @@ function dribAware(dt){try{if(!M||mode!=='match'||M.cine||M.freeze||M.koWait)ret
   if(o.y<B)o.vy+=(1-o.y/B)*K.avoid*600*dt;else if(o.y>PH-B)o.vy-=(1-(PH-o.y)/B)*K.avoid*600*dt;
   if(!inMouthY){if(o.x<B)o.vx+=(1-o.x/B)*K.avoid*600*dt;else if(o.x>PW-B)o.vx-=(1-(PW-o.x)/B)*K.avoid*600*dt;}
 }catch(e){}}
+{const _lt=abLookTarget;abLookTarget=function(c,s,o){const r=_lt.apply(this,arguments);
+  try{if(r&&abInMatch(o)&&!o.isGK&&abSamePl(o,M.ball.owner)&&s.lk&&s.lk.alt){
+    let best=null,bd=1e9;for(const p of M.players){if(p.team===o.team||p.off||p.isGK)continue;const d=Math.hypot(p.x-o.x,p.y-o.y);if(d<bd){bd=d;best=p;}}
+    if(best&&bd<14*PXM){const lk=s.lk;lk.ox=(best.x-PW/2)*S3;lk.oy=1.35;lk.oz=(best.y-PH/2)*S3;window.__gz={who:best.num,d:+(bd/PXM).toFixed(1)};}}}catch(e){}
+  return r;};}
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
