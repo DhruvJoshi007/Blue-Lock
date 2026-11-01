@@ -10638,7 +10638,7 @@ function fxConf2D(dt){const L=FXC.conf;if(!L.length)return;ctx.save();
 // ---------- C13: anime broadcast HUD (drawHUD delegates here) ----------
 function fxHUD(){const t0=performance.now();try{const s=Math.min(1.2,Math.max(.75,W/900)),dt=FXC.dt2||0;ctx.save();
   fxScoreBug(s,dt);if(M.ch===1)fxHype(s);else fxSys(s);fxToast(s);fxSkillChip(s);ultHud(s);try{readHud(s);readQteOv(s);}catch(e){}flowLiveOv(s);adaptHud(s);try{eliteHud(s);anaHud(s);}catch(e){}fxKickoff(s);fxGoalGfx(s);
-  if(!touchUI&&M.time<12)smallText('W fwd · S back · A/D strafe · mouse turns · J/R-click pass · K/L-click shoot · C curve · F lob · Space dribble · E tackle · R call · X hype · Z dap shot · G read the play (defending)'+(M.ch===1?'':'')+' · V camera',W/2,H-18,12,'rgba(238,243,248,.6)','center',FS,500);
+  if(!touchUI&&M.time<12)smallText('W fwd · S back · A/D strafe · mouse turns · J/R-click pass · K/L-click shoot · C curve · F lob · Space dribble · E tackle · R call · X hype · Z dap shot · V camera',W/2,H-18,12,'rgba(238,243,248,.6)','center',FS,500);
   ctx.restore();fxOnoDraw(dt);fxFlash2D();fxTransDraw();}catch(e){fxErr(e);try{ctx.restore();}catch(_){}}FXC.msH=(FXC.msH||0)*.95+(performance.now()-t0)*.05;}
 function fxScoreBug(s,dt){const mob=W<560,bw=(mob?250:330)*s,bh=34*s,bx=mob?16:W/2-bw/2,by=12,sk=bh*.28;
   const sc0=M.score[0],sc1=M.score[1];if(!FXC.sc)FXC.sc={p:[sc0,sc1],t:[9,9]};const S=FXC.sc;for(let i=0;i<2;i++){if(M.score[i]!==S.p[i]){S.p[i]=M.score[i];S.t[i]=0;}S.t[i]+=dt;}
@@ -14141,6 +14141,8 @@ function mxPlan(c,o,dt){let b0;const S=c.mxS||(c.mxS={});
   if(C&&C.type==='read'&&!C.calmOn&&mine(C.u)){const sp=c.mxV||0;S.rw=(S.rw||0)+(abSst(1.2,3,sp)*.97-(S.rw||0))*Math.min(1,dt*10);S.rt=(S.rt||0)+dt*clamp(sp/4.5+.45,.9,1.9);if(S.rw>.02)return {n:'runC',t:S.rt,w:S.rw,loop:true,noY:1};}
   // run-in actors during cutscenes use the run cycles too
   if(C&&C.type!=='ult'&&C.type!=='shot'){const sp=c.mxV||0;if(!o.pose&&!o.isGK&&sp>2.4){S.rw=(S.rw||0)+(abSst(2.4,4.2,sp)*.92-(S.rw||0))*Math.min(1,dt*8);S.rt=(S.rt||0)+dt*clamp(sp/5.6,.6,1.5);return {n:((o.num||0)+(o.id||0))%2?'runB':'runA',t:S.rt,w:S.rw,loop:true,noY:1};}}
+  if(o.isGK&&C&&C.type==='ult'&&C.v===5&&C.gk&&abSamePl(o,C.gk)&&(o.diveT||0)>0&&o.diveDir){const pg=clamp(1.1-o.diveT,0,1.05),yw=c.root.rotation.y;
+    return {n:(-o.diveDir*Math.sin(yw)>0)!==!!MX.flip?'gkDive':'gkDiveM',t:.5+pg*.75,w:abSst(0,.12,pg),loop:false};}
   // keeper during the shot cutscene: catch the easy ones, flap at the central goals, dive for the rest
   if(o.isGK&&C&&C.type==='shot'&&abSamePl(o,C.gk)){const t=C.t,dl=(C.gkTo.y-C.gkFrom.y)||(C.to.y-C.gk.y),lat=Math.abs(dl),yw=c.root.rotation.y;
     const fade=t0=>abSst(t0-.1,t0+.15,t)*(1-abSst(SH.END-.6,SH.END-.1,t));
@@ -15023,6 +15025,9 @@ function vfxBudget(){try{const V=window.__vfx,c=M&&M.cine;if(!c)return 1;const t
   }catch(e){}};}
 {const _kh=koHold;koHold=function(){const was=M&&M.koFace;_kh.apply(this,arguments);try{if(M&&M.koWait&&M.koFace&&!was){for(const p of M.home.players){if(p.isGK||p.off)continue;const a=fxActor(p);if(a){const st=abS(a);st.tele=true;a.yaw=Math.atan2(p.fx,p.fy);}}if(typeof G3.userYaw==='number')G3.yaw=G3.userYaw;}}catch(e){}};}
 window.__abS=abS;
+readAvail=function(){return 0;};
+readStart=function(){return false;};
+window.__analysisOff=true;
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
