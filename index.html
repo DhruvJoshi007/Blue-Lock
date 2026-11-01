@@ -336,6 +336,7 @@ button{font:inherit;cursor:pointer}
         <button class="btn" id="b-stad">Stadium: Classic</button>
         <button class="btn" id="b-move">Movement: Arcade</button>
         <button class="btn" id="b-phys">Physics tuning</button>
+        <div class="eyebrow" id="build-stamp" style="width:100%;text-align:center;opacity:.7"></div>
         <button class="btn" id="b-mlen">Match length</button>
         <button class="btn" id="b-restart">Restart chapter</button>
         <button class="btn" id="b-title">Title screen</button>
@@ -6164,7 +6165,7 @@ function render3DMatch(dt){
     let dive=0;if(c&&c.type==='ult'){const ud=ultGkDive(p,a);if(ud!=null)dive=ud;}if(p.isGK&&p.diveT>0)dive=p.diveDir*dvS(p)*ease(clamp((1.1-p.diveT)/.35,0,1));if(c&&c.type==='shot'&&!c.rush&&p===c.gk&&c.t>SH.DIVE){const dz=Math.sign(c.gkTo.y-c.gkFrom.y)||1;dive=dz*dvS(p)*ease((c.t-SH.DIVE)/.5)*(c.out==='wide'?.4:1);}
     const pose=p.pose||((M.flash&&M.flash.col==='#ffc04a'&&p.team===M.home)?'cheer':null);
     let drib=null,yawAdd=0;if(c&&c.type==='drib'&&(p===c.u||p===c.def)){drib={key:c.key,k:c.k,tr:c.tr,ok:c.ok,role:p===c.u?'ren':'def'};if(p===c.u)yawAdd=c.spin||0;}else if(c&&c.type==='chain'){const j=c.defs.indexOf(p),S=p===c.u?c.sub:(j>=0?c.subs[j]:null);if(S&&c.t>=S.m0&&c.t<S.m1){drib={key:S.key,k:S.k,tr:S.tr,ok:true,role:p===c.u?'ren':'def'};if(p===c.u)yawAdd=S.spin||0;}}else if(!c&&M.live&&p===M.live.u){const L=M.live;drib={key:L.key,k:L.k,tr:L.tr,ok:L.ok,role:'ren'};yawAdd=L.spin||0;}
-    if(dive&&p.isGK)a.yaw=Math.atan2(dvF(p),p.fy||0);placeActor(a,{...p,dive,pose,drib,yawAdd:yawAdd+(p.yawSpin||0),kickT:p.kickT,slideT:p.slideT},dt,p.airH||0);}
+    if(p.isGK&&pdrClipDive(p,c))dive=0;if(dive&&p.isGK)a.yaw=Math.atan2(dvF(p),p.fy||0);placeActor(a,{...p,dive,pose,drib,yawAdd:yawAdd+(p.yawSpin||0),kickT:p.kickT,slideT:p.slideT},dt,p.airH||0);}
   renderBenches(dt);
   worldUpdate(dt);fxUpdate3D(dt,c);ownerArrow(c);
   endActors();placeBall(b,dt);updateTrail(c&&((c.type==='shot'&&c.t>SH.KICK&&c.t<SH.ARR+.3)||((c.type==='drib'||c.type==='chain')&&M.ball.h>3)||(c.type==='duo'&&c.t>1&&c.t<3.95)||(c.type==='ult'&&c.t>c.tS&&c.t<c.tN+.2)));
@@ -13847,7 +13848,7 @@ function ultCam(c,dt){if(c.v!==5)return;
   else if(t<T.air){ph=84;   // close behind him: NAGI on his back as he takes off and whips round
     pos=Hd.clone().addScaledVector(F,1.05).addScaledVector(L,.4).add(V(0,.05,0));look=Hd.clone().addScaledVector(F,-1.5).add(V(0,-.25,0));fov=46;}
   else if(t<D5_BC+.01){ph=85;   // from the turf among the fallen defenders, looking up at the jumping turn
-    const q=clamp((t-T.air)/4.5,0,1);pos=O.clone().addScaledVector(F,2.5).addScaledVector(L,.35).setY(lerp(.4,.6,q));look=Hd.clone().add(V(-.0,.0,0)).lerp(B,.25).addScaledVector(L,-.25);fov=60;}
+    const q=clamp((t-T.air)/4.5,0,1),ctr=Hd.clone().add(V(0,-.5,0)),ap=Math.sin(Math.PI*clamp((t-T.air)/3.2,0,1));pos=ctr.clone().addScaledVector(F,lerp(3.4,4.2,ap)).addScaledVector(L,-2.3);pos.y=Math.max(.9,ctr.y+.15);look=ctr.clone();fov=lerp(44,50,ap);}
   else if(t<T.eye+.01&&c.bcFail){ph=86;pos=U.clone().addScaledVector(F,-4).setY(2.2);look=U.clone().setY(1.6);fov=40;}
   else if(t<T.ballP){ph=87;   // eye close-up, three-quarter profile, rolled with his head
     const ha=fxActor(u),hq=ha&&ha.bones&&ha.bones.Head?ha.bones.Head.getWorldQuaternion(new THREE.Quaternion()):null,toG=Gc.clone().sub(Hd).setY(0).normalize(),hf=hq?V(1,0,0).applyQuaternion(hq):toG.clone();hu=hq?V(0,-1,0).applyQuaternion(hq):null;
@@ -14262,6 +14263,7 @@ function wuShots(){wuCast();const PI=Math.PI,set=G3.stage==='day'?'day':G3.stage
     const gkActs=['gaga'];gkActs.forEach((k,gi)=>{const active=true,u=active?clamp((dtk-.02)/.75,0,1):0,rise=active?clamp((dtk-1.15)/.25,0,1):0;let R={ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.2,kL:.3,lRx:-.2,kR:.3,hy:-.12,bx:.15},z=GZ[gi],h=0;
       if(u>0&&u<1+1e-6){const dv=d5Dive(sg,{gkS:sg}),e=ease(u)*(1-ease(rise));R={};for(const q in dv)R[q]=dv[q]*e;z=GZ[gi]+sg*3*ease(u)*(1-.8*ease(rise));h=Math.sin(PI*clamp(u,0,1))*.45;}
       else if(active&&dtk>=1.0&&rise<1){const dv=d5Dive(sg,{gkS:sg});R={};for(const q in dv)R[q]=dv[q]*(1-ease(rise));z=GZ[gi]+sg*3*(1-.8*ease(rise));}
+      {const ac=A(k);if(u>0&&rise<1){const pg=clamp(u,0,1);ac.mxForce={n:((sg>0)!==!!MX.flip)?'gkDive':'gkDiveM',t:.5+pg*.6,w:abSst(0,.15,pg)*(1-ease(rise)),loop:false};R={ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.2,kL:.3,lRx:-.2,kR:.3,hy:-.12,bx:.15};h=0;}else ac.mxForce=null;}
       wuPose(A(k),68.6,z,-PI/2,R,'focus',h);});
     let bx,by,bz;if(dtk<0||dtk>1.3){const sp=zs(dtk<0?sIdx:nextS);bx=55;by=.12;bz=sp;}else{const u=clamp(dtk/.45,0,1),sp=zs(sIdx);const gz=GZ[((kk%2)+2)%2]+sg*2.2;if(u<1){bx=lerp(55,70,u);bz=lerp(sp,tz,u);by=.12+Math.sin(PI*u)*1.2+u*u*1.5;}else{bx=69.4;bz=gz;by=lerp(1.4,.15,clamp((dtk-.45)/.5,0,1));}}
     stBall(bx,by,bz,.3);};
@@ -14768,7 +14770,7 @@ function todApply(S){if(!S||(S.kind!=='day'&&S.kind!=='night'))return;const name
 function todSet(name){if(!TOD.order.includes(name))return;TOD.cur=name;try{localStorage.setItem('twin.tod',name);}catch(e){}G3.stage=null;const b=$('b-tod');if(b)b.textContent='Time: '+name[0].toUpperCase()+name.slice(1);}
 try{const b=$('b-tod');if(b){b.textContent='Time: '+TOD.cur[0].toUpperCase()+TOD.cur.slice(1);b.onclick=()=>{todSet(TOD.order[(TOD.order.indexOf(TOD.cur)+1)%4]);};}}catch(e){console.warn('tod ui',e);}
 window.__tod={TOD,TOD_P,todSet,todApply,get stages(){return G3.stages;}};
-const EMS={scale:1.57,cx:-5.5,cz:2.3,y0:6.3,mode:'classic',ready:false,loading:false,scene:null,box:null,building:false,err:null,url:'stadium_emirates.wasm'};
+const EMS={scale:1.57,cx:-5.5,cz:2.3,y0:6.3,mode:'classic',ready:false,loading:false,scene:null,box:null,building:false,err:null,url:'stadium_emirates.wasm?v='+(window.__BUILD_ID||'0')};
 try{const v=localStorage.getItem('twin.stad');if(v==='emirates'||v==='classic')EMS.mode=v;}catch(e){}
 function emUse(kind){return EMS.mode==='emirates'&&EMS.ready&&!!EMS.scene&&(kind==='day'||kind==='night');}
 // four-step cel ramp for the stadium material
@@ -14876,7 +14878,7 @@ function physSave(g,b,sp){
 physDerive();
 async function physLoad(){
   const st=[],files=[['player_movement.json','mv'],['goalkeeper.json','gk'],['ball_physics.json','ball']];
-  for(const [f,k] of files){try{const r=await fetch(f,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();const c=JSON.parse(JSON.stringify(PHYS[k])),u=[];physMerge(c,j,k,u);PHYS[k]=c;st.push(f+': loaded'+(u.length?' ('+u.length+' unknown keys ignored)':''));}catch(e){st.push(f+': built-in values ('+(e&&e.message||e)+')');}}
+  for(const [f,k] of files){try{const r=await fetch(f+(f.indexOf('?')<0?'?v='+(window.__BUILD_ID||'0'):''),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();const c=JSON.parse(JSON.stringify(PHYS[k])),u=[];physMerge(c,j,k,u);PHYS[k]=c;st.push(f+': loaded'+(u.length?' ('+u.length+' unknown keys ignored)':''));}catch(e){st.push(f+': built-in values ('+(e&&e.message||e)+')');}}
   try{const o=JSON.parse(localStorage.getItem(PHYS_KEY)||'null');if(o){const u=[];physApplyObj(o,u);st.push('saved edits: applied');}}catch(e){st.push('saved edits: ignored ('+(e&&e.message||e)+')');}
   PHYS.status=st;physDerive();physUI();
 }
@@ -15086,6 +15088,39 @@ function shotFloor(){try{const c=M&&M.cine;if(c&&c.type==='shot'){const cm=G3.ca
     return {n:(-o.diveDir*Math.sin(yw)>0)!==!!MX.flip?'gkDive':'gkDiveM',t:.5+pg*.75,w:abSst(0,.12,pg),loop:false};}}catch(e){}
   return _mp.apply(this,arguments);};}
 window.__shoot=shoot;window.__shotFloor=shotFloor;
+function pdrClipDive(p,c){try{if(!p||!p.isGK)return false;
+  if(c&&c.type==='ult'&&c.v===5)return !!(c.gk&&abSamePl(p,c.gk)&&(p.diveT||0)>0);
+  if(!c)return (p.diveT||0)>0&&!!p.diveDir;
+  return false;}catch(e){return false;}}
+// build stamp (shown in the pause menu so the running version can be read off the screen)
+window.__BUILD_ID='117';window.__mxd={MXC,MX,mxApply,mxDur};
+try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w122';}catch(e){}
+// ---- fail-safe: nobody stays on the ground in live play ----
+// after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
+// or who has the ball while lying down, is stood up (pose, raw track, fall counters and the fall/stand-up clip state are all cleared)
+const SAFE={prev:false,t:new WeakMap()};
+function safeStandReset(p){
+  p.fall=0;p.pose=null;p.raw=null;p.celebrate=null;p.celebT=null;p.kick=undefined;p.kickWarp=null;p.yawSpin=0;p.airH=0;p.lookAt=null;p.slide=null;p.slideT=undefined;p.lungeT=0;p.cool=Math.max(p.cool||0,.2);p.sdHold=0;
+  try{const a=fxActor(p);if(a){const st=abS(a);if(st){st.fall=null;}if(a.mxS){a.mxS.fl=null;}a.mxForce=null;}}catch(e){}
+}
+{const _da=dribAware;dribAware=function(dt){_da.apply(this,arguments);
+  try{if(!M||mode!=='match')return;const cine=!!M.cine;
+    if(SAFE.prev&&!cine){for(const p of M.players)if(!p.off&&!p.isGK)safeStandReset(p);}
+    SAFE.prev=cine;if(!cine&&!M.bike)for(const p of M.players){if(!p.off&&p.pose==='raw'&&!p.isGK){p.rawT=(p.rawT||0)+dt;if(p.rawT>.25){safeStandReset(p);p.rawT=0;}}else p.rawT=0;}
+    if(cine||M.bike||M.freeze||M.koWait)return;
+    const own=M.ball&&M.ball.owner;
+    for(const p of M.players){if(p.off||p.isGK)continue;
+      const down=(p.fall||0)>.4,odd=p.pose==='raw'||p.pose==='lie'||p.pose==='fall';
+      let st=SAFE.t.get(p)||0;st=(down||odd)?st+dt:0;SAFE.t.set(p,st);
+      const lim=(own&&own===p)?.6:down?3:2;
+      if(st>lim){safeStandReset(p);SAFE.t.set(p,0);window.__safeStand=(window.__safeStand||0)+1;}}
+  }catch(e){}};}
+// ---- Dap Shot: the head follows the spine through the mid-air twist (no ball/goal look target while the body is spinning) ----
+{const _u2=ultUpdate;ultUpdate=function(c,dt){const r=_u2.apply(this,arguments);try{
+  if(c&&c.v===5&&c.u&&Math.abs(c.u.yawSpin||0)>.02)c.u.lookAt=null;
+  // root cause of 'stuck lying on the pitch': the Dap scene's own pose writer (d3Apply) ran again after endCine() had cleared the pose, leaving pose='raw' on Nagi, the mate, the keeper and the defenders
+  if(c&&c.v===5&&M.cine!==c){const L=[c.u,c.mate,c.gk].concat((c.D||[]).map(d=>d&&d.o));for(const o of L){if(o&&o.pose==='raw'){safeStandReset(o);}}}
+  }catch(e){}return r;};}
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
