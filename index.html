@@ -6719,7 +6719,7 @@ function shotPathOv(c){const L=c.trl;if(!L||L.length<2||c.t<SH.KICK)return;
   const col=(FX_STY[c.style]||FX_STY.LASER).c,fade=1-clamp((c.t-(SH.ARR+.5))/.6,0,1);if(fade<=0)return;
   const pts=[];for(const q of L){const p=project3(q.x,q.y,q.h*S3+.11);if(!p.behind)pts.push(p);}
   if(pts.length<2)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
-  for(const [w,c2,a] of [[14,col,.22],[7,col,.55],[2.5,'#ffffff',.95]]){ctx.globalAlpha=a*fade;ctx.strokeStyle=c2;ctx.lineWidth=w*(W<600?.6:1);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();}
+  for(const [w,c2,a] of [[5,col,.07],[2.2,col,.2],[1,'#ffffff',.45]]){ctx.globalAlpha=a*fade;ctx.strokeStyle=c2;ctx.lineWidth=w*(W<600?.6:1);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();}
   ctx.restore();}
 
 // ---- glowing eyes (flow state): additive sprites on the eye bones, plus the white tiger emblem ----
@@ -8053,7 +8053,7 @@ function ownerArrow(c){
   A.material.color.set(o.team===M.home?(o.isUser?'#ffd34a':'#7fd0ff'):'#ff5a4f');
 }
 function ballCam(dt){
-  const b=M.ball,T=b.owner?b.owner.team:M.home,dir=T.dir*(M.koWait?-1:1),B=v3(b.x,b.y);
+  const b=M.ball,T=b.owner?b.owner.team:M.home,dir=T.dir,B=v3(b.x,b.y);
   setCam(new THREE.Vector3(B.x-dir*9,5.2,B.z*.85+2.4),new THREE.Vector3(B.x+dir*7,.6,B.z),55,dt,5);
 }
 // ==== END PKG-F ====
@@ -10105,7 +10105,7 @@ function fxRing(x,y,z,col,a,s0,s1,dur,w,nx,ny,nz){{const c=M&&M.cine;if(c){a*=c.
   const c=fxCol(col);R.m.uniforms.uC.value.setRGB(c[0]*1.6,c[1]*1.6,c[2]*1.6);R.m.uniforms.uW.value=w||.3;R.m.uniforms.uS.value=nx==null?28:18;R.o.scale.setScalar(s0);R.o.visible=true;}
 function fxStepRings(dt){for(const R of FXC.rings){if(!R.on)continue;R.t+=dt;const q=R.t/R.d;if(q>=1){R.on=false;R.o.visible=false;continue;}
   R.o.scale.setScalar(R.s0+(R.s1-R.s0)*(1-Math.pow(1-q,3)));R.m.uniforms.uA.value=R.a*Math.pow(1-q,1.3);R.m.uniforms.uT.value=q;}}
-const FX_TR={CURLER:{n:2,c1:'#f2fdff',c2:'#2f9bff',w:.15,sp:.3,tw:5.5,len:9,i:2.2},LASER:{n:2,c1:'#fff4ee',c2:'#ff2a1a',w:.42,core:.11,len:13,i:2.6},
+const FX_TR={CURLER:{n:2,c1:'#f2fdff',c2:'#2f9bff',w:.15,sp:.3,tw:5.5,len:9,i:2.2},LASER:{n:2,c1:'#fff4ee',c2:'#ff2a1a',w:.12,core:.035,len:13,i:1.2},
   DIPPER:{n:2,c1:'#fff0ff',c2:'#b04dff',w:.2,sag:1,sp:.12,tw:3,len:9,i:2.2},KNUCKLEBALL:{n:3,c1:'#f4fff4',c2:'#4dff95',w:.075,wob:.3,len:7,i:2.4},
   FINESSE:{n:1,c1:'#fffbe6',c2:'#ffc04a',w:.3,curl:.2,len:10,i:2},GOLD:{n:2,c1:'#fff6d8',c2:'#ffb020',w:.17,sp:.22,tw:4,len:9,i:2.2},
   SYSTEM:{n:2,c1:'#eaffff',c2:'#29d4ff',w:.2,core:.06,len:8,i:2.2},SKILL:{n:1,c1:'#ffffff',c2:'#ffd34a',w:.11,len:4,i:1.6}};
@@ -14241,7 +14241,7 @@ function wuBug(t,lab){const k=clamp(t*3,0,1);if(k<=0)return;const s=sc(),fs=Math
   ctx.fillStyle='rgba(6,10,16,.82)';ctx.fillRect(x,y,fs*17,fs*2.2);ctx.fillStyle='#ff3b30';ctx.fillRect(x,y,fs*3.2,fs*2.2);smallText('LIVE',x+fs*1.6,y+fs*1.1,fs,'#fff','center',FS,800);
   smallText(lab,x+fs*3.8,y+fs*1.1,fs,'#eef3f8','left',FS,700);ctx.restore();}
 function wuShots(){wuCast();const PI=Math.PI,set=G3.stage==='day'?'day':G3.stage==='night'?'night':(M.ch===1?'night':'day'),sh=[];
-  const ids=['nagi','isagi','bach','reo','hiori','raichi','barou','rin','kuni','chig','gaga','fuka','aiku','darai','haya','niou','aryu','niko'];const cast=ids.map(k=>WU[k]);
+  const ids=['nagi','isagi','bach','reo','hiori','raichi','barou','rin','kuni','chig','gaga','aiku','darai','haya','niou','aryu','niko'];const cast=ids.map(k=>WU[k]);
   const base={cast,toon:0,lc:false,noFade:true,crowd:.9};
   const A=k=>stA(WU[k]);
   // field of play: rondo at the centre, shooting at the +x box, defenders along the -z touchline
@@ -14251,15 +14251,15 @@ function wuShots(){wuCast();const PI=Math.PI,set=G3.stage==='day'?'day':G3.stage
   const rondo=(t,dt)=>{const n=Math.floor(t/Tp),f=(t-n*Tp)/Tp,a=rpos(seq(n)),b=rpos(seq(n+1));const bx=lerp(a[0],b[0],f),bz=lerp(a[1],b[1],f);
     RP.forEach(([k,i])=>{const p=rpos(i),pq=((t-(3*i%5)*Tp+10*Tp*5)%(5*Tp));let R=null;const ph=(pq+.25)/.8;if(pq<.55)R=wuKick(clamp(ph,0,1));else if(pq>5*Tp-.25)R=wuKick(clamp((pq-5*Tp+.25)/.8,0,1));
       wuPose(A(k),p[0],p[1],wuYaw(p[0],p[1],bx,bz),R,'focus');});
-    const pr=(k,ph,r)=>{const x=clamp(bx*.5+Math.sin(t*1.7+ph)*1.3,-r,r),z=clamp(bz*.5+Math.cos(t*1.3+ph)*1.3,-r,r);wuPose(A(k),x,z,wuYaw(x,z,bx,bz),null,'determined');};pr('raichi',0,2.8);pr('barou',2.2,2.8);
+    const pr=(k,ph,r)=>{const q=k==='barou'?.04:1,x=clamp(bx*.12*q+Math.sin(t*1.1+ph)*1.6*q+(q<1?2.0:0),-r,r),z=clamp(bz*.12*q+Math.cos(t*.9+ph)*1.6*q+(q<1?-1.6:0),-r,r);wuPose(A(k),x,z,wuYaw(x,z,bx,bz),null,'determined');};pr('raichi',0,2.8);pr('barou',2.2,2.8);
     stBall(bx,.14+Math.sin(PI*f)*.12,bz,.2);};
   // shooting: three strikers, two keepers, one ball
-  const SH0=[-9,0,9],Ps=1.4,GZ=[-2.1,2.1];
+  const SH0=[-9,0,9],Ps=1.4,GZ=[0,0];
   const shoot=(t,dt)=>{const kk=Math.floor((t-.9)/Ps),sIdx=((kk%3)+3)%3,nextS=(((kk+1)%3)+3)%3,dtk=t-(.9+kk*Ps);const zs=i=>SH0[i];
     ['rin','kuni','chig'].forEach((k,i)=>{const P3=3*Ps,q=(((t-(.9+i*Ps))%P3)+P3)%P3;let x=54,R=null;if(q<.5)x=54;else if(q<2.1)x=lerp(54,49,ease(clamp((q-.5)/1.6,0,1)));else if(q<2.9)x=49;else x=lerp(49,54,ease(clamp((q-2.9)/(P3-2.9),0,1)));
       const ph=q>P3-.32?(q-P3+.32)/.8:q<.48?(q+.32)/.8:-1;if(ph>=0&&ph<=1)R=wuKick(ph);wuPose(A(k),x,zs(i),wuYaw(x,zs(i),70,0),R,'determined');});
     const tz=kk%2?-3.2:3.2,sg=tz>0?1:-1;
-    const gkActs=['gaga','fuka'];gkActs.forEach((k,gi)=>{const active=((kk%2)+2)%2===gi,u=active?clamp((dtk-.02)/.75,0,1):0,rise=active?clamp((dtk-1.15)/.25,0,1):0;let R={ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.2,kL:.3,lRx:-.2,kR:.3,hy:-.12,bx:.15},z=GZ[gi],h=0;
+    const gkActs=['gaga'];gkActs.forEach((k,gi)=>{const active=true,u=active?clamp((dtk-.02)/.75,0,1):0,rise=active?clamp((dtk-1.15)/.25,0,1):0;let R={ikL:0,ikR:0,aLz:.5,aRz:.5,eL:.4,eR:.4,lLx:-.2,kL:.3,lRx:-.2,kR:.3,hy:-.12,bx:.15},z=GZ[gi],h=0;
       if(u>0&&u<1+1e-6){const dv=d5Dive(sg,{gkS:sg}),e=ease(u)*(1-ease(rise));R={};for(const q in dv)R[q]=dv[q]*e;z=GZ[gi]+sg*3*ease(u)*(1-.8*ease(rise));h=Math.sin(PI*clamp(u,0,1))*.45;}
       else if(active&&dtk>=1.0&&rise<1){const dv=d5Dive(sg,{gkS:sg});R={};for(const q in dv)R[q]=dv[q]*(1-ease(rise));z=GZ[gi]+sg*3*(1-.8*ease(rise));}
       wuPose(A(k),68.6,z,-PI/2,R,'focus',h);});
@@ -14752,7 +14752,7 @@ function todSkyMesh(kind){const C=h=>LIN(h),U={uTime:{value:0},uSize:{value:.05}
   m.renderOrder=-10;m.frustumCulled=false;m.userData.tod=true;const S0=A_CUR;m.userData.stage=S0;
   m.onBeforeRender=()=>{U.uTime.value=clock;const S=m.userData.stage;if(S&&S.lampM&&S.todFlick){const f=Math.sin(clock*37)*Math.sin(clock*23.7)>.6?.35:1;S.lampM.color.setScalar(S.todLamp*(.72+.28*Math.sin(clock*1.3))*f);}};
   return m;}
-function todApply(S){if(!S||(S.kind!=='day'&&S.kind!=='night'))return;const name=S.kind==='night'?'night':(TOD.cur==='night'?'afternoon':TOD.cur),P=TOD_P[name];S.todName=name;
+function todApply(S){if(!S||(S.kind!=='day'&&S.kind!=='night'))return;const name=(TOD.order.includes(TOD.cur)&&TOD_P[TOD.cur])?TOD.cur:(S.kind==='night'?'night':'afternoon'),P=TOD_P[name];S.todName=name;
   let sky=null;S.env.traverse(o=>{if(o.userData&&o.userData.tod)sky=o;});
   if(!S.tod0)S.tod0={fog:S.fog?{c:S.fog.color.clone(),n:S.fog.near,f:S.fog.far}:null,bg:S.bg?S.bg.clone():null};
   let dir=S.sunDir.clone();
@@ -15028,6 +15028,12 @@ window.__abS=abS;
 readAvail=function(){return 0;};
 readStart=function(){return false;};
 window.__analysisOff=true;
+SHC.slow=.45;
+koHold=function(){try{if(!M||mode!=='match'||M.cine)return;
+  if(M.koWait){for(const p of M.players){p.vx=p.vy=0;}
+    if(M.koFace){const T=M.home,d=T.dir,u=M.user;for(const p of T.players){if(!p.isGK){p.fx=d;p.fy=0;}}if(u&&u.team===T){u.heading=Math.atan2(d,0);G3.userYaw=u.heading;}M.koFace=0;}}
+  else if(M.koFace){const T=M.home,d=T.dir,u=M.user;for(const p of T.players){if(!p.isGK){p.fx=d;p.fy=0;}}if(u&&u.team===T){u.heading=Math.atan2(d,0);G3.userYaw=u.heading;}M.koFace=0;}
+}catch(e){}};
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
