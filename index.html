@@ -9218,7 +9218,7 @@ function abFeetReset(s){const cy=Math.cos(s.ryaw),sy=Math.sin(s.ryaw);
   for(let k=0;k<2;k++){const f=s.feet[k],x=(k?-1:1)*.115*s.hs,z=0;f.st=1;f.wx=s.rx+x*cy+z*sy;f.wz=s.rz-x*sy+z*cy;f.lx=x;f.lz=z;}s.ph=s.ph<.5?.62:.12;}
 function abGait(c,s,o,dt,an){
   const rd=abRDc(c),P=s.P,hs=s.hs,v=s.v;let ux=0,uz=1;if(v>.05){ux=s.lvx/v;uz=s.lvz/v;}const lat=Math.abs(ux);
-  let cad=v<3?1.75+.32*v:2.71+.26*(v-3)+.12*Math.max(0,v-8);cad=Math.min(cad,7)*(1+.35*lat*abSst(.4,2.5,v))/Math.sqrt(an.stride);
+  let cad=v<3?1.75+.32*v:2.71+.26*(v-3)+.12*Math.max(0,v-8);cad=Math.min(cad,7)*(1+.35*lat*abSst(.4,2.5,v))/Math.sqrt(an.stride)*pdrCad(o);
   const wr=abSst(2.3,4.3,v)*(1-.6*lat),wsp=abSst(5.5,9.5,v);let T=2/cad;
   const Lg=(rd.L1+rd.L2)*s.sy,hh=(rd.hip[0][1]-rd.minY)*s.sy,hyN=-(lerp(0,lerp(.045,.07,wsp),wr)+.03*lat*abSst(.5,3,v));
   const reach=Math.sqrt(Math.max(.01,Lg*Lg*.96-Math.pow(hh+(hyN-.035*(1-wr))*hs-rd.aH*s.sy,2)));
@@ -14822,8 +14822,8 @@ window.__feel={GKT,MOVE,MOVE_P,moveSet};
 // The three JSON files are read at start (fetch, relative to the page) and over-ridden by anything saved from the Physics tuning window (localStorage 'twin.phys').
 // Every number below is read each frame through PD (pixel units), so edits apply immediately. Arcade = file values x the "modes.arcade" multipliers, Balanced = file values as written.
 const PXM=PW/140;
-const PHYS={ver:0,status:[],mv:{"profile_name":"Blue Lock Arcade / Balanced Tuned","player_types":{"striker_forward":{"topSpeedMps":10.3,"sprintSpeedMps":11.8,"accelMps2":18.5,"decelMps2":15.0,"turnRateDegPerSec":360,"stamina":{"max":100,"drainPerSecSprint":12.5,"recoverPerSecJog":18.0,"minSpeedFactor":0.75}},"midfielder":{"topSpeedMps":9.8,"sprintSpeedMps":11.0,"accelMps2":16.0,"decelMps2":14.0,"turnRateDegPerSec":390,"stamina":{"max":100,"drainPerSecSprint":10.0,"recoverPerSecJog":20.0,"minSpeedFactor":0.8}},"defender":{"topSpeedMps":9.2,"sprintSpeedMps":10.5,"accelMps2":15.0,"decelMps2":16.0,"turnRateDegPerSec":320,"stamina":{"max":100,"drainPerSecSprint":11.0,"recoverPerSecJog":16.0,"minSpeedFactor":0.7}}},"typeBands":{"strikerMinDepth":0.62,"defenderMaxDepth":0.3},"modes":{"arcade":{"accel":4.0,"decel":4.0,"turn":3.0,"stamina":0.2,"rollFriction":0.725,"airDrag":0.8,"rushDistance":2.3},"balanced":{"accel":1.0,"decel":1.0,"turn":1.0,"stamina":1.0,"rollFriction":1.0,"airDrag":1.0,"rushDistance":1.0}}},gk:{"gk_profile":"Standard U-20 / Blue Lock Match Keeper","reactionTime":{"meanMs":150,"sdMs":25},"reactionClampMs":{"min":120,"max":200},"diveSpeedMps":9.0,"reachMeters":2.2,"rushOutThresholds":{"maxDistanceMeters":6.5,"ballSpeedMaxForRushMps":18.0},"saveChanceMatrix":[{"maxShotSpeedMps":12.0,"maxDistanceMeters":15.0,"baseSaveProbability":0.92},{"maxShotSpeedMps":22.0,"maxDistanceMeters":10.0,"baseSaveProbability":0.7},{"maxShotSpeedMps":30.0,"maxDistanceMeters":5.0,"baseSaveProbability":0.4}],"fallbackSaveProbability":0.3,"uncommittedSaveFactor":0.55},ball:{"ball_properties":{"massKg":0.43,"dragCoefficient":0.25,"bounceRestitution":0.68,"rollFrictionPerSec":1.2,"curveStrength":1.45,"curveReference":1.45,"maxSpeedMps":35.0}}};
-const PHYS_KEY='twin.phys',PHYS_DEF=JSON.parse(JSON.stringify({mv:PHYS.mv,gk:PHYS.gk,ball:PHYS.ball}));
+const PHYS={ver:0,status:[],procedural_dribble:{enabled:1,forward_lean_degrees:25,acceleration_lean_burst_degrees:35,sharp_turn_bank_angle_degrees:30,shoulder_swing_multiplier:1.6,elbow_fixed_bend_degrees:85,hand_clench_weight:1,stride_frequency_hz:3.4,foot_lift_height_m:.45,head_tilt_down_degrees:10,dribble_distance_m:.45},mv:{"profile_name":"Blue Lock Arcade / Balanced Tuned","player_types":{"striker_forward":{"topSpeedMps":10.3,"sprintSpeedMps":11.8,"accelMps2":18.5,"decelMps2":15.0,"turnRateDegPerSec":360,"stamina":{"max":100,"drainPerSecSprint":12.5,"recoverPerSecJog":18.0,"minSpeedFactor":0.75}},"midfielder":{"topSpeedMps":9.8,"sprintSpeedMps":11.0,"accelMps2":16.0,"decelMps2":14.0,"turnRateDegPerSec":390,"stamina":{"max":100,"drainPerSecSprint":10.0,"recoverPerSecJog":20.0,"minSpeedFactor":0.8}},"defender":{"topSpeedMps":9.2,"sprintSpeedMps":10.5,"accelMps2":15.0,"decelMps2":16.0,"turnRateDegPerSec":320,"stamina":{"max":100,"drainPerSecSprint":11.0,"recoverPerSecJog":16.0,"minSpeedFactor":0.7}}},"typeBands":{"strikerMinDepth":0.62,"defenderMaxDepth":0.3},"modes":{"arcade":{"accel":4.0,"decel":4.0,"turn":3.0,"stamina":0.2,"rollFriction":0.725,"airDrag":0.8,"rushDistance":2.3},"balanced":{"accel":1.0,"decel":1.0,"turn":1.0,"stamina":1.0,"rollFriction":1.0,"airDrag":1.0,"rushDistance":1.0}}},gk:{"gk_profile":"Standard U-20 / Blue Lock Match Keeper","reactionTime":{"meanMs":150,"sdMs":25},"reactionClampMs":{"min":120,"max":200},"diveSpeedMps":9.0,"reachMeters":2.2,"rushOutThresholds":{"maxDistanceMeters":6.5,"ballSpeedMaxForRushMps":18.0},"saveChanceMatrix":[{"maxShotSpeedMps":12.0,"maxDistanceMeters":15.0,"baseSaveProbability":0.92},{"maxShotSpeedMps":22.0,"maxDistanceMeters":10.0,"baseSaveProbability":0.7},{"maxShotSpeedMps":30.0,"maxDistanceMeters":5.0,"baseSaveProbability":0.4}],"fallbackSaveProbability":0.3,"uncommittedSaveFactor":0.55},ball:{"ball_properties":{"massKg":0.43,"dragCoefficient":0.25,"bounceRestitution":0.68,"rollFrictionPerSec":1.2,"curveStrength":1.45,"curveReference":1.45,"maxSpeedMps":35.0}}};
+const PHYS_KEY='twin.phys',PHYS_DEF=JSON.parse(JSON.stringify({mv:PHYS.mv,gk:PHYS.gk,ball:PHYS.ball,procedural_dribble:PHYS.procedural_dribble}));
 const PD={t:{},m:null};
 function physMerge(dst,src,path,unk){
   if(!src||typeof src!=='object')throw new Error('expected an object at '+path);
@@ -14881,16 +14881,16 @@ async function physLoad(){
   PHYS.status=st;physDerive();physUI();
 }
 function physApplyObj(o,unk){
-  const c={mv:JSON.parse(JSON.stringify(PHYS.mv)),gk:JSON.parse(JSON.stringify(PHYS.gk)),ball:JSON.parse(JSON.stringify(PHYS.ball))};
-  if(o.player_movement)physMerge(c.mv,o.player_movement,'player_movement',unk);if(o.goalkeeper)physMerge(c.gk,o.goalkeeper,'goalkeeper',unk);if(o.ball_physics)physMerge(c.ball,o.ball_physics,'ball_physics',unk);
-  PHYS.mv=c.mv;PHYS.gk=c.gk;PHYS.ball=c.ball;}
-function physText(){return JSON.stringify({player_movement:PHYS.mv,goalkeeper:PHYS.gk,ball_physics:PHYS.ball},null,1);}
+  const c={mv:JSON.parse(JSON.stringify(PHYS.mv)),gk:JSON.parse(JSON.stringify(PHYS.gk)),ball:JSON.parse(JSON.stringify(PHYS.ball)),procedural_dribble:JSON.parse(JSON.stringify(PHYS.procedural_dribble))};
+  if(o.player_movement)physMerge(c.mv,o.player_movement,'player_movement',unk);if(o.goalkeeper)physMerge(c.gk,o.goalkeeper,'goalkeeper',unk);if(o.procedural_dribble)physMerge(c.procedural_dribble,o.procedural_dribble,'procedural_dribble',unk);if(o.ball_physics)physMerge(c.ball,o.ball_physics,'ball_physics',unk);
+  PHYS.mv=c.mv;PHYS.gk=c.gk;PHYS.ball=c.ball;PHYS.procedural_dribble=c.procedural_dribble;}
+function physText(){return JSON.stringify({player_movement:PHYS.mv,goalkeeper:PHYS.gk,ball_physics:PHYS.ball,procedural_dribble:PHYS.procedural_dribble},null,1);}
 function physUI(){const m=$('pc-msg');if(m&&!m.dataset.keep)m.textContent=PHYS.status.join(' · ');}
 function physApply(){
   const m=$('pc-msg');m.dataset.keep='1';
   try{const o=JSON.parse($('pc-text').value),u=[];physApplyObj(o,u);physDerive();try{localStorage.setItem(PHYS_KEY,$('pc-text').value);}catch(e){}m.textContent='Applied.'+(u.length?' Ignored unknown keys: '+u.slice(0,4).join(', ')+(u.length>4?'...':''):'');}
   catch(e){m.textContent='Not applied: '+(e&&e.message||e);}}
-async function physReset(){try{localStorage.removeItem(PHYS_KEY);}catch(e){}PHYS.mv=JSON.parse(JSON.stringify(PHYS_DEF.mv));PHYS.gk=JSON.parse(JSON.stringify(PHYS_DEF.gk));PHYS.ball=JSON.parse(JSON.stringify(PHYS_DEF.ball));const m=$('pc-msg');if(m)delete m.dataset.keep;await physLoad();const t=$('pc-text');if(t)t.value=physText();}
+async function physReset(){try{localStorage.removeItem(PHYS_KEY);}catch(e){}PHYS.mv=JSON.parse(JSON.stringify(PHYS_DEF.mv));PHYS.gk=JSON.parse(JSON.stringify(PHYS_DEF.gk));PHYS.ball=JSON.parse(JSON.stringify(PHYS_DEF.ball));PHYS.procedural_dribble=JSON.parse(JSON.stringify(PHYS_DEF.procedural_dribble));const m=$('pc-msg');if(m)delete m.dataset.keep;await physLoad();const t=$('pc-text');if(t)t.value=physText();}
 try{$('b-phys').onclick=()=>{const m=$('pc-msg');if(m)delete m.dataset.keep;$('pc-text').value=physText();m.textContent=PHYS.status.join(' · ');$('physcfg').hidden=false;};$('pc-close').onclick=()=>{$('physcfg').hidden=true;};$('pc-apply').onclick=physApply;$('pc-reset').onclick=physReset;}catch(e){console.warn('phys ui',e);}
 window.__phys={PHYS,PD,PXM,load:physLoad,reset:physReset,apply:physApplyObj,derive:physDerive,ptype,save:physSave,react:physGkReact,limit:physLimit,stam:physStam};
 physLoad();
@@ -15034,6 +15034,47 @@ koHold=function(){try{if(!M||mode!=='match'||M.cine)return;
     if(M.koFace){const T=M.home,d=T.dir,u=M.user;for(const p of T.players){if(!p.isGK){p.fx=d;p.fy=0;}}if(u&&u.team===T){u.heading=Math.atan2(d,0);G3.userYaw=u.heading;}M.koFace=0;}}
   else if(M.koFace){const T=M.home,d=T.dir,u=M.user;for(const p of T.players){if(!p.isGK){p.fx=d;p.fy=0;}}if(u&&u.team===T){u.heading=Math.atan2(d,0);G3.userYaw=u.heading;}M.koFace=0;}
 }catch(e){}};
+// ---- procedural dribble: carrier-only kinematic layer on top of the run cycle (lean, burst, bank, arms, elbows, fists, foot lift, head tilt, ball distance) ----
+function pdrCfg(o){try{const D=PHYS.procedural_dribble;if(!D||!D.enabled||mode!=='match'||!M||M.cine||M.freeze||!M.ball||!M.ball.owner||!abSamePl(o,M.ball.owner)||o.isGK||o.coach||o.bench)return null;return D;}catch(e){return null;}}
+function pdrCad(o){const D=pdrCfg(o);return D?clamp(D.stride_frequency_hz/3.4,.5,1.8):1;}
+{const _pg=abGait;abGait=function(c,s,o,dt,an){_pg.apply(this,arguments);
+  try{const D=pdrCfg(o);if(!D)return;const P=s.P,G=s.gait;if(!G)return;const g=G.g,wr=G.wr,wsp=G.wsp,v=s.v,D2R=Math.PI/180,cl=(x,a,b)=>Math.min(b,Math.max(a,x));
+    const lean=cl(D.forward_lean_degrees,0,60)*D2R,burst=cl(D.acceleration_lean_burst_degrees,0,70)*D2R,bank=cl(D.sharp_turn_bank_angle_degrees,0,60)*D2R;
+    // forward lean: aim the total trunk pitch at the configured angle (the stock gait already gives about 0.2 rad at a jog and 0.45 at a sprint)
+    const ref=((.03+.12*wr)+.2*wsp)*an.lean+.05*wr+.05*wsp,tgt=lean*(.15+.85*abSst(1,9,v)),acc=cl(s.af/14,0,1),brk=cl(-s.af/14,0,1);
+    P[abCI.sx]+=((tgt-ref)+Math.max(0,burst-lean)*acc*(1-(s.sdw||0))-.1*brk)*g;
+    // bank into sharp turns: replace the stock bank (max 0.32 rad) by the configured angle
+    const bk=-s.yr*s.v*.035;P[abCI.bz]+=(cl(bk*bank/.32,-bank,bank)-cl(bk,-.32,.32))*s.gw;
+    // arms: shoulder swing multiplier (capped at 2 rad), fixed elbow bend, clenched fists
+    const back=0,A=g*lerp(.48,lerp(.72,1.5,wsp),wr)*an.armSwing*(1-.55*G.lat),cph=Math.cos(Math.PI*2*(s.ph-.05)),mEff=Math.min(cl(D.shoulder_swing_multiplier,.3,3),Math.max(1,2/Math.max(A,.01))),elb=cl(D.elbow_fixed_bend_degrees,20,140)*D2R,fist=cl(D.hand_clench_weight,0,1),ew=g*abSst(2.3,4.3,v);
+    for(let k=0;k<2;k++){const sw=(k?-A:A)*cph,o4=k?4:0,fw=A>1e-3?Math.max(0,-sw/A):0;
+      P[abCI.aLx+o4]+=(mEff-1)*(sw>0?sw*.75:sw);
+      P[abCI.eL+o4]=lerp(P[abCI.eL+o4],elb+.3*fw*wr,ew);
+      P[abCI.cL+k]=lerp(P[abCI.cL+k],.4+.6*fist,g*wr);}
+    // foot lift: scale the swing-foot height toward the configured peak (stock peak 0.44 m)
+    const lf=cl(D.foot_lift_height_m,.1,.9)/.44;for(let k=0;k<2;k++){const i=abCI.fhL+(k?5:0);P[i]*=lerp(1,lf,g*wr);}
+    // head tilted down while running with the ball; the carrier gaze layer still steers it toward the ball and the nearest defender
+    P[abCI.nx]+=cl(D.head_tilt_down_degrees,0,40)*D2R*abSst(.2,3,v)*g;
+    // ball distance
+    if(window.__spec){const d=cl(D.dribble_distance_m,.2,1.2);window.__spec.ballM=d;window.__spec.ballPx=d*PXM;}
+  }catch(e){if(!window.__pdrErr){window.__pdrErr=1;console.warn('procedural dribble',e);}}
+};}
+// sliders inside the Physics tuning window (live; they write the procedural_dribble block and keep the JSON box and the saved copy in step)
+try{const card=$('pc-text')&&$('pc-text').parentNode;if(card&&!$('pdr-box')){
+  const SL=[['forward_lean_degrees','Forward lean (deg)',5,45,1],['acceleration_lean_burst_degrees','Acceleration lean burst (deg)',10,60,1],['sharp_turn_bank_angle_degrees','Sharp-turn bank (deg)',0,50,1],['shoulder_swing_multiplier','Shoulder swing x',.4,2.4,.05],['elbow_fixed_bend_degrees','Elbow bend (deg)',40,130,1],['hand_clench_weight','Fist clench',0,1,.05],['stride_frequency_hz','Stride frequency (Hz, 3.4 = current)',2,5,.1],['foot_lift_height_m','Foot lift (m)',.15,.8,.01],['head_tilt_down_degrees','Head tilt down (deg)',0,25,1],['dribble_distance_m','Ball distance (m)',.3,.9,.01]];
+  const box=document.createElement('div');box.id='pdr-box';box.style.cssText='margin:8px 0;padding:8px;border:1px solid #2a4a7a;border-radius:6px;background:#0b1424;color:#eaf3ff;font:12px/1.5 system-ui,sans-serif';
+  box.innerHTML='<div style="font-weight:700;margin-bottom:4px">Procedural dribble (ball carrier) <label style="float:right;font-weight:400"><input type="checkbox" id="pdr-on"> on</label></div>';
+  const rows={};
+  const save=()=>{try{const t=$('pc-text');let o;try{o=JSON.parse(t.value);}catch(e){o=null;}if(o&&typeof o==='object'){o.procedural_dribble=JSON.parse(JSON.stringify(PHYS.procedural_dribble));t.value=JSON.stringify(o,null,1);}else t.value=physText();localStorage.setItem(PHYS_KEY,t.value);}catch(e){}};
+  SL.forEach(([k,lab,a,b,st])=>{const r=document.createElement('label');r.style.cssText='display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,2fr) 3.4em;gap:6px;align-items:center';
+    r.innerHTML='<span>'+lab+'</span><input type="range" min="'+a+'" max="'+b+'" step="'+st+'"><b style="text-align:right"></b>';
+    const inp=r.querySelector('input'),out=r.querySelector('b');inp.oninput=()=>{const v=+inp.value;PHYS.procedural_dribble[k]=v;out.textContent=String(Math.round(v*100)/100);save();};rows[k]=[inp,out];box.appendChild(r);});
+  const on=box.querySelector('#pdr-on');on.onchange=()=>{PHYS.procedural_dribble.enabled=on.checked?1:0;save();};
+  window.pdrSync=()=>{const D=PHYS.procedural_dribble;on.checked=!!D.enabled;for(const k in rows){rows[k][0].value=D[k];rows[k][1].textContent=String(Math.round(D[k]*100)/100);}};
+  card.insertBefore(box,$('pc-text'));pdrSync();
+  ['b-phys','pc-apply','pc-reset'].forEach(id=>{const e=$(id);if(e)e.addEventListener('click',()=>{setTimeout(pdrSync,80);setTimeout(pdrSync,500);});});
+}}catch(e){console.warn('pdr ui',e);}
+window.__pdr=pdrCfg;
 stAttach();stP2();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
