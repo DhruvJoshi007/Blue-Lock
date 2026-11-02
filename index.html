@@ -13609,7 +13609,7 @@ window.__rs=RS;
 // Scene time t runs at wall-clock speed; his body runs on tau (seconds of real motion) through D5MAP (slow motion).
 const D5={e:0,gkSg:1,eyeUp:.055,bandUp:.1};
 const D5MAP=[[0,0],[12.7,0],[15.2,.45],[16.6,.78],[17.4,.9],[17.6,1.0],[17.9,1.07],[20.0,1.25],[20.9,1.33],[21.2,1.38],[21.7,1.43],[23.9,1.6],[24.3,1.72],[24.7,1.92],[24.95,2.2],[29.7,2.205],[33.7,2.21],[37.2,2.28],[38.87,2.34],[38.93,2.344],[39.1,2.36],[41.2,2.47],[55,2.62],[75,2.62]];
-const D5_FSIDE=1.1,D5_AIRI=.06,D5_PF=[.9,.2,1.18],D5_HR=.15,D5_STRIKE=39.0,D5_LASER=39.13,D5_NET=39.55,D5_END=75.0,D5_BC=29.7,D5_BCEND=33.7;
+const D5_FSIDE=1.1,D5_AIRI=.06,D5_PF=[-.33,1.13,1.2],D5_HR=.2,D5_STRIKE=39.0,D5_LASER=39.13,D5_NET=39.55,D5_END=75.0,D5_BC=29.7,D5_BCEND=33.7;
 const D5T={pass:0,gkFace:1.2,ballC:1.7,save:2.2,run:3.7,duo:6.2,top:9.2,high:10.7,split:12.7,net:15.2,ctrl:17.2,dive:18.7,lift:20.0,faces:22.2,turn:23.7,air:25.2,eye:33.7,ballP:37.2,strike:38.7,ballR:41.2,goal:40.5,land:55,look:58};
 const D5_SHOT=1.65,D5_SAVE=3.0,D5_RCV=17.6,D5_SLD=21.4,D5_SL0=23.95;D5T.faces=23.0;
 function d5Tau(t){if(t>24.5&&t<25.05){const x=clamp((t-24.5)/.09,0,1);return 1.82+.38*x*x*x*(x*(x*6-15)+10);}   // the whip-turn snaps, then holds
@@ -13631,7 +13631,7 @@ const D5_KEYS=[
   [1.92,{_hd:1,hy:0,bz:.85,bx:.2,lLx:.45,kL:.5,lRx:-.95,kR:2.2,ikL:0,ikR:0,sx:.1,sy:.35,aLz:.35,aLx:.9,eL:1.3,aLy:.4,aRz:1.0,aRx:.2,eR:2.0,aRy:.3,wL:.7,wR:.9,cL:.8,cR:.9,nx:.05}],                               // tucked, rising
   [2.2,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,lRx:.2,lRz:1.5,kR:2.4,fR:.5,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15}],   // round to face the goal: spine, neck and head turn as one, hands up
   [2.3,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,lRx:.2,lRz:1.5,kR:2.4,fR:.5,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15}],  // hands still up
-  [2.34,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,lRx:.2,lRz:1.5,kR:2.4,fR:.5,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15}],[2.344,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15,lRx:-.95,lRz:.35,kR:.2,fR:.8}],[2.36,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15,lRx:-.95,lRz:.35,kR:.2,fR:.8}],  // STRIKE: right toe smashes the ball into the ground
+  [2.34,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,lRx:.2,lRz:1.5,kR:2.4,fR:.5,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15}],[2.344,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15,lRx:-.2,lRz:1.4,kR:.9,fR:.8}],[2.36,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15,lRx:-.2,lRz:1.4,kR:.9,fR:.8}],  // STRIKE: right toe smashes the ball into the ground
   [2.47,{_hd:1,hy:0,bz:.38,bx:.62,lLx:-.5,lLz:.42,kL:.9,ikL:0,ikR:0,sx:1.0,sy:-.78,aRz:1.5,aRx:-.25,eR:1.95,aRy:.2,aLz:.3,aLx:.95,eL:1.15,aLy:.5,wL:.5,wR:.9,cL:.6,cR:.9,nx:.05,ny:-.15,lRx:-.5,lRz:.25,kR:.1,fR:1.0}],              // follow-through
   [2.75,{hy:-.05,bz:.2,lLx:-.6,kL:.9,lRx:-.3,kR:1.0,ikL:0,ikR:0,sx:.1,aLz:.9,aRz:.9,nx:.2}],
   [2.95,{hy:-.24,kL:.9,kR:.9,lLx:-.4,lRx:-.4,ikL:1,ikR:1,sx:.3,aLz:.5,aRz:.5,nx:.1}],
@@ -13709,7 +13709,8 @@ function d5After(a){const c=M.cine;if(!c||c.v!==5||!c.u||!a||!a.bones||!a.root)r
   try{if(c.D.some(d=>fxActor(d.o)===a)){a.root.updateMatrixWorld(true);let m=9;for(const n in a.bones){const b=a.bones[n];if(!b)continue;const y=b.getWorldPosition(D5V0).y-(/Foot$/.test(n)?.07:/Toe/.test(n)?.02:.06);if(y<m)m=y;}if(m<0){a.root.position.y-=m;a.root.updateMatrixWorld(true);window.__d5py=(window.__d5py||0)+1;}}}catch(e){window.__d5pe='D:'+e;}
   try{if(a===fxActor(c.u)&&t>=24.3&&t<D5_STRIKE+1.8){const H=a.bones.Head;if(H&&H.parent){const w=ease(clamp((t-24.3)/.25,0,1))*(1-ease(clamp((t-(D5_STRIKE+1.2))/.5,0,1)));
     if(w>.001){a.root.updateMatrixWorld(true);const hp=H.getWorldPosition(D5V0),B=M.ball,f=d5Aim(hp,t),up=new THREE.Vector3(0,1,0);up.addScaledVector(f,-up.dot(f)).normalize();
-      const Yv=up.negate(),Zv=new THREE.Vector3().crossVectors(f,Yv);D5M0.makeBasis(f,Yv,Zv);D5Q0.setFromRotationMatrix(D5M0);H.parent.getWorldQuaternion(D5Q1).invert();D5Q1.multiply(D5Q0);H.quaternion.slerp(D5Q1,w);H.updateMatrixWorld(true);window.__d5ph=(window.__d5ph||0)+1;}}}}catch(e){window.__d5pe='H:'+e;}}
+      const Yv=up.negate(),Zv=new THREE.Vector3().crossVectors(f,Yv);D5M0.makeBasis(f,Yv,Zv);D5Q0.setFromRotationMatrix(D5M0);const N=H.parent;if(N&&N.parent&&/Neck/i.test(N.name||'')){const Hq=H.getWorldQuaternion(new THREE.Quaternion()),dl=D5Q0.clone().multiply(Hq.invert()),half=new THREE.Quaternion().slerp(dl,.5),Nw=N.getWorldQuaternion(new THREE.Quaternion()),Pq=N.parent.getWorldQuaternion(new THREE.Quaternion()).invert(),Nl=Pq.multiply(half.multiply(Nw));N.quaternion.slerp(Nl,w);N.updateMatrixWorld(true);}
+      H.parent.getWorldQuaternion(D5Q1).invert();D5Q1.multiply(D5Q0);H.quaternion.slerp(D5Q1,w);H.updateMatrixWorld(true);window.__d5ph=(window.__d5ph||0)+1;}}}}catch(e){window.__d5pe='H:'+e;}}
 function d5Rec(c){const t=c.t,R=window.__d5R||(window.__d5R={});
   let off=false;try{off=localStorage.getItem('twin.dapRec')==='0';}catch(e){}
   if(off||typeof MediaRecorder==='undefined')return;
@@ -13906,6 +13907,8 @@ function ultCam(c,dt){if(c.v!==5)return;
     if(t>=T.strike-.14){const C=c.c9||d5C9(c),a2=fxActor(u),Hp=a2&&a2.bones&&a2.bones.Hips?a2.bones.Hips.getWorldPosition(V(0,0,0)):U.clone().setY(1),ctr=Hp.clone().lerp(B,.4);
       if(!c.p88)c.p88={pos:pos.clone(),look:look.clone(),fov};const e=ease(clamp((t-T.strike+.14)/.15,0,1)),far=ctr.clone().addScaledVector(C.D,-3.4).addScaledVector(C.R,-1.5);far.y=.28;const lf=V(B.x,1.35,B.z);
       pos=c.p88.pos.clone().lerp(far,e);look=c.p88.look.clone().lerp(lf,e);fov=lerp(c.p88.fov,54,e);c.p88e=e;}}
+  else if(c.tH&&t<c.tH+.3){ph=89;if(!c.iP)c.iP=B.clone();const q=clamp((t-c.tH)/.3,0,1),Tt=d5Toe(c,'Right'),dd=lerp(1.25,.95,q);
+    pos=B.clone().addScaledVector(F,dd).addScaledVector(L,.35);pos.y=B.y+.2;look=Tt?B.clone().lerp(Tt,.55):B.clone();fov=lerp(40,34,q);}
   else if(t<D5_NET){ph=89;const C=c.c9||d5C9(c);if(!c.iP)c.iP=B.clone();const I=c.iP,q=clamp((t-(c.tH||D5_STRIKE))/.45,0,1);
     pos=V(I.x,.35,I.z).addScaledVector(C.D,-4.2).addScaledVector(C.R,-1.3);look=V(I.x,1.3,I.z).lerp(Gc.clone().setY(1.7),ease(q)*.75);fov=lerp(52,56,q);}
   else if(t<T.goal){ph=90;   // the ball flying at goal, the keeper's glove reaching
@@ -14019,7 +14022,7 @@ function d5Defs(c,on){c.D.forEach((d,i)=>{const a=fxActor(d.o),L=D5_DEF[i];if(!a
 {const _fp=A_flarePre;A_flarePre=function(S,CM){const c=M&&M.cine,on=c&&c.type==='ult'&&c.v===5;if(S&&S.flare)S.flare.visible=!on;if(on)return;return _fp.apply(this,arguments);};}
 {const _fa=fxAuras;fxAuras=function(dt,c,rdt){const r=_fa.apply(this,arguments);try{if(c&&c.type==='ult'&&c.v===5){for(const a of G3.actors.values()){const A=a&&a.__fxA;if(A){A.target=0;A.str=0;for(const q of A.shells)q.visible=false;if(A.glow)A.glow.visible=false;}}}}catch(e){}return r;};}   // no glowing shells on anyone during the cut
 {const _pb=placeBall;placeBall=function(b,dt){const r=_pb.apply(this,arguments);try{const c=M&&M.cine,o=G3.ball;if(o){if(c&&c.type==='ult'&&c.v===5){const tau=c.tau||0,q=tau>1.06&&tau<1.33?Math.min(1,(tau-1.06)/.01)*(1-clamp((tau-1.3)/.03,0,1)):0;
-  o.scale.set(1+.14*q,1-.2*q,1+.14*q);o.position.y-=.11*.2*q;if(c.t>24&&c.t<D5_STRIKE)o.rotation.y+=dt*14;c.sq=1;}else if(!c&&o.scale.y!==1){o.scale.setScalar(1);}}}catch(e){}return r;};}
+  {const qh=c.tH&&c.t>=c.tH&&c.t<c.tH+.14?1-(c.t-c.tH)/.14:0,qq=Math.max(q,qh*1.6);o.scale.set(1+.14*qq,1-.2*qq,1+.14*qq);o.position.y-=.11*.2*qq;}if(c.t>24&&c.t<D5_STRIKE)o.rotation.y+=dt*14;c.sq=1;}else if(!c&&o.scale.y!==1){o.scale.setScalar(1);}}}catch(e){}return r;};}
 // ---------------- Japan watching: the 16-20 s cut-away (story stage) ----------------
 function d5Cast(){const G=(k,kit,n,seed,h)=>{w5Gen(k,'Japan',kit,n,'MF',seed);const d=DESIGNS[k];if(d&&h&&d.build)d.build={...d.build,h:(d.build.h||1)*h};};
   try{w5Init();}catch(e){}
@@ -15158,7 +15161,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='133';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='134';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
