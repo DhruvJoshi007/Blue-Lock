@@ -13701,7 +13701,7 @@ function d5Front(c,off){const T=d5Toe(c);if(!T)return null;let hx=T.dir.x,hz=T.d
 function d5BY(h){return .15+(h||0)*S3*1.2;}
 function d5FootB(c,side){const F=ultFoot(c,0,side);if(!F)return null;return {x:F.x,y:F.y,h:Math.max(0,(F.h*S3+.11-.15)/(S3*1.2))};}
 function d5Aim(hp,t){const B=M.ball,cc=M.cine,k=(cc&&cc.tH&&t>=cc.tH)||t>=D5_STRIKE+.12?1:0;
-  const G=v3(ultGoalX(),PH/2,1.1),gx=G.x-hp.x,gy=G.y-hp.y,gz=G.z-hp.z,gh=Math.hypot(gx,gz)||1,bx=gx/gh,by=.28,bz=gz/gh;
+  const G=v3(ultGoalX(),PH/2,1.1),gx=G.x-hp.x,gy=G.y-hp.y,gz=G.z-hp.z,gh=Math.hypot(gx,gz)||1,hx=gx/gh,hz=gz/gh,ya=.0873,bx=hx*Math.cos(ya)+hz*Math.sin(ya),by=-.21,bz=hz*Math.cos(ya)-hx*Math.sin(ya);
   const bl=Math.hypot(bx,by,bz)||1,gl=Math.hypot(gx,gy,gz)||1;window.__d5k=k;
   return D5V1.set(bx/bl*(1-k)+gx/gl*k,by/bl*(1-k)+gy/gl*k,bz/bl*(1-k)+gz/gl*k).normalize();}
 const D5V0=new THREE.Vector3(),D5V1=new THREE.Vector3(),D5Q0=new THREE.Quaternion(),D5Q1=new THREE.Quaternion(),D5M0=new THREE.Matrix4();
@@ -15156,7 +15156,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='128';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='129';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
