@@ -13609,7 +13609,7 @@ window.__rs=RS;
 // Scene time t runs at wall-clock speed; his body runs on tau (seconds of real motion) through D5MAP (slow motion).
 const D5={e:0,gkSg:1,eyeUp:.055,bandUp:.1};
 const D5MAP=[[0,0],[12.7,0],[15.2,.45],[16.6,.78],[17.4,.9],[17.6,1.0],[17.9,1.07],[20.0,1.25],[20.9,1.33],[21.2,1.38],[21.7,1.43],[23.9,1.6],[24.3,1.72],[24.7,1.92],[24.95,2.2],[29.7,2.205],[33.7,2.21],[37.2,2.28],[38.87,2.34],[38.93,2.344],[39.1,2.36],[41.2,2.47],[55,2.62],[75,2.62]];
-const D5_AIRI=.06,D5_PF=[.66,-.30,.30],D5_HR=.2,D5_STRIKE=39.0,D5_LASER=41.2,D5_NET=42.35,D5_END=75.0,D5_BC=29.7,D5_BCEND=33.7;
+const D5_AIRI=.06,D5_PF=[.66,-.30,.30],D5_HR=.15,D5_STRIKE=39.0,D5_LASER=41.2,D5_NET=42.35,D5_END=75.0,D5_BC=29.7,D5_BCEND=33.7;
 const D5T={pass:0,gkFace:1.2,ballC:1.7,save:2.2,run:3.7,duo:6.2,top:9.2,high:10.7,split:12.7,net:15.2,ctrl:17.2,dive:18.7,lift:20.0,faces:22.2,turn:23.7,air:25.2,eye:33.7,ballP:37.2,strike:38.7,ballR:41.2,goal:42.2,land:55,look:58};
 const D5_SHOT=1.65,D5_SAVE=3.0,D5_RCV=17.6,D5_SLD=21.4,D5_SL0=21.15;D5T.faces=23.0;
 function d5Tau(t){if(t>24.5&&t<25.05){const x=clamp((t-24.5)/.55,0,1);return 1.82+.38*x*x*x*(x*(x*6-15)+10);}   // the whip-turn snaps, then holds
@@ -13797,9 +13797,8 @@ function ultUpdate(c,dt){
     else if(t<SL+1.15){const q=t-SL;if(!d.sl){d.sl=1;sfx('swoosh');}
       if(q<.35){const k=1-Math.pow(1-q/.35,2.5);o.x=lerp(PR.x,PI.x,k);o.y=lerp(PR.y,PI.y,k);}else{const k=1-Math.pow(1-clamp((q-.35)/.8,0,1),2);o.x=lerp(PI.x,PG.x,k);o.y=lerp(PI.y,PG.y,k);}
       {const dx=PI.x-PR.x,dy=PI.y-PR.y,l=Math.hypot(dx,dy)||1;o.fx=dx/l;o.fy=dy/l;}o.fRun=null;o.fRunW=0;o.pose=null;o.lookAt=null;if(da)da.mxForce={n:'tackle',t:Math.min(1.7,q*1.1),w:abSst(0,.08,q),loop:false};}
-    else{o.x=PG.x;o.y=PG.y;o.fx=-L.x*s*.8-F.x*.4;o.fy=-L.y*s*.8-F.y*.4;const k=ease(clamp((t-SL-1.15)/.6,0,1));o.pose='raw';
-      if(da&&t<SL+1.75)da.mxForce={n:'tackle',t:Math.min(1.7,(t-SL)*1.1),w:1-k,loop:false};
-      if(!d.R)d.R={};const A=i?D5_SLIDE:D5_LUNGE,B2=i?D5_SITUP:D5_CROUCH;for(const kk in B2)d.R[kk]=lerp(A[kk]||0,B2[kk],k);for(const kk in A)if(!(kk in B2))d.R[kk]=lerp(A[kk],0,k);if(i===0)dapFace(o,c.O.x,c.O.y);o.raw=d.R;o.lookAt=Bw();}});
+    else{o.x=PG.x;o.y=PG.y;{const dx=PI.x-PR.x,dy=PI.y-PR.y,l=Math.hypot(dx,dy)||1;o.fx=dx/l;o.fy=dy/l;}o.fRun=null;o.fRunW=0;o.pose=null;o.lookAt=null;
+      if(da)da.mxForce=t<24?{n:'tackle',t:.95,w:1,loop:false}:null;}});
   if(t>=D5T.air&&t<D5T.strike-.02&&!(t>=D5_BC&&t<D5_BCEND)){const o=c.D[0].o,P=d5V(c,-1.45,0,1.15);o.x=P.x;o.y=P.y;o.fx=F.x;o.fy=F.y;}
   // the volley frame: the first defender sits beaten in the right foreground, looking back at it
   if(t>=D5T.strike-.02&&t<D5T.ballR){if(t<D5T.strike+.3||!c.c9)d5C9(c);const C=c.c9,o=c.D[0].o,P=C.pos.clone().addScaledVector(C.D,6.4).addScaledVector(C.R,2.2),f=C.D.clone().multiplyScalar(.5).addScaledVector(C.R,-.8);
@@ -15136,7 +15135,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='121';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='122';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
