@@ -9761,13 +9761,13 @@ function abCeleb(c,s,o,g,dt,an){
 
 // ---------- in-match roles ----------
 function abMatchRoles(c,s,o,dt,an){const g=abG.goal;
-  if(g&&g.M===M)return abCeleb(c,s,o,g,dt,an);
+  if(g&&g.M===M){if(M.dapFallen&&o===M.user&&o.raw){for(const k in o.raw)if(abCI[k]!==undefined)s.P[abCI[k]]=o.raw[k];return '';}return abCeleb(c,s,o,g,dt,an);}
   const C=M.cine;if(C&&C.type==='shot'&&abSamePl(o,C.shooter))return abShotPose(c,s,o,C);
   return '';}
 function abOffsets(a,s,o,dt){
   const f=s.off;f.yaw=null;f.tr=0;let act=false;
   if(abInMatch(o)&&!o.coach&&!o.bench){const C=M.cine,g=abG.goal&&abG.goal.M===M?abG.goal:null;
-    if(g)act=abCelOff(a,s,o,g,dt);
+    if(g&&!(M.dapFallen&&o===M.user))act=abCelOff(a,s,o,g,dt);
     else if(C&&C.type==='shot'&&abSamePl(o,C.shooter)){abShotOff(s,o,C);act=true;}
     if(!act&&!C&&!g){const b=M.ball,ow=b.owner;
       if(o.isGK&&!abSamePl(o,ow)){f.yaw=Math.atan2(b.x-o.x,b.y-o.y);f.tr=7;}
@@ -13707,9 +13707,9 @@ function d5Aim(hp,t){const B=M.ball,cc=M.cine,k=(cc&&cc.tH&&t>=cc.tH)||t>=D5_STR
 const D5V0=new THREE.Vector3(),D5V1=new THREE.Vector3(),D5Q0=new THREE.Quaternion(),D5Q1=new THREE.Quaternion(),D5M0=new THREE.Matrix4();
 function d5After(a){const c=M.cine;if(!c||c.v!==5||!c.u||!a||!a.bones||!a.root)return;const t=c.t;window.__d5pn=(window.__d5pn||0)+1;
   try{if(c.D.some(d=>fxActor(d.o)===a)){a.root.updateMatrixWorld(true);let m=9;for(const n in a.bones){const b=a.bones[n];if(!b)continue;const y=b.getWorldPosition(D5V0).y-(/Foot$/.test(n)?.07:/Toe/.test(n)?.02:.06);if(y<m)m=y;}if(m<0){a.root.position.y-=m;a.root.updateMatrixWorld(true);window.__d5py=(window.__d5py||0)+1;}}}catch(e){window.__d5pe='D:'+e;}
-  try{if(a===fxActor(c.u)&&t>=24.3&&t<D5_STRIKE+1.8){const H=a.bones.Head;if(H&&H.parent){const w=ease(clamp((t-24.3)/.25,0,1))*(1-ease(clamp((t-(D5_STRIKE+1.2))/.5,0,1)));
+  try{if(a===fxActor(c.u)&&t>=24.3&&t<D5_STRIKE+1.8){const H=a.bones.Head;if(H&&H.parent){const w=ease(clamp((t-24.3)/.25,0,1))*(1-ease(clamp((t-((c.tH||D5_STRIKE)+.15))/.35,0,1)));
     if(w>.001){a.root.updateMatrixWorld(true);const hp=H.getWorldPosition(D5V0),B=M.ball,f=d5Aim(hp,t),up=new THREE.Vector3(0,1,0);up.addScaledVector(f,-up.dot(f)).normalize();
-      const Yv=up.negate(),Zv=new THREE.Vector3().crossVectors(f,Yv);D5M0.makeBasis(f,Yv,Zv);D5Q0.setFromRotationMatrix(D5M0);const N=H.parent;if(N&&N.parent&&/Neck/i.test(N.name||'')){const Hq=H.getWorldQuaternion(new THREE.Quaternion()),dl=D5Q0.clone().multiply(Hq.invert()),half=new THREE.Quaternion().slerp(dl,.5),Nw=N.getWorldQuaternion(new THREE.Quaternion()),Pq=N.parent.getWorldQuaternion(new THREE.Quaternion()).invert(),Nl=Pq.multiply(half.multiply(Nw));N.quaternion.slerp(Nl,w);N.updateMatrixWorld(true);}
+      const Yv=up.negate(),Zv=new THREE.Vector3().crossVectors(f,Yv);D5M0.makeBasis(f,Yv,Zv);D5Q0.setFromRotationMatrix(D5M0);{const H0=H.getWorldQuaternion(new THREE.Quaternion()),an=H0.angleTo(D5Q0),lim=lerp(9,.8,ease(clamp((t-(c.tH||D5_STRIKE))/.15,0,1)));if(an>lim)D5Q0.copy(H0).slerp(D5Q0,lim/an);}const N=H.parent;if(N&&N.parent&&/Neck/i.test(N.name||'')){const Hq=H.getWorldQuaternion(new THREE.Quaternion()),dl=D5Q0.clone().multiply(Hq.invert()),half=new THREE.Quaternion().slerp(dl,.5),Nw=N.getWorldQuaternion(new THREE.Quaternion()),Pq=N.parent.getWorldQuaternion(new THREE.Quaternion()).invert(),Nl=Pq.multiply(half.multiply(Nw));N.quaternion.slerp(Nl,w);N.updateMatrixWorld(true);}
       H.parent.getWorldQuaternion(D5Q1).invert();D5Q1.multiply(D5Q0);H.quaternion.slerp(D5Q1,w);H.updateMatrixWorld(true);window.__d5ph=(window.__d5ph||0)+1;}}}}catch(e){window.__d5pe='H:'+e;}}
 function d5Rec(c){const t=c.t,R=window.__d5R||(window.__d5R={});
   let off=false;try{off=localStorage.getItem('twin.dapRec')==='0';}catch(e){}
@@ -13768,7 +13768,7 @@ function ultUpdate(c,dt){
     const kp=ease(clamp((t-D5T.look-.3)/.6,0,1)),kl=ease(clamp((t-LD)/.3,0,1));for(const kk in D5_SIDE)R[kk]=D5_SIDE[kk]*(kk==='bz'?c.spinS*(D5.sideSg||1):1)*(kk==='hy'||kk==='bz'||kk==='bx'?kl:1);R.hy=lerp(0,D5_SIDE.hy,kl);R.nx=lerp(.1,.55,kp);R.ny=-.9*kp*c.spinS;u.raw=R;const sl=1-Math.pow(1-clamp((t-LD)/.9,0,1),2.2),P=d5V(c,-(1.3*ease(clamp((t-LD)/.4,0,1))+1.2*sl),0,0);u.x=P.x;u.y=P.y;}
   ultAwake(0);
   // dark smoke rolling off his body through the turn, like the anime's storm clouds
-  if(FXC&&FXC.on&&t>24.2&&t<D5_STRIKE+1){const a=fxActor(u),hv=t<D5_BC?.7:.35;if(a&&a.bones)for(const n of ['LeftShoulder','RightShoulder','Spine2','Hips']){const B=a.bones[n];if(!B||Math.random()>.32*hv)continue;const P=B.getWorldPosition(new THREE.Vector3());
+  if(false&&FXC&&FXC.on&&t>24.2&&t<D5_STRIKE+1){const a=fxActor(u),hv=t<D5_BC?.7:.35;if(a&&a.bones)for(const n of ['LeftShoulder','RightShoulder','Spine2','Hips']){const B=a.bones[n];if(!B||Math.random()>.32*hv)continue;const P=B.getWorldPosition(new THREE.Vector3());
     fxPuff(P.x+rnd(-.08,.08),P.y+.05,P.z+rnd(-.08,.08),1,.14+.12*hv,Math.random()<.6?'#111827':'#1f2937',.22+.2*hv,.12,.45+.3*hv,1.2);}}
   const Bw=()=>{const B=v3(b.x,b.y,d5BY(b.h));return {x:B.x,y:B.y,z:B.z};};
   u.lookAt=t<.6&&mate?(()=>{const P=v3(mate.x,mate.y);return {x:P.x,y:1.0,z:P.z};})():t>=D5T.eye&&t<D5T.ballP?(()=>{const Hd=ultHead(u),G=v3(ultGoalX(),PH/2);return {x:G.x,y:Hd.y+.2,z:G.z};})():t<D5_STRIKE+.1?Bw():t>=D5T.look?(()=>{const P=v3(c.O.x+F.x*4/S3,c.O.y+F.y*4/S3);return {x:P.x,y:1.2,z:P.z};})():null;
@@ -13849,6 +13849,11 @@ function ultEnd(c){if(c.v!==5)return;A_SHK.value=0;A_crowdEx(.25);const u=c.u;d5
   c.gk.airH=0;c.gkW=0;for(const d of c.D){d.o.pose=null;d.o.raw=null;d.o.lookAt=null;d.o.tackleCd=.8;d.o.fRun=null;}
   c.gk.x=c.gkFrom.x;c.gk.y=c.G.y+Math.sign(PH/2-c.G.y)*8;M.ball.x=c.G.x;M.ball.y=c.G.y;M.ball.h=0;
   goalScored(M.home);if(M.flash)M.flash.sub='ULTIMATE · DAP SHOT · SEISHIRO NAGI';}
+
+{const _ue6=ultEnd;ultEnd=function(c){let keep=null;try{if(c&&c.v===5&&c.u&&c.ldR){const u=c.u;keep={x:u.x,y:u.y,fx:u.fx,fy:u.fy,ys:u.yawSpin,raw:Object.assign({},u.raw||c.ldR)};}}catch(e){}
+  const r=_ue6.apply(this,arguments);
+  try{if(keep){const u=c.u;u.x=keep.x;u.y=keep.y;u.fx=keep.fx;u.fy=keep.fy;u.yawSpin=keep.ys;u.pose='raw';u.raw=keep.raw;u.airH=0;u.vx=u.vy=0;M.dapFallen=1;const pa=M.after;M.after=()=>{M.dapFallen=0;if(pa)pa();};}}catch(e){console.warn('dap fallen',e);}
+  return r;};}
 // ---------------- cameras: one per anime shot ----------------
 function d5Cam(cam,pos,look,fov,roll){cam.position.copy(pos);cam.up.set(0,1,0);cam.lookAt(look);if(roll)cam.rotateZ(roll);cam.fov=fov;cam.updateProjectionMatrix();}
 function d5HeadOf(p,V){const a=fxActor(p);return a&&a.bones&&a.bones.Head?a.bones.Head.getWorldPosition(V(0,0,0)):fxAPos(p).setY(1.6);}
@@ -15163,13 +15168,14 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='136';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='137';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
 // or who has the ball while lying down, is stood up (pose, raw track, fall counters and the fall/stand-up clip state are all cleared)
 const SAFE={prev:false,t:new WeakMap()};
 function safeStandReset(p){
+  if(M&&M.dapFallen&&p===M.user)return;
   p.fall=0;p.pose=null;p.raw=null;p.celebrate=null;p.celebT=null;p.kick=undefined;p.kickWarp=null;p.yawSpin=0;p.airH=0;p.lookAt=null;p.slide=null;p.slideT=undefined;p.lungeT=0;p.cool=Math.max(p.cool||0,.2);p.sdHold=0;
   try{const a=fxActor(p);if(a){const st=abS(a);if(st){st.fall=null;}if(a.mxS){a.mxS.fl=null;}a.mxForce=null;}}catch(e){}
 }
