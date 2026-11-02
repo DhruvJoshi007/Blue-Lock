@@ -13612,7 +13612,7 @@ const D5MAP=[[0,0],[12.7,0],[15.2,.45],[16.6,.78],[17.4,.9],[17.6,1.0],[17.9,1.0
 const D5_FSIDE=1.1,D5_AIRI=.06,D5_PF=[.9,.2,1.18],D5_HR=.15,D5_STRIKE=39.0,D5_LASER=39.13,D5_NET=39.55,D5_END=75.0,D5_BC=29.7,D5_BCEND=33.7;
 const D5T={pass:0,gkFace:1.2,ballC:1.7,save:2.2,run:3.7,duo:6.2,top:9.2,high:10.7,split:12.7,net:15.2,ctrl:17.2,dive:18.7,lift:20.0,faces:22.2,turn:23.7,air:25.2,eye:33.7,ballP:37.2,strike:38.7,ballR:41.2,goal:40.5,land:55,look:58};
 const D5_SHOT=1.65,D5_SAVE=3.0,D5_RCV=17.6,D5_SLD=21.4,D5_SL0=21.15;D5T.faces=23.0;
-function d5Tau(t){if(t>24.5&&t<25.05){const x=clamp((t-24.5)/.55,0,1);return 1.82+.38*x*x*x*(x*(x*6-15)+10);}   // the whip-turn snaps, then holds
+function d5Tau(t){if(t>24.5&&t<25.05){const x=clamp((t-24.5)/.07,0,1);return 1.82+.38*x*x*x*(x*(x*6-15)+10);}   // the whip-turn snaps, then holds
   for(let i=1;i<D5MAP.length;i++){const a=D5MAP[i-1],b=D5MAP[i];if(t<=b[0])return lerp(a[1],b[1],clamp((t-a[0])/((b[0]-a[0])||1),0,1));}return D5MAP[D5MAP.length-1][1];}
 function d5Pw(P,t){for(let i=1;i<P.length;i++)if(t<=P[i][0])return lerp(P[i-1][1],P[i][1],clamp((t-P[i-1][0])/((P[i][0]-P[i-1][0])||1),0,1));return P[P.length-1][1];}
 const D5_KEYS=[
@@ -13756,8 +13756,9 @@ function ultUpdate(c,dt){
   else if(!S.k&&t>1.1&&u.kick==='pass')u.kick=undefined;
   // the jumping turn: coil, a 0.25 s whip to 160 degrees, then the rest of the 360 in the air so he comes round facing the goal
   c.spinS=c.spinS||(c.side*dir>0?1:-1);
-  const DG=Math.PI/180;const sst=x=>{x=clamp(x,0,1);return x*x*x*(x*(x*6-15)+10);};let yA=t<23.9?0:t<24.5?-35*ease((t-23.9)/.6):t<25.05?-35+365*sst((t-24.5)/.55):t<29.7?330+10*ease((t-25.05)/4.65):340;
+  const DG=Math.PI/180;const sst=x=>{x=clamp(x,0,1);return x*x*x*(x*(x*6-15)+10);};let yA=t<23.9?0:t<24.5?-35*ease((t-23.9)/.6):t<25.05?-35+365*sst((t-24.5)/.07):t<29.7?330+10*ease((t-25.05)/4.65):340;
   u.yawSpin=yA*DG*c.spinS;
+  if(t>=24.5&&!S.cut){S.cut=1;G3.impact=1.0;try{fxKick({shake:.2,flash:.3});sfx('swoosh');}catch(e){}}
   if(t>=24.72&&!S.whip){S.whip=1;sfx('swoosh');sfx('kick');G3.impact=.2;fxKick({shake:.05});}
   u.airH=tau<1.72?0:tau<1.95?.8*ease((tau-1.72)/.23):tau<2.4?(t<37.2?.8+.05*Math.sin((t-24)*1.3):t<D5_STRIKE+.05?.85+.05*Math.sin((t-37.2)*1.3)*(1-ease(clamp((t-37.2)/1.8,0,1))):lerp(.85,D5_AIRI,ease(clamp((t-(D5_STRIKE+.05))/.9,0,1)))):D5_AIRI*(1-ease((tau-2.4)/.5));
   // after the volley he comes down flat on his front, then looks back over his shoulder
@@ -13888,7 +13889,7 @@ function ultCam(c,dt){if(c.v!==5)return;
   else if(t<T.turn){ph=83;pos=O.clone().addScaledVector(F,-6).setY(2);look=O.clone().setY(1);fov=40;   // two shocked faces
     for(const i of [0,1]){const Hh=DH[i]||O.clone().setY(1),fw=Hd.clone().sub(Hh).setY(0).normalize();d5Cam(c.pc[i],Hh.clone().addScaledVector(fw,.75).add(V(0,.02,0)),Hh.clone(),30);}
     c.panels=[{cam:c.pc[0],who:c.D[0]&&c.D[0].o,solid:1},{cam:c.pc[1],who:c.D[1]&&c.D[1].o,solid:1}];}
-  else if(t<T.air){ph=84;   // close behind him: NAGI on his back as he takes off and whips round
+  else if(t<24.5){ph=84;   // close behind him: NAGI on his back as he takes off and whips round
     if(t<24.55){pos=U.clone().addScaledVector(F,1.7).addScaledVector(L,.8).setY(.5);look=U.clone().lerp(B,.5).setY(.75);fov=40;}else{pos=Hd.clone().addScaledVector(F,1.7).addScaledVector(L,1.0).add(V(0,-.15,0));look=Hd.clone().addScaledVector(F,-.6).add(V(0,-.55,0));fov=46;}}
   else if(t<D5_BC+.01){ph=85;   // from the turf among the fallen defenders, looking up at the jumping turn
     const q=clamp((t-T.air)/4.5,0,1),ctr=Hd.clone().add(V(0,-.5,0)),ap=Math.sin(Math.PI*clamp((t-T.air)/3.2,0,1));pos=ctr.clone().addScaledVector(F,lerp(3.4,4.2,ap)).addScaledVector(L,-2.3);pos.y=Math.max(.9,ctr.y+.15);look=ctr.clone();fov=lerp(44,50,ap);}
@@ -15156,7 +15157,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='129';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='130';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
