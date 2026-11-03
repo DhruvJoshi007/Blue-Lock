@@ -8177,7 +8177,7 @@ function nMat(d,kit,st,o={}){
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
 varying float vReg;varying float vNz;varying vec3 vOP;uniform float nSuit;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
 float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smoothstep(.45,.52,x)*.22;float soft=saturate((x+.25)/1.25);soft=soft*soft*(3.-2.*soft);float b0=mix(toon,soft,nReal);return mix(b0,soft*.8+.2,nSkF*.9);}`)
-    .replace('#include <map_fragment>',`vec4 tx=texture2D(map,vUv);vec3 c=tx.rgb;float r=floor(vReg+.5);float l=dot(c,vec3(.299,.587,.114));nSkF=(r==2.||r==13.||r==12.)?1.:0.;
+    .replace('#include <map_fragment>',`vec4 tx=texture2D(map,vUv);vec3 c=tx.rgb;float r=floor(vReg+.5);float l=dot(c,vec3(.299,.587,.114));nSkF=(r==2.||r==13.||r==12.||(nOrig>.5&&r==0.))?1.:0.;
   if(r==8.)discard;if(r==14.&&nAwake<.5)discard;
   if(nOrig>.5){c=mapTexelToLinear(tx).rgb;}
   else if(r==0.||r==11.){vec3 J=r==0.?nJer:nSho;float k=clamp(l/nUniRef,0.,1.2);c=J*k*k*(3.-2.*k)*1.02+J*.0;c=mix(c,J*.12,smoothstep(.2,.05,l));}
@@ -8193,7 +8193,8 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
   else if(r==9.){vec2 nl=(vUv-nNumR.xy)/nNumR.zw;if(vNz<0.)nl=vec2(.5,.6875)-nl;vec4 nt=texture2D(nNumT,nl);c=mix(nJer,nt.rgb,nt.a);}
   else if(r==16.){c=vec3(.025,.02,.025)+nHair*.05;}
   if(nSuit>.5&&(r==0.||r==9.)&&vOP.z>0.){float px=abs(vOP.x)/.167,py=(1.5-vOP.y)/.57;float sh=step(px,.5*(1.-py/.56))*step(py,.56);float tie=step(abs(vOP.x),.015+.012*py)*step(.03,py);c=mix(c,vec3(.8)*(.8+.3*l),sh);c=mix(c,vec3(.01),sh*tie);}
-  if(nSkF>.5)c*=.78;
+  if(nOrig>.5&&r==0.)c*=mix(vec3(1.05,.95,.86),vec3(1.),smoothstep(.84,.92,l));
+  if(nSkF>.5)c*=(nOrig>.5?.95:.78);
   diffuseColor.rgb*=c;`)
     .replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );')
     .replace('#include <aomap_fragment>',`#include <aomap_fragment>
@@ -8235,11 +8236,11 @@ function nSplit(g,keep){const U=g.userData,k='sp'+keep;if(U[k])return U[k];const
 function nHeadSkin(k){const C=N.cm[k];if(!C)return null;if(C.skinLin!==undefined)return C.skinLin;C.skinLin=null;
   try{const im=C.tex.image,g=C.geo,uv=g.attributes.uv,rg=g.attributes.nReg;if(!im||!uv||!rg)return null;
     const cv=document.createElement('canvas');cv.width=im.width;cv.height=im.height;const x=cv.getContext('2d');x.drawImage(im,0,0);
-    let r=0,gg=0,b=0,n=0;const st=Math.max(1,Math.floor(uv.count/900));
-    for(let i=0;i<uv.count;i+=st){const q=Math.round(rg.getX(i));if(q!==2&&q!==13)continue;
+    let r=0,gg=0,b=0,n=0;const hist={};window.__hsDbg=window.__hsDbg||{};const st=Math.max(1,Math.floor(uv.count/900));
+    for(let i=0;i<uv.count;i+=st){const q=Math.round(rg.getX(i));hist[q]=(hist[q]||0)+1;if(q!==0&&q!==2&&q!==13)continue;
       const px=Math.min(im.width-1,Math.max(0,Math.floor(uv.getX(i)*im.width))),py=Math.min(im.height-1,Math.max(0,Math.floor(uv.getY(i)*im.height)));
-      const d=x.getImageData(px,py,1,1).data;r+=d[0];gg+=d[1];b+=d[2];n++;}
-    if(n>20){C.skinLin=new THREE.Color(r/n/255,gg/n/255,b/n/255).convertSRGBToLinear();window.__headSkin=window.__headSkin||{};window.__headSkin[k]=[n,+(r/n).toFixed(0),+(gg/n).toFixed(0),+(b/n).toFixed(0)];}
+      const d=x.getImageData(px,py,1,1).data,lm=(d[0]*.299+d[1]*.587+d[2]*.114)/255;if(lm>.96||lm<.25||d[3]<200)continue;r+=d[0];gg+=d[1];b+=d[2];n++;}
+    window.__hsDbg[k]={n,hist,w:im.width,h:im.height};if(n>20){C.skinLin=new THREE.Color(r/n/255,gg/n/255,b/n/255).convertSRGBToLinear().multiply(new THREE.Color(1.05,.95,.86));window.__headSkin=window.__headSkin||{};window.__headSkin[k]=[n,+(r/n).toFixed(0),+(gg/n).toFixed(0),+(b/n).toFixed(0)];}
   }catch(e){}
   return C.skinLin;}
 function nBuild(d,kit){
@@ -8350,7 +8351,8 @@ const A_GRADES={
   system:{ex:1.05,lift:[-.02,0,.02],gam:[.97,1.02,1.04],gain:[.92,1.04,1.1],sat:.95,con:1.15,sh:[-.1,.04,.12],hi:[-.04,.06,.1],vig:.55,grain:.035,bl:1.4,thr:1.1},
   dusk:{ex:1.05,lift:[.01,-.004,.01],gam:[1.03,1,.96],gain:[1.1,1.0,.9],sat:1.1,con:1.08,sh:[-.04,-.02,.08],hi:[.1,.04,-.06],vig:.45,grain:.03,bl:1,thr:1.4},
   noir:{ex:1.05,lift:[0,0,0],gam:[1,1,1],gain:[1,1,1],sat:.08,con:1.25,sh:[0,0,.03],hi:[.03,.02,0],vig:.7,grain:.06,bl:.8,thr:1.4}};
-G3.GRADES=A_GRADES;
+G3.GRADES=A_GRADES;for(const k in A_GRADES){if(k==='noir')continue;const g=A_GRADES[k];g.ex*=1.16;g.vig*=.72;g.lift=g.lift.map(v=>v+.012);g.sat*=1.05;}
+{let last=performance.now(),acc=0,n=0,tier=0;const fg=t=>{try{const dt=t-last;last=t;if(tier<2&&dt<400&&!document.hidden){acc+=dt;n++;if(n>=150){const avg=acc/n;acc=0;n=0;if(avg>30&&G3&&G3.scene){tier++;const ms=tier===1?2048:1024;G3.scene.traverse(o=>{if(o.isLight&&o.shadow&&o.shadow.mapSize.x>ms){o.shadow.mapSize.set(ms,ms);if(o.shadow.map){o.shadow.map.dispose();o.shadow.map=null;}}});window.__frameGuard=tier+':'+avg.toFixed(1);}}}}catch(e){}requestAnimationFrame(fg);};requestAnimationFrame(fg);}
 G3.world={crowd(v){const S=G3.stages&&G3.stages[G3.stage];if(S&&S.crowdG)S.crowdG.visible=!!v;}};
 function A_gradeTarget(SC3){let g=SC3&&SC3.userData&&SC3.userData.grade;if(!g)g=G3.grade;if(!g&&SC3===G3.scene)g=mode==='menu'?'menu':G3.stage;if(typeof g==='string')g=A_GRADES[g]||A_GRADES.night;return g||A_GRADES.night;}
 function A_gradeStep(dt,SC3){const T=A_gradeTarget(SC3);let C=G3._gr;if(!C){C=G3._gr=JSON.parse(JSON.stringify(T));return C;}const k=1-Math.exp(-Math.min(dt,.1)*4);
@@ -15208,7 +15210,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='146';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='147';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
