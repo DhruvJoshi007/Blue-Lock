@@ -10792,7 +10792,7 @@ function dzPatch(sh,m){
   const kind=m.userData.dzKind,K=DZK[kind]||DZK.kit,skin=K[0]==='S';Object.assign(sh.uniforms,DZU);if(m.userData.dzU)Object.assign(sh.uniforms,m.userData.dzU);
   let L=THREE.ShaderChunk.lights_physical_pars_fragment.replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dzN = dot( geometry.normal, directLight.direction ); float dotNL = dzBand( dzN );');
   if(skin)L=L.replace('reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );','$&\n reflectedLight.directDiffuse += directLight.color * material.diffuseColor * vec3(1.,.38,.26) * .6 * smoothstep(-.36,-.04,dzN) * (1.-smoothstep(-.04,.3,dzN));');
-  const hdr=`uniform vec3 dzRim;uniform vec3 dzRimDir;uniform float dzHi;\nfloat dzBand(float x){return smoothstep(-.03,.03,x-.1+${K[2]}*.5)*.8+smoothstep(.6,.64,x)*.2;}\n`;
+  const hdr=`uniform vec3 dzRim;uniform vec3 dzRimDir;uniform float dzHi;\nfloat dzBand(float x){float b=smoothstep(-.03,.03,x-.1+${K[2]}*.5)*.8+smoothstep(.6,.64,x)*.2;${skin?'return mix(b,smoothstep(-.4,.9,x)*.8+.12,.8);':'return b;'}}\n`;
   const post=`\n${kind==='shoe'||kind==='eye'?'':'reflectedLight.directSpecular*=0.;reflectedLight.indirectSpecular*=.2;'}
   reflectedLight.indirectDiffuse*=${K[1]};
   {float dzF=1.-saturate(dot(geometry.normal,geometry.viewDir));float dzR=smoothstep(.58,.66,dzF)*(.3+.7*saturate(dot(geometry.normal,dzRimDir)))${kind==='eye'?'*0.':kind==='face'?'*.35':''};
@@ -11096,12 +11096,12 @@ function dzPrepTex(){const R=DZ.R,S=touchUI?512:1024,T={};
     tx.putImageData(td,0,0);T[kind]=dzDataTex(tc);}
   DZ.tex=T;}
 const DZMAPF={
-  face:`vec4 dzt=texture2D(map,vUv);vec3 dzc=dzSkin*(1.+(dzt.r-.5)*1.);float dzbl=max(0.,dzt.b-.5)*2.,dzns=max(0.,.5-dzt.b)*2.;
+  face:`vec4 dzt=texture2D(map,vUv);vec3 dzc=dzSkin*(1.+(dzt.r-.5)*.5)*.9;float dzbl=max(0.,dzt.b-.5)*2.,dzns=max(0.,.5-dzt.b)*2.;
   dzc=mix(dzc,dzc*vec3(1.06,.8,.82)+vec3(.05,0.,.012),dzbl);dzc=mix(dzc,dzc*vec3(.6,.42,.4),dzns);
   float dzbm=dzt.g;if(dzBeard.w>1.5&&dzBeard.w<2.5){vec2 dzd=(vUv-dzMUV)/vec2(.055,.075);dzbm*=1.-smoothstep(.75,1.05,length(dzd-vec2(0.,.16)));}
   if(dzBeard.w<1.5){float dzh=fract(sin(dot(floor(vUv*600.),vec2(12.9898,78.233)))*43758.5453);dzbm=smoothstep(.3,.6,dzbm)*.28*(dzh<.6?1.:.5);}else dzbm=smoothstep(.18,.42,dzbm)*.95;
   dzc=mix(dzc,dzBeard.rgb,dzbm*step(.5,dzBeard.w));diffuseColor.rgb*=dzc;`,
-  skin:`vec4 dzt=texture2D(map,vUv),dzt2=texture2D(dzTex2,vUv);float dzd=1.+(dzt.r-.5)*1.;vec3 dzc=dzSkin*dzd;
+  skin:`vec4 dzt=texture2D(map,vUv),dzt2=texture2D(dzTex2,vUv);float dzd=1.+(dzt.r-.5)*.5;vec3 dzc=dzSkin*dzd*.9;
   dzc=mix(dzc,dzSock.rgb*(.85+.3*dzd),dzt.g);dzc=mix(dzc,dzSleeve.rgb*(.88+.24*dzd),dzt.b*dzSleeve.w);dzc=mix(dzc,dzPants.rgb*(.88+.24*dzd),dzt2.r*dzPants.w);
   dzc=mix(dzc,dzGlove.rgb,dzt2.g*dzGlove.w);dzc=mix(dzc,dzGlove.rgb*.55,dzt2.b*dzGlove.w*.6);diffuseColor.rgb*=dzc;`,
   top:`vec4 dzt=texture2D(map,vUv);vec3 dzc=dzJC;if(vDzT.z>1.5)dzc=mix(dzc,dzSlC.rgb,dzSlC.w);dzc=mix(dzc,dzAC,dzt.g);dzc=mix(dzc,dzAC*.6,smoothstep(.75,1.,dzt.g)*.5);dzc=mix(dzc,dzCuC,dzt.b);
@@ -13926,7 +13926,7 @@ function ultCam(c,dt){if(c.v!==5)return;
   else if(t<T.faces){ph=97;   // the slide: both defenders dive in from the front, Nagi right of frame, the ball at his left boot
     pos=O.clone().addScaledVector(F,-3.4).addScaledVector(L,1.25).setY(.95);look=O.clone().addScaledVector(F,-.6).addScaledVector(L,-.3).setY(.55);fov=46;}
   else if(t<T.turn){ph=83;pos=O.clone().addScaledVector(F,-6).setY(2);look=O.clone().setY(1);fov=40;   // two shocked faces
-    for(const i of [0,1]){const Hh=DH[i]||O.clone().setY(1),fw=Hd.clone().sub(Hh).setY(0).normalize();d5Cam(c.pc[i],Hh.clone().addScaledVector(fw,.75).add(V(0,.02,0)),Hh.clone(),30);}
+    for(const i of [0,1]){const Hh=DH[i]||O.clone().setY(1),fw=Hd.clone().sub(Hh).setY(0).normalize();d5Cam(c.pc[i],Hh.clone().addScaledVector(fw,.25).addScaledVector(V(-fw.z,0,fw.x),-.6).setY(.12),Hh.clone().add(V(0,.02,0)),36);}
     c.panels=[{cam:c.pc[0],who:c.D[0]&&c.D[0].o,solid:1},{cam:c.pc[1],who:c.D[1]&&c.D[1].o,solid:1}];}
   else if(t>=24.5&&t<24.545){ph=84;pos=Hd.clone().addScaledVector(F,.95).addScaledVector(L,.28).add(V(0,.02,0));look=Hd.clone();fov=30;}
   else if(t<24.5){ph=84;   // close behind him: NAGI on his back as he takes off and whips round
@@ -15211,7 +15211,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='148';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='149';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
