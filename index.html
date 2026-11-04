@@ -13856,11 +13856,11 @@ function ultUpdate(c,dt){
   if(t>=D5T.strike-.02&&t<D5T.ballR&&(t<D5T.strike+.3||!c.c9))d5C9(c);   // (defenders stay where they slid; they are no longer moved for a camera)
   // ---- keeper: parries the teammate's shot, gets up, then a full-stretch dive at the corner that misses ----
   gk.vx=gk.vy=0;gk.x=c.gkFrom.x;c.gkW=0;const ga=fxActor(gk);
-  const dive=(sg,k,amp,yTo)=>{const bz=1.25*(Math.sign(Math.sin(ga?ga.yaw||0:0))||1)*sg*D5.gkSg;gk.pose=null;gk.raw=null;gk.diveDir=sg;gk.diveT=Math.max(.05,1.1-Math.min(1,k*amp*1.2));gk.lookAt=Bw();};
+  const dive=(sg,k,amp,yTo)=>{if(c.gkDived&&t>=3.9)return;if(t<3.9)c.gkDived=1;const bz=1.25*(Math.sign(Math.sin(ga?ga.yaw||0:0))||1)*sg*D5.gkSg;gk.pose=null;gk.raw=null;gk.diveDir=sg;gk.diveT=Math.max(.05,1.1-Math.min(1,k*amp*1.2));gk.lookAt=Bw();};
   if(t<2.25){gk.y=lerp(gk.y,y0,.08);gk.airH=0;gk.pose=null;gk.diveT=0;gk.lookAt=Bw();}
   else if(t<3.9){const sg=Math.sign(Gh.y-y0)||1,k=ease(clamp((t-2.25)/.75,0,1))*(1-ease(clamp((t-3.2)/.7,0,1)));gk.y=y0+(Gh.y-y0)*.7*Math.min(1,(t-2.25)/.75);gk.airH=.3*Math.sin(Math.PI*clamp((t-2.25)/1.0,0,1));dive(sg,k,.6);}
   else if(t<D5_LASER){gk.y=lerp(gk.y,y0,.04);gk.airH=0;gk.pose=null;gk.diveT=0;gk.lookAt=Bw();}
-  else{const sg=Math.sign(c.G.y-y0)||1,k=ease(clamp((t-D5_LASER)/.85,0,1));gk.y=y0+(c.G.y-y0)*.85*k;gk.airH=t>D5_NET+.6?0:(.25+.45*clamp(c.G.h/30,0,1))*Math.sin(Math.PI*Math.min(1,k*1.1)*.85);dive(sg,k,1);}
+  else{gk.y=lerp(gk.y,y0,.04);gk.airH=0;gk.pose=null;gk.raw=null;gk.diveT=0;gk.lookAt=Bw();}
   // keep everyone else out of the shots
   for(const p of M.players){if(p===u||p===mate||p.isGK||p.off||c.D.some(d=>d.o===p))continue;const dx=p.x-c.O.x,dy=p.y-c.O.y,l=Math.hypot(dx,dy)||1;if(l<420){p.x+=dx/l*Math.min(420-l,dt*500);p.y+=dy/l*Math.min(420-l,dt*500);}}
   // lines (spoken where there is a voice; Nagi's own words come from the real clip)
@@ -13917,12 +13917,18 @@ function ultCam(c,dt){if(c.v!==5)return;
     pos=Hd.clone().addScaledVector(F,4.3).addScaledVector(L,.35);pos.y=Math.max(.9,Hd.y-.4);look=lk;fov=58;k=6;}
   else if(false){ph=80;   // ball close-up from the turf: it drops, the sole kills it dead
     const Bb=c.bPin?v3(c.bPin.x,c.bPin.y,.11):v3(M.ball.x,M.ball.y,.11);const q=(t-T.ctrl)/1.5;pos=Bb.clone().addScaledVector(F,-.8).addScaledVector(L,-.28).setY(.16);look=V(Bb.x,Math.max(.3,Math.min(B.y,1.2)),Bb.z).addScaledVector(L,-.12);fov=lerp(46,40,q);}
-  else if(t>=20.55&&t<21.45){ph=80;const rs=clamp((t-21.2)/.2,0,1),Tt=d5Toe(c,'Left'),T0=Tt||V(U.x,.1,U.z);const Bb=V(T0.x,0,T0.z);pos=Bb.clone().addScaledVector(L,-.7).addScaledVector(F,-.15);pos.y=lerp(.2,.38,rs);look=T0.clone().lerp(B,lerp(.45,.7,rs));look.y=Math.max(.14,Math.min(look.y,lerp(.5,1.4,rs)));fov=lerp(36,46,rs);k=30;}
-  else if(t>=21.45&&t<21.6){ph=81;const Dh=DH[0]||O.clone().setY(1.2),mid=Hd.clone().lerp(Dh,.5),dr=Dh.clone().sub(Hd).setY(0);const pr=V(-dr.z,0,dr.x).normalize();pos=mid.clone().addScaledVector(pr,Math.max(1.2,dr.length()*.8));look=mid.clone();fov=54;}
+  else if(t>=19.1&&t<20.55){ph=79;   // still the front shot: the camera eases down and in so both legs are in frame while the left one draws back and crosses
+    const qq=ease(clamp((t-19.1)/1.45,0,1)),lk=U.clone().lerp(B,.35);lk.y=lerp(Math.min(Hd.y+.2,1.5),.75,qq);
+    pos=U.clone().addScaledVector(F,lerp(4.3,3.1,qq)).addScaledVector(L,.35);pos.y=lerp(Math.max(.9,Hd.y-.4),1.0,qq);look=lk;fov=lerp(58,46,qq);k=8;}
+  else if(t>=20.55&&t<21.45){ph=80;   // hard zoom straight in from the front: left boot over the ball, the squash faces the lens
+    const zq=ease(clamp((t-20.55)/.55,0,1)),Tt=d5Toe(c,'Left'),T0=Tt||V(U.x,.1,U.z),Bb=V(T0.x,0,T0.z);
+    pos=Bb.clone().addScaledVector(F,lerp(2.6,1.2,zq));pos.y=lerp(.8,.3,zq);
+    look=T0.clone().lerp(B,.5);look.y=Math.max(.12,Math.min(look.y,lerp(.7,.3,zq)));fov=lerp(44,34,zq);k=30;}
+  else if(t>=21.45&&t<21.6){ph=81;const Tt=d5Toe(c,'Left'),T0=Tt||V(U.x,.1,U.z);pos=V(T0.x,0,T0.z).addScaledVector(F,1.1).setY(.5);look=T0.clone().lerp(B,.4);fov=36;k=30;}
   else if(false){ph=81;   // medium from the front: the defenders dive in from both sides
     const q=(t-T.dive)/2.5;pos=O.clone().addScaledVector(F,-lerp(2.9,2.5,q)).addScaledVector(L,lerp(.9,.7,q)).setY(1.0);look=O.clone().addScaledVector(F,-.15).addScaledVector(L,-.45).setY(.78);fov=42;}
   else if(t<D5_SLD){ph=82;   // low, side-on: drag and lift tap
-    const qq=clamp((t-19.1)/(D5_SLD-19.1),0,1);pos=V(U.x,0,U.z).addScaledVector(L,-lerp(5.4,5.0,qq)).addScaledVector(F,-2.2);pos.y=lerp(1.0,.95,qq);look=V(U.x,.8,U.z).addScaledVector(F,.9);fov=42;}
+    const qq=clamp((t-21.6)/Math.max(.1,D5_SLD-21.6),0,1);pos=V(U.x,0,U.z).addScaledVector(F,lerp(2.4,3.2,qq)).addScaledVector(L,.5);pos.y=lerp(.7,.9,qq);look=V(U.x,.55,U.z);fov=44;}
   else if(t<T.faces){ph=97;   // the slide: both defenders dive in from the front, Nagi right of frame, the ball at his left boot
     pos=O.clone().addScaledVector(F,-3.4).addScaledVector(L,1.25).setY(.95);look=O.clone().addScaledVector(F,-.6).addScaledVector(L,-.3).setY(.55);fov=46;}
   else if(t<T.turn){ph=83;pos=O.clone().addScaledVector(F,-6).setY(2);look=O.clone().setY(1);fov=40;   // two shocked faces
@@ -15206,12 +15212,15 @@ function hipFloorOne(c){const H=c.bones.Hips;c.root.updateMatrixWorld(true);
   try{if(c&&c.rig&&c.bones&&c.bones.Hips&&c.holder&&o){const st=(typeof abS==='function')?abS(c):null;
     if(M&&(M.cine||o.fall||o.pose||o.raw||o.slide||(o.diveT||0)>0||o.yawSpin||(o.airH||0)>0||(st&&(st.fall||st.down>0)))){c.hipRisk=clock;hipFloorOne(c);}}}catch(e){window.__hfpErr=String(e&&e.stack||e).slice(0,300);}
   return r;};}
-function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hipRisk>.2||!c.bones||!c.bones.Hips||!c.holder)return;hipFloorOne(c);});}catch(e){window.__hfpErr=String(e&&e.stack||e).slice(0,300);}}
+function gkFloorOne(c){try{c.root.updateMatrixWorld(true);const v=new THREE.Vector3();let lo=1e9;for(const k in c.bones){const B=c.bones[k];if(!B||!B.getWorldPosition)continue;B.getWorldPosition(v);if(v.y<lo)lo=v.y;}
+  if(lo<.07&&lo>-3){const ps=c.holder.parent?Math.max(.05,c.holder.parent.getWorldScale(v).y):1;c.holder.position.y+=(.07-lo)/ps;c.root.updateMatrixWorld(true);c.gkFloor=(c.gkFloor||0)+1;}}catch(e){window.__gkfErr=String(e&&e.stack||e).slice(0,200);}}
+function gkFloorPass(){try{if(!M||!M.players)return;for(const p of M.players){if(!p.isGK||p.off)continue;const a=fxActor(p);if(a&&a.bones&&a.holder&&a.root&&(M.cine||(p.diveT||0)>0||p.pose||p.raw||(p.airH||0)>0))gkFloorOne(a);}}catch(e){window.__gkfErr=String(e&&e.stack||e).slice(0,200);}}
+function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hipRisk>.2||!c.bones||!c.bones.Hips||!c.holder)return;hipFloorOne(c);});}catch(e){window.__hfpErr=String(e&&e.stack||e).slice(0,300);}}
 // Nagi's hand mesh has no finger weights: the fist scale in abApplyRig is what stops the palms reading flat. Half a fist through the jumping turn and the strike.
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='150';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='151';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
