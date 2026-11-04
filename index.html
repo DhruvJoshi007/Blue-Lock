@@ -6195,7 +6195,7 @@ function render3DTrial(dt){
   placeActor(getActor('t-run',DESIGNS.goro,{...KITS.bib,num:''}),P,dt);
   placeActor(getActor('t-coach',DESIGNS.ishida,{...KITS.coachK,num:''}),{...Co,pose:'arms'},dt);
   endActors();placeBall(TR.ball,dt);
-  const mk=markers();mk.r.material.color.set('#ffffff');mk.r.position.set((R.x-PW/2)*S3,.03,(R.y-PH/2)*S3);mk.ar.visible=false;mk.k.visible=false;mk.m.visible=false;
+  const mk=markers();mk.r.material.color.set('#ffffff');mk.r.position.set((R.x-PW/2)*S3,.03,(R.y-PH/2)*S3);mk.ar.visible=false;mk.k.visible=false;mk.m.visible=false;{const c5=M&&M.cine;if(c5&&c5.type==='ult')mk.r.visible=false;}
   const Rv=v3(R.x,R.y),Pv=v3(P.x,P.y);
   if(TR.phase==='approach'){const dir=Pv.clone().sub(Rv).setY(0).normalize(),side=new THREE.Vector3(-dir.z,0,dir.x);const close=TR.qt>0;
     setCam(Rv.clone().addScaledVector(dir,close?-3:-4.5).addScaledVector(side,close?1.2:1.6).setY(close?1.7:2.3),Rv.clone().lerp(Pv,.5).setY(1),close?42:55,dt,close?3:5);}
@@ -8759,8 +8759,8 @@ function A_crowd(grp,spots,kind,S,hx,hz){
   const away=night?['#e2463f','#a8261f','#1b1b22','#ffffff']:['#b9a6ff','#e6e0ff','#5a4a9a','#b9a6ff','#8a78d0'],neu=['#c8c0b0','#4a4a52','#7a3a3a','#3a5a3a','#b9936a','#d8d8d8'];
   const skins=['#f1d3bf','#e6bc9a','#d6a47c','#c08657','#a87648','#86573a','#5e3b26','#3d271a'];
   const U={uEx:{value:.25}};const g=A_fanGeo(low),im=new THREE.InstancedMesh(g,A_crowdMat(U),n);im.frustumCulled=false;im.castShadow=false;im.receiveShadow=false;
-  const aC=new Float32Array(n*4),aSh=new Float32Array(n*3),aSk=new Float32Array(n*3),aHr=new Float32Array(n*3);const dim=night?.5:.7;
-  for(let i=0;i<n;i++){const s=spots[i];const yaw=Math.atan2(-s[3],-s[4]),sc=.92+R()*.16;A_Q.setFromAxisAngle(UPV,yaw+(R()-.5)*.3);A_V.set(s[0],s[1],s[2]);A_V2.set(sc,sc*(.94+R()*.12),sc);A_M4.compose(A_V,A_Q,A_V2);im.setMatrixAt(i,A_M4);
+  const aC=new Float32Array(n*4),aSh=new Float32Array(n*3),aSk=new Float32Array(n*3),aHr=new Float32Array(n*3);const dim=spots.em?1.25:night?.5:.7;
+  for(let i=0;i<n;i++){const s=spots[i];const yaw=Math.atan2(-s[3],-s[4]),sc=(.92+R()*.16)*(s[6]||1);A_Q.setFromAxisAngle(UPV,yaw+(R()-.5)*.3);A_V.set(s[0],s[1],s[2]);A_V2.set(sc,sc*(.94+R()*.12),sc);A_M4.compose(A_V,A_Q,A_V2);im.setMatrixAt(i,A_M4);
     const aw=s[0]>hx-22&&s[2]>0;const pal=aw?away:R()<.1?neu:home;A_C.set(pal[R()*pal.length|0]).convertSRGBToLinear().multiplyScalar(dim*(.75+R()*.35));A_C.multiplyScalar(s[5]?.86:1);aSh.set([A_C.r,A_C.g,A_C.b],i*3);
     A_C.set(skins[R()*skins.length|0]).convertSRGBToLinear().multiplyScalar(dim);aSk.set([A_C.r,A_C.g,A_C.b],i*3);A_C.set(HAIRC[R()*HAIRC.length|0]).convertSRGBToLinear().multiplyScalar(dim);aHr.set([A_C.r,A_C.g,A_C.b],i*3);
     const r=R();aC.set([R(),r<.5?0:r<.72?1:r<.86?2:3,R(),R()],i*4);}
@@ -10118,7 +10118,7 @@ function fxStepStreaks(dt){const S=FXC.st;let i=0;
 function fxMkRing(){const m=new THREE.ShaderMaterial({uniforms:{uC:{value:new THREE.Color()},uA:{value:0},uT:{value:0},uW:{value:.3},uS:{value:22}},vertexShader:FX_UVS,fragmentShader:FX_RFS,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
   const o=new THREE.Mesh(FXC.plane,m);o.visible=false;o.frustumCulled=false;o.renderOrder=28;G3.scene.add(o);return {o,m,t:0,d:1,s0:0,s1:1,a:1,on:false};}
 // ring: ground decal (n omitted) or a plane facing direction n
-function fxRing(x,y,z,col,a,s0,s1,dur,w,nx,ny,nz){{const c=M&&M.cine;if(c){a*=c.type==='ult'?.3:.55;s1*=c.type==='ult'?.5:.75;}}const R=FXC.rings.find(r=>!r.on)||FXC.rings.reduce((p,r)=>r.t/r.d>p.t/p.d?r:p);
+function fxRing(x,y,z,col,a,s0,s1,dur,w,nx,ny,nz){{const c=M&&M.cine;if(c&&c.type==='ult'&&c.v===5)return;if(c){a*=c.type==='ult'?.3:.55;s1*=c.type==='ult'?.5:.75;}}const R=FXC.rings.find(r=>!r.on)||FXC.rings.reduce((p,r)=>r.t/r.d>p.t/p.d?r:p);
   R.on=true;R.t=0;R.d=dur;R.s0=s0;R.s1=s1;R.a=a;R.o.position.set(x,y,z);if(nx==null)R.o.rotation.set(-Math.PI/2,0,0);else R.o.lookAt(FXC.v[0].set(x+nx,y+ny,z+nz));
   const c=fxCol(col);R.m.uniforms.uC.value.setRGB(c[0]*1.6,c[1]*1.6,c[2]*1.6);R.m.uniforms.uW.value=w||.3;R.m.uniforms.uS.value=nx==null?28:18;R.o.scale.setScalar(s0);R.o.visible=true;}
 function fxStepRings(dt){for(const R of FXC.rings){if(!R.on)continue;R.t+=dt;const q=R.t/R.d;if(q>=1){R.on=false;R.o.visible=false;continue;}
@@ -14888,13 +14888,21 @@ function emUse(kind){return EMS.mode==='emirates'&&EMS.ready&&!!EMS.scene&&(kind
 function emRamp(){if(EMS.ramp)return EMS.ramp;const d=new Uint8Array([70,70,70,255,140,140,140,255,205,205,205,255,255,255,255,255]);const t=new THREE.DataTexture(d,4,1,THREE.RGBAFormat);t.minFilter=t.magFilter=THREE.NearestFilter;t.needsUpdate=true;return EMS.ramp=t;}
 // everything of the model inside the game pitch rectangle (and under 10 m) is clipped away: its own pitch is a few huge triangles that cut through ours
 function emClip(){if(EMS.clip)return EMS.clip;const hx=PW*S3/2+3,hz=PH*S3/2+3,P=(x,y,z,c)=>new THREE.Plane(new THREE.Vector3(x,y,z),c);return EMS.clip=[P(1,0,0,-hx),P(-1,0,0,-hx),P(0,0,1,-hz),P(0,0,-1,-hz),P(0,1,0,-10)];}
+// the model's red seat textures are repainted stadium blue (red-dominant pixels only; greys, whites, steel and the sky stay as they were)
+function emRecolor(tex){try{const im=tex&&tex.image;if(!im||!im.width||!im.height)return tex;if(EMS.rc&&EMS.rc.has(tex))return EMS.rc.get(tex);if(!EMS.rc)EMS.rc=new Map();
+  const cv=document.createElement('canvas');cv.width=im.width;cv.height=im.height;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);const d=x.getImageData(0,0,cv.width,cv.height),p=d.data;
+  for(let i=0;i<p.length;i+=4){const r=p[i]/255,g=p[i+1]/255,b=p[i+2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),df=mx-mn;if(mx<.12||df<.1)continue;const sat=df/mx;if(sat<.22)continue;
+    let h=mx===r?((g-b)/df)%6:mx===g?(b-r)/df+2:(r-g)/df+4;h*=60;if(h<0)h+=360;if(!(h<28||h>285))continue;const hd=h>180?h-360:h,nh=(215+hd*.4+360)%360,ns=sat*.85,nv=mx*.95;
+    const c=nv*ns,hp=nh/60,xx=c*(1-Math.abs(hp%2-1)),m0=nv-c;let rr=0,gg=0,bb=0;if(hp<1){rr=c;gg=xx;}else if(hp<2){rr=xx;gg=c;}else if(hp<3){gg=c;bb=xx;}else if(hp<4){gg=xx;bb=c;}else if(hp<5){rr=xx;bb=c;}else{rr=c;bb=xx;}
+    p[i]=(rr+m0)*255;p[i+1]=(gg+m0)*255;p[i+2]=(bb+m0)*255;}
+  x.putImageData(d,0,0);const ct=new THREE.CanvasTexture(cv);ct.flipY=tex.flipY;ct.wrapS=tex.wrapS;ct.wrapT=tex.wrapT;ct.minFilter=tex.minFilter;ct.magFilter=tex.magFilter;if(tex.colorSpace!==undefined)ct.colorSpace=tex.colorSpace;if(tex.encoding!==undefined)ct.encoding=tex.encoding;ct.needsUpdate=true;EMS.rc.set(tex,ct);return ct;}catch(e){console.warn('emRecolor',e);return tex;}}
 function emLoad(){if(EMS.ready||EMS.loading)return Promise.resolve(EMS.ready);EMS.loading=true;EMS.err=null;
   return fetch(new URL(EMS.url,location.href).href).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();}).then(buf=>new Promise((ok,bad)=>{
     if(!THREE.GLTFLoader)return bad(new Error('no GLTFLoader'));new THREE.GLTFLoader().parse(buf,'',ok,bad);})).then(g=>{
     const root=g.scene,ramp=emRamp(),conv=new Map();
     root.traverse(o=>{if(!o.isMesh)return;o.castShadow=false;o.receiveShadow=true;o.frustumCulled=true;
       const ms=Array.isArray(o.material)?o.material:[o.material],out=ms.map(m=>{if(!m)return m;if(conv.has(m))return conv.get(m);
-        const t=new THREE.MeshToonMaterial({map:m.map||null,color:m.map?0xffffff:(m.color||0xffffff),gradientMap:ramp,side:THREE.DoubleSide,transparent:!!m.transparent,alphaTest:m.alphaTest||0});t.clippingPlanes=emClip();t.clipIntersection=true;
+        const t=new THREE.MeshToonMaterial({map:m.map?emRecolor(m.map):null,color:m.map?0xffffff:(m.color||0xffffff),gradientMap:ramp,side:THREE.DoubleSide,transparent:!!m.transparent,alphaTest:m.alphaTest||0});t.clippingPlanes=emClip();t.clipIntersection=true;
         if(t.map){t.map.anisotropy=4;}conv.set(m,t);m.dispose();return t;});
       o.material=Array.isArray(o.material)?out:out[0];});
     root.updateMatrixWorld(true);EMS.box=new THREE.Box3().setFromObject(root);EMS.scene=root;EMS.ready=true;EMS.loading=false;
@@ -14908,6 +14916,18 @@ function emSet(mode){EMS.mode=mode==='emirates'?'emirates':'classic';try{localSt
   const b=$('b-stad');if(b)b.textContent='Stadium: '+(EMS.mode==='emirates'?(EMS.ready?'Emirates':EMS.loading?'Emirates (loading)':EMS.err?'Emirates (failed)':'Emirates'):'Classic');
   if(EMS.mode==='emirates'&&!EMS.ready)emLoad().then(()=>emSet('emirates'));else emRefresh();}
 // builds the stage with the model: goals and corner flags from the classic stage, floodlight masts on synthetic bowl dimensions, no classic bowl or boards
+// seats on the model's own tiers: every inclined, pitch-facing triangle outside the game pitch gets fans on a ~.8 m grid (deterministic, capped)
+function emSeats(g,hx,hz){const out=[],R=srand(77),cell=.85,seen=new Set(),A=new THREE.Vector3(),B=new THREE.Vector3(),C=new THREE.Vector3(),N=new THREE.Vector3(),E1=new THREE.Vector3(),E2=new THREE.Vector3();
+  g.traverse(o=>{if(!o.isMesh||!o.geometry||!o.geometry.attributes.position)return;const P=o.geometry.attributes.position,I=o.geometry.index,M4=o.matrixWorld,nT=I?I.count/3:P.count/3;
+    for(let t=0;t<nT;t++){const i0=I?I.getX(t*3):t*3,i1=I?I.getX(t*3+1):t*3+1,i2=I?I.getX(t*3+2):t*3+2;A.fromBufferAttribute(P,i0).applyMatrix4(M4);B.fromBufferAttribute(P,i1).applyMatrix4(M4);C.fromBufferAttribute(P,i2).applyMatrix4(M4);
+      E1.subVectors(B,A);E2.subVectors(C,A);N.crossVectors(E1,E2);const ar=N.length()/2;if(ar<.05||ar>400)continue;N.normalize();if(N.y<0){N.negate();}
+      const cx=(A.x+B.x+C.x)/3,cy=(A.y+B.y+C.y)/3,cz=(A.z+B.z+C.z)/3;
+      if(N.y<.3||N.y>.88||cy<1.2||cy>34)continue;if(Math.abs(cx)<hx+2&&Math.abs(cz)<hz+2)continue;
+      const hl=Math.hypot(N.x,N.z)||1,tx=-cx,tz=-cz,tl=Math.hypot(tx,tz)||1;if((N.x*tx+N.z*tz)/(hl*tl)<.3)continue;
+      const n=Math.min(40,Math.round(ar/(cell*cell)));for(let k=0;k<n;k++){let u=R(),v=R();if(u+v>1){u=1-u;v=1-v;}
+        const x=A.x+E1.x*u+E2.x*v,y=A.y+E1.y*u+E2.y*v,z=A.z+E1.z*u+E2.z*v,key=Math.round(x/cell)+','+Math.round(y/cell)+','+Math.round(z/cell);if(seen.has(key))continue;seen.add(key);if(R()<.06)continue;
+        out.push([x,y,z,-N.x/hl,-N.z/hl,y>14?1:0,1.4]);}}});
+  if(out.length>4200){const keep=4200/out.length,r2=srand(78),o2=[];for(const s of out)if(r2()<keep)o2.push(s);return o2;}return out;}
 function A_stadiumEm(env,kind,S){
   const night=kind==='night';buildGoal(env,0);buildGoal(env,1);
   for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const x=sx*PW/2*S3,z=sz*PH/2*S3;env.add(mesh(cyl(.025,.025,1.6,6),M3('#f4f4f4'),x,.8,z));
@@ -14918,6 +14938,7 @@ function A_stadiumEm(env,kind,S){
   g.scale.setScalar(k);m.position.set(-EMS.cx,-EMS.y0,-EMS.cz);
   env.add(g);S.emG=g;
   const hx=size.x*k/2,hz=size.z*k/2,bw={hx:hx*.82,hz:hz*.82,rc:16,oB:6,oRi:8,roofY:Math.min(52,size.y*k*.7)};S.bw=bw;A_floods(env,kind,S,bw);
+  try{g.updateMatrixWorld(true);const spots=emSeats(g,PW*S3/2+3,PH*S3/2+3);if(spots.length>50){spots.em=true;const cg=new THREE.Group();env.add(cg);S.crowdG=cg;A_crowd(cg,spots,kind,S,hx,hz);S.emSpots=spots.length;}}catch(e){console.warn('em crowd',e);}
   S.flare=A_flareMesh();env.add(S.flare);S.flareSrc=night?S.lights.map(p=>({p,i:.5})):[{p:S.sunDir.clone().multiplyScalar(300),i:.8}];
 }
 try{const b=$('b-stad');if(b){b.textContent='Stadium: '+(EMS.mode==='emirates'?'Emirates':'Classic');b.onclick=()=>emSet(EMS.mode==='emirates'?'classic':'emirates');}}catch(e){console.warn('stad ui',e);}
@@ -15220,7 +15241,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='151';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='152';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
