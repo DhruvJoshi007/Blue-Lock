@@ -9203,7 +9203,7 @@ function abMatchFrame(){
   if(c&&c.type==='shot')abG.shooters.set(c.shooter.team,c.shooter);
   const cg=!!(c&&((c.type==='shot'&&c.out==='goal'&&c.t>=SH.ARR-.05)||(c.type==='duo'&&c.t>=3.85)||(c.type==='ult'&&c.t>=c.tN)));
   let g=abG.goal;if(g&&(g.M!==M||(!M.flash&&!cg)))g=abG.goal=null;
-  if(!g&&(cg||M.flash)){const T=cg?(c.type==='shot'?c.shooter.team:M.home):(M.flash.col==='#ffc04a'?M.home:M.away);
+  if(!g&&(cg||M.flash)&&!(M.dapFallen||(c&&c.type==='ult'&&c.v===5))){const T=cg?(c.type==='shot'?c.shooter.team:M.home):(M.flash.col==='#ffc04a'?M.home:M.away);
     let sc=cg?(c.type==='shot'?c.shooter:M.kaito):abG.shooters.get(T);
     if(!sc||!T.players.includes(sc)){let bd=1e9;for(const p of T.players){if(p.isGK)continue;const d=Math.hypot(p.x-M.ball.x,p.y-M.ball.y);if(d<bd){bd=d;sc=p;}}}
     g=abG.goal={M,T,sc,t0:clock,f0:null,dir:null,pos:null};}
@@ -15211,7 +15211,7 @@ function hipFloorPass(){try{G3.actors.forEach(c=>{if(!c||!c.hipRisk||clock-c.hip
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='149';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='150';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
