@@ -8167,7 +8167,7 @@ function nMat(d,kit,st,o={}){
   if(N.mats.has(key))return N.mats.get(key);
   const base=N.skinBase,t=d.skinLin?d.skinLin.clone():NLIN(tone);
   const U={nJer:{value:NLIN(kit.jersey||'#3a6cd8')},nSho:{value:NLIN(kit.shorts||kit.jersey||'#3a6cd8')},nAcc:{value:NLIN(kit.trim||kit.accent||'#4a5ad8')},
-    nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},nSkT:{value:new THREE.Vector3(t.r,t.g,t.b)},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
+    nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},nSkT:{value:(()=>{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);})()},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
     nBoot:{value:NLIN(kit.boots||'#e8e8ee')},nGlove:{value:NLIN(kit.gloves||'#000')},nGl:{value:kit.gloves?1:0},nUniRef:{value:N.uniRef},nInner:{value:NLIN(kit.sleeve||'#1d2233')},
     nNumT:{value:nNumTex(kit.num,kit.jersey||'#3a6cd8',kit.accent||'#fff')},nNumR:{value:new THREE.Vector4(N.slot.num[0]/2048,N.slot.num[1]/1024,N.slot.num[2]/2048,N.slot.num[3]/1024)},
     nAwake:{value:0},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0}};
@@ -8194,8 +8194,8 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
   else if(r==16.){c=vec3(.025,.02,.025)+nHair*.05;}
   if(nSuit>.5&&(r==0.||r==9.)&&vOP.z>0.){float px=abs(vOP.x)/.167,py=(1.5-vOP.y)/.57;float sh=step(px,.5*(1.-py/.56))*step(py,.56);float tie=step(abs(vOP.x),.015+.012*py)*step(.03,py);c=mix(c,vec3(.8)*(.8+.3*l),sh);c=mix(c,vec3(.01),sh*tie);}
   if(nOrig>.5&&r==0.)c*=mix(vec3(1.05,.95,.86),vec3(1.),smoothstep(.84,.92,l));
-  if(nOrig>.5&&(r==0.||r==2.||r==13.)){float cl=dot(c,vec3(.299,.587,.114)),Lt=max(.05,dot(nSkT,vec3(.299,.587,.114)));float sw=smoothstep(.03,.09,c.r-c.b)*smoothstep(.16,.32,cl)*(1.-smoothstep(.9,1.,cl*1.2-.0));
-    vec3 sk=nSkT*clamp(cl/Lt,.8,1.1);c=mix(c,sk,sw*.94);}
+  if(nOrig>.5&&(r==0.||r==2.||r==3.||r==13.)){float cl=dot(c,vec3(.299,.587,.114)),Lt=max(.05,dot(nSkT,vec3(.299,.587,.114)));float sw=(r==3.?smoothstep(.17,.21,c.r-c.b):smoothstep(.07,.15,c.r-c.b))*smoothstep(.16,.32,cl);
+    vec3 sk=nSkT*.72*clamp(cl/Lt,.8,1.0);c=mix(c,sk,sw*.94);}
   if(nSkF>.5)c*=(nOrig>.5?.95:.78);
   diffuseColor.rgb*=c;`)
     .replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );')
@@ -13793,7 +13793,7 @@ function ultUpdate(c,dt){
   u.airH=tau<1.72?0:tau<1.95?.8*ease((tau-1.72)/.23):tau<2.4?(t<37.2?.8+.05*Math.sin((t-24)*1.3):t<D5_STRIKE+.05?.85+.05*Math.sin((t-37.2)*1.3)*(1-ease(clamp((t-37.2)/1.8,0,1))):(.85+.05*Math.sin((t-37.2)*1.3)*0)*(1-Math.pow(clamp((t-(D5_STRIKE+.05))/.45,0,1),2))):D5_AIRI*(1-ease((tau-2.4)/.5));
   // after the volley he comes down flat on his front, then looks back over his shoulder
   const LD=(c.tH||D5_STRIKE)+.3;if(t>=LD){if(!c.ld){c.ld={h:u.airH};u.kick=undefined;u.kickWarp=null;}const fk=clamp((t-LD)/.26,0,1);u.airH=lerp(c.ld.h,0,fk*fk);u.pose='raw';const R=c.ldR||(c.ldR={});
-    const kp=ease(clamp((t-D5T.look-.3)/.6,0,1)),kl=ease(clamp((t-LD)/.3,0,1));const kb=ease(clamp((t-LD)/.26,0,1));for(const kk in D5_PRN)R[kk]=D5_PRN[kk]*kb;R.nx=D5_PRN.nx*kb;R.ny=-.9*kp*c.spinS;u.raw=R;const sl=1-Math.pow(1-clamp((t-LD)/.9,0,1),2.2),P=d5V(c,-(1.3*ease(clamp((t-LD)/.4,0,1))+1.2*sl),0,0);u.x=P.x;u.y=P.y;}
+    const kp=ease(clamp((t-D5T.look-.3)/.6,0,1)),kl=ease(clamp((t-LD)/.3,0,1));const kb=ease(clamp((t-LD)/.26,0,1));for(const kk in D5_PRN)R[kk]=D5_PRN[kk]*kb;R.nx=D5_PRN.nx*kb;R.ny=-.9*kp*c.spinS;u.raw=R;{const an=fxActor(u);if(an)an.mxForce={n:'tackle',t:Math.min(.85,Math.max(0,t-LD)),w:abSst(LD,LD+.2,t),loop:false};}const sl=1-Math.pow(1-clamp((t-LD)/.9,0,1),2.2),P=d5V(c,-(1.3*ease(clamp((t-LD)/.4,0,1))+1.2*sl),0,0);u.x=P.x;u.y=P.y;}
   ultAwake(0);
   // dark smoke rolling off his body through the turn, like the anime's storm clouds
   if(false&&FXC&&FXC.on&&t>24.2&&t<D5_STRIKE+1){const a=fxActor(u),hv=t<D5_BC?.7:.35;if(a&&a.bones)for(const n of ['LeftShoulder','RightShoulder','Spine2','Hips']){const B=a.bones[n];if(!B||Math.random()>.32*hv)continue;const P=B.getWorldPosition(new THREE.Vector3());
@@ -15244,7 +15244,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='154';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='155';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
