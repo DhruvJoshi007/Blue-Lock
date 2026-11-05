@@ -8161,6 +8161,19 @@ function nNumTex(num,jersey,ink){const k=num+'|'+jersey+'|'+ink;if(N.num.has(k))
   const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.flipY=false;N.num.set(k,t);return t;}
 // ---------- material ----------
 const NLIN=h=>new THREE.Color(h).convertSRGBToLinear();
+// face landmarks of the shared generic head (bind pose), measured once per hair-style geometry
+function nGenInfo(st){const g=N.geo[st]||N.geo.straight;if(!g)return null;if(g.userData.gi!==undefined)return g.userData.gi;g.userData.gi=null;
+  try{const P=g.attributes.position,R=g.attributes.nReg;if(!P||!R)return null;const n=P.count;
+    let ex=0,ey=0,en=0,x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+    for(let i=0;i<n;i++){if(Math.round(R.getX(i))!==4)continue;const x=P.getX(i),y=P.getY(i);if(x<=0)continue;ex+=x;ey+=y;en++;x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}
+    if(en<8)return null;ex/=en;ey/=en;const hx=Math.max(.004,(x1-x0)/2),hy=Math.max(.003,(y1-y0)/2);
+    let my=0,mn=0,mz=1e9;for(let i=0;i<n;i++){if(Math.round(R.getX(i))!==6)continue;const y=P.getY(i);if(y>ey-hy*1.6||Math.abs(P.getX(i))>hx*1.2)continue;my+=y;mn++;mz=Math.min(mz,P.getZ(i));}
+    if(mn<4)return null;my/=mn;
+    let nyv=my+(ey-my)*.4,nz=-1e9;for(let i=0;i<n;i++){if(Math.round(R.getX(i))!==13)continue;const x=P.getX(i),y=P.getY(i),z=P.getZ(i);if(Math.abs(x)>.012||y<my+.008||y>ey-hy*1.2)continue;if(z>nz){nz=z;nyv=y;}}
+    if(nz<-1e8)nz=mz+.02;
+    let by=0,bn=0;for(let i=0;i<n;i++){if(Math.round(R.getX(i))!==7)continue;by+=P.getY(i);bn++;}by=bn?by/bn:ey+hy*2;
+    g.userData.gi={eye:[ex,ey,hx,hy],mou:[my,Math.max(.012,hx*.34),mz-.015,1],nose:[nyv,nz,by,1.45]};}catch(e){g.userData.gi=null;}
+  return g.userData.gi;}
 function nMat(d,kit,st,o={}){
   const f=d.face||{},tone=NSKIN[d.skin]||NSKIN.light,hair=st==='dome'?darker(tone,.86):(d.hair&&d.hair.color)||'#222';
   const orig=d.model?1:0,key=[d.model?(N.cm[d.model]?d.model:'wait'):'',st,d.skin,hair,f.eyeColor||'',kit.jersey,kit.shorts,kit.accent,kit.trim||'',kit.sleeve||'',kit.boots||'',kit.gloves||'',kit.num,o.ol?1:0,d.skinLin?d.skinLin.getHexString():''].join('|');
@@ -8170,12 +8183,12 @@ function nMat(d,kit,st,o={}){
     nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},nSkT:{value:(()=>{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);})()},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
     nBoot:{value:NLIN(kit.boots||'#e8e8ee')},nGlove:{value:NLIN(kit.gloves||'#000')},nGl:{value:kit.gloves?1:0},nUniRef:{value:N.uniRef},nInner:{value:NLIN(kit.sleeve||'#1d2233')},
     nNumT:{value:nNumTex(kit.num,kit.jersey||'#3a6cd8',kit.accent||'#fff')},nNumR:{value:new THREE.Vector4(N.slot.num[0]/2048,N.slot.num[1]/1024,N.slot.num[2]/2048,N.slot.num[3]/1024)},
-    nAwake:{value:0},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0}};
-  const m=new THREE.MeshStandardMaterial({map:(d.model&&N.cm[d.model]?N.cm[d.model].tex:N.atlas),roughness:.82,metalness:0,skinning:true,side:THREE.DoubleSide});m.userData.nU=U;
+    nAwake:{value:0},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
+  const m=new THREE.MeshStandardMaterial({map:(d.model&&N.cm[d.model]?N.cm[d.model].tex:N.atlas),roughness:.82,metalness:0,skinning:true,side:THREE.DoubleSide});m.userData.nU=U;m.extensions={derivatives:true};
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;varying float vReg;varying float vNz;varying vec3 vOP;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;');
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGM;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)transformed.y=nGN.z+(transformed.y-nGN.z)*nGN.w;').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
-varying float vReg;varying float vNz;varying vec3 vOP;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
+varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;float nFx=0.;uniform vec4 nGE;uniform vec4 nGM;uniform vec4 nGN;uniform vec3 nSkB;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
 float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smoothstep(.45,.52,x)*.22;float soft=saturate((x+.25)/1.25);soft=soft*soft*(3.-2.*soft);float b0=mix(toon,soft,nReal);return mix(b0,soft*.8+.2,nSkF*.9);}`)
     .replace('#include <map_fragment>',`vec4 tx=texture2D(map,vUv);vec3 c=tx.rgb;float r=floor(vReg+.5);float l=dot(c,vec3(.299,.587,.114));nSkF=(r==2.||r==13.||r==12.||(nOrig>.5&&r==0.))?1.:0.;
   if(r==8.)discard;if(r==14.&&nAwake<.5)discard;
@@ -8193,18 +8206,46 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
   else if(r==9.){vec2 nl=(vUv-nNumR.xy)/nNumR.zw;if(vNz<0.)nl=vec2(.5,.6875)-nl;vec4 nt=texture2D(nNumT,nl);c=mix(nJer,nt.rgb,nt.a);}
   else if(r==16.){c=vec3(.025,.02,.025)+nHair*.05;}
   if(nSuit>.5&&(r==0.||r==9.)&&vOP.z>0.){float px=abs(vOP.x)/.167,py=(1.5-vOP.y)/.57;float sh=step(px,.5*(1.-py/.56))*step(py,.56);float tie=step(abs(vOP.x),.015+.012*py)*step(.03,py);c=mix(c,vec3(.8)*(.8+.3*l),sh);c=mix(c,vec3(.01),sh*tie);}
+  if(nOrig<.5&&nGM.w>.5){vec3 P=vOP;vec3 sk=nSkB*nSkin;vec3 ink=vec3(.075,.03,.035);
+    if(r==7.)c=nHair*.12+vec3(.014,.008,.008);
+    if((r==6.||r==16.||r==13.)&&abs(P.x)<nGM.y*2.7&&P.y>nGM.x-.016&&P.y<nGM.x+.014&&P.z>nGM.z){
+      vec3 b0=r==13.?c:sk;float mx=P.x/nGM.y,w=sqrt(max(0.,1.-mx*mx));float dy=P.y-(nGM.x-.0008*mx*mx);float aa=max(fwidth(dy),1e-5);
+      float th=.00105*(.4+.6*w);float ln=(1.-smoothstep(th-aa,th+aa,abs(dy)))*(1.-smoothstep(.96,1.04,abs(mx)));
+      float lp=smoothstep(-.0052,-.0034,dy)*(1.-smoothstep(-.0024,-.0012,dy))*w*.16;
+      c=mix(b0*(1.-lp),ink,ln*.92);nSkF=1.;if(r!=13.)nFx=1.;}
+    if(r==13.){float ny=P.y-nGN.x;if(abs(P.x)<.014&&ny>-.008&&ny<.02&&P.z>nGN.y-.03){float aa=max(fwidth(P.x),1e-5);
+      float wd=.0062*(1.-clamp((ny+.0035)/.017,0.,1.));float shd=smoothstep(-aa,aa,P.x+.0004)*(1.-smoothstep(wd-aa,wd+aa,P.x))*smoothstep(-.0042,-.0026,ny)*(1.-smoothstep(.01,.0135,ny));
+      c*=1.-shd*vec3(.14,.2,.2);
+      float td=abs(ny+.0024-.22*(P.x-.0022));float a2=max(fwidth(td),1e-5);float tk=(1.-smoothstep(.0007-a2,.0007+a2,td))*smoothstep(-.0012,0.,P.x)*(1.-smoothstep(.0055,.0068,P.x));
+      c=mix(c,ink*1.4,tk*.8);}}
+    if(r==4.||r==14.||r==16.||r==6.||(r==13.&&l<.35)){float s=(abs(P.x)-nGE.x)/nGE.z,ey=(P.y-nGE.y)/nGE.w;
+      if(abs(s)<1.9&&ey>-2.2&&ey<3.4&&P.y>nGM.x+.02&&P.z>nGM.z-.01){float ax=max(0.,1.-s*s);float top=.36*pow(ax,.55)+.22*s+.02,bot=-.27*pow(ax,.9)+.05*s-.05;
+        float aa=max(fwidth(ey),1e-4);float lw=.3+.18*clamp(s,0.,1.);
+        float inO=smoothstep(-aa,aa,top-ey)*smoothstep(-aa,aa,ey-bot)*(1.-smoothstep(.98,1.02,abs(s)));
+        float up=smoothstep(-aa,aa,ey-(top-.02))*smoothstep(-aa,aa,top+lw-ey)*(1.-smoothstep(1.06,1.14,abs(s)))*smoothstep(-1.08,-.95,s);
+        float wing=smoothstep(.85,.95,s)*(1.-smoothstep(1.18,1.26,s))*smoothstep(-aa,aa,ey-top)*smoothstep(-aa,aa,top+lw*.8+(s-.9)*.5-ey);
+        float lo=smoothstep(-aa,aa,ey-(bot-.07))*smoothstep(-aa,aa,bot+.01-ey)*smoothstep(0.,.35,s)*(1.-smoothstep(.92,1.,s));
+        float lin=max(max(up,wing),lo*.85);bool ball=r==4.||r==14.;
+        vec3 lid=sk*(1.-.18*(1.-smoothstep(0.,.5,ey-top)));vec3 eo=c;if(r==4.)eo=mix(eo,eo*vec3(.7,.68,.8),(1.-smoothstep(0.,.25,top-ey))*inO);
+        c=mix(lid,eo,ball?inO:0.);c=mix(c,ink,lin);if((!ball||inO<.5)&&lin<.5)nSkF=1.;if(r!=13.&&(!ball||inO<.5))nFx=1.;}}
+    if(nFx>.5)c*=vec3(.86,.85,.87);
+  }
   if(nOrig>.5&&r==0.)c*=mix(vec3(1.05,.95,.86),vec3(1.),smoothstep(.84,.92,l));
   if(nOrig>.5&&(r==0.||r==2.||r==3.||r==13.)){float cl=dot(c,vec3(.299,.587,.114)),Lt=max(.05,dot(nSkT,vec3(.299,.587,.114)));float sw=(r==3.?smoothstep(.17,.21,c.r-c.b):smoothstep(.07,.15,c.r-c.b))*smoothstep(.16,.32,cl);
     vec3 sk=nSkT*.72*clamp(cl/Lt,.8,1.0);c=mix(c,sk,sw*.94);}
   if(nSkF>.5)c*=(nOrig>.5?.95:.78);
   diffuseColor.rgb*=c;`)
     .replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );')
-    .replace('#include <aomap_fragment>',`#include <aomap_fragment>
+    .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\nif(nFx>.5)normal=normalize(vFwd);').replace('#include <lights_fragment_begin>',THREE.ShaderChunk.lights_fragment_begin.split('directLight.color *= all(').join('if(nFx<.5)directLight.color *= all(')).replace('#include <aomap_fragment>',`#include <aomap_fragment>
   reflectedLight.directSpecular*=0.;reflectedLight.indirectSpecular*=.15+.1*nReal;
   {float fr=1.-saturate(dot(geometry.normal,geometry.viewDir));float rr=mix(smoothstep(.6,.7,fr),smoothstep(.45,1.,fr)*.35,nReal);reflectedLight.directDiffuse+=nRim*rr*(diffuseColor.rgb*.8+.06);
   float rg=floor(vReg+.5);if(nReal>.5&&(rg==2.||rg==13.||rg==12.)){reflectedLight.directDiffuse+=diffuseColor.rgb*vec3(.10,.03,.02)*(1.-fr);}}
+  if(nOrig<.5&&floor(vReg+.5)==3.){float hy=normalize(vON).y;float hf=saturate(dot(geometry.normal,geometry.viewDir));
+    reflectedLight.indirectDiffuse*=mix(vec3(.5,.53,.68),vec3(.92),smoothstep(-.2,.6,hy));reflectedLight.directDiffuse*=1.08;
+    float hb=smoothstep(.3,.45,hy)*(1.-smoothstep(.6,.75,hy))*smoothstep(.25,.6,hf)*(.75+.25*sin(vOP.x*420.+vOP.z*260.));
+    reflectedLight.directDiffuse+=diffuseColor.rgb*1.1*hb+vec3(.05)*hb;}
   if(floor(vReg+.5)==14.)reflectedLight.indirectDiffuse+=diffuseColor.rgb*2.;
-  if(floor(vReg+.5)==4.)reflectedLight.indirectDiffuse+=diffuseColor.rgb*1.1;
+  if(floor(vReg+.5)==4.&&nFx<.5)reflectedLight.indirectDiffuse+=diffuseColor.rgb*1.1;
   reflectedLight.directDiffuse+=diffuseColor.rgb*nFlash;`);
     sh.fragmentShader=sh.fragmentShader.replace('#include <lights_physical_pars_fragment>',THREE.ShaderChunk.lights_physical_pars_fragment.replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );'));};
   m.customProgramCacheKey=()=>'nToon';N.mats.set(key,m);return m;}
@@ -15244,7 +15285,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='155';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='156';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
