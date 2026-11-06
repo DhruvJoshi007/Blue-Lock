@@ -6514,7 +6514,7 @@ function turnPlant(u,dt){const m=Math.hypot(u.inX||0,u.inY||0),sp=Math.hypot(u.v
     if(m>.2){const tg=u.speed*(sprinting()?1.22:1.04),k=Math.min(1,dt*16);u.vx+=(u.inX/m*tg-u.vx)*k;u.vy+=(u.inY/m*tg-u.vy)*k;u.turnTo={x:u.inX/m,y:u.inY/m};}
     if(!tankMode()&&u.turnTo){u.fx=u.turnTo.x;u.fy=u.turnTo.y;}return;}
   if(sp>50&&m>.35&&!(u.dashT>0)&&u.fall<=0){
-    const d=(u.vx*u.inX+u.vy*u.inY)/(sp*m);if(d<.5){u.vx*=.1;u.vy*=.1;u.turnT=.3;u.brakeKA=.45;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;u.turnTo={x:u.inX/m,y:u.inY/m};u.turnN=(u.turnN||0)+1;}}}
+    const d=(u.vx*u.inX+u.vy*u.inY)/(sp*m);if(d<.5){u.vx*=.02;u.vy*=.02;u.turnT=.3;u.brakeKA=.45;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;u.turnTo={x:u.inX/m,y:u.inY/m};u.turnN=(u.turnN||0)+1;}}}
 function fakeCancel(u){const A=M.aim,C=M.cine;const ia=axis(),mv=Math.hypot(ia.x,ia.y)>.35||hit('skill');if(!mv)return;
   if(A&&A.p===u&&A.kind==='shot'){M.aim=null;try{aimLayer(false);}catch(e){}try{G3.camFollowReset&&G3.camFollowReset();}catch(e){}M.toast={t:0,text:'FAKE SHOT',skill:1};return;}
   if(C&&C.type==='shot'&&C.shooter===u&&!C.kicked&&C.t<.8&&!C.opp){M.cine=null;giveBall(u);try{syncUI();}catch(e){}M.toast={t:0,text:'FAKE SHOT',skill:1};}}
@@ -9413,7 +9413,7 @@ function abPlace(a,o,dt,h){
   s.px=X;s.pz=Z;a.root.position.set(X,Math.max(0,h||0),Z);if(!a.last)a.last={x:X,z:Z};a.last.x=X;a.last.z=Z;
   const k=1-Math.exp(-dt*12);s.vx+=(vx-s.vx)*k;s.vz+=(vz-s.vz)*k;if(s.tele){s.vx=s.vz=0;}
   const prev=a.yaw||0;const tr=o.drib?20:(s.off.tr||(lab&&lab.turn)||10);
-  a.yaw=s.tele?yawT:lerpAng(prev,yawT,1-Math.exp(-dt*tr*.85));const yr=dt>0?abWrapA(a.yaw-prev)/dt:0;s.yr+=(clamp(yr,-12,12)-s.yr)*Math.min(1,dt*10);
+  a.yaw=s.tele?yawT:lerpAng(prev,yawT,1-Math.exp(-dt*Math.max(tr,14)*3.2));const yr=dt>0?abWrapA(a.yaw-prev)/dt:0;s.yr+=(clamp(yr,-12,12)-s.yr)*Math.min(1,dt*10);
   a.root.rotation.y=a.yaw+(o.yawAdd||0);s.ryaw=a.root.rotation.y;s.rx=X;s.rz=Z;s.placed=abG.frame;
   animChar(a,o,dt,Math.hypot(s.vx,s.vz));
 }
@@ -9465,7 +9465,7 @@ function abGait(c,s,o,dt,an){
   if(s.hyM==null||s.tele)s.hyM=hyM,s.hyMv=0;abCdamp(s,'hyM','hyMv',Math.min(hyM,.02),30,dt);if(hyT>s.hyM)hyT=lerp(hyT,s.hyM,g);P[abCI.hy]=hyT;
   const tw=g*lerp(.13,.16,wr)*(1+.5*wsp)*(1-.6*lat)*Math.cos(PI2*s.ph);P[abCI.hpy]-=tw;P[abCI.sy]+=tw*1.75;
   const rl=g*lerp(.085,.04,wr)*(stL-stR)*(1+an.swagger);P[abCI.hpz]+=rl;P[abCI.sz]-=rl*.8;P[abCI.hox]+=g*lerp(.022,.01,wr)*(stL-stR)*(1+an.swagger*2);
-  const back=uz<0?-uz:0;P[abCI.sx]+=g*((lerp(.03,.15,wr)+.2*wsp)*an.lean*(1-back*.8)+.06*lat);P[abCI.hpx]+=g*(.05*wr+.05*wsp);
+  const back=uz<0?-uz:0;
   const A=g*lerp(.48,lerp(.72,1.5,wsp),wr)*an.armSwing*(1-.55*lat)*(1-.4*back),cph=Math.cos(PI2*(s.ph-.05));
   for(let k=0;k<2;k++){const sw=(k?-A:A)*cph,o4=k?4:0,fw=A>1e-3?Math.max(0,-sw/A):0,bw=A>1e-3?Math.max(0,sw/A):0;
     P[abCI.aLx+o4]+=sw>0?sw*.75:sw;P[abCI.eL+o4]=lerp(P[abCI.eL+o4],lerp(.42,lerp(1.4,1.68,wsp),wr)+.3*wr*fw,g);
@@ -9553,13 +9553,11 @@ function abLook(c,s,o,dt,wt){
 }
 // ---------- secondary motion: inertial overshoot of trunk and head on starts, stops and turns ----------
 function abSecondary(c,s,dt){
-  const P=s.P,sp=s.sp;const tp=clamp(-s.af*.02,-.22,.3),tr=clamp(s.yr*s.v*.012,-.25,.25);
+  const P=s.P,sp=s.sp;const tp=0,tr=0;
   abUspring(sp,'p','pv',tp,9,.38,dt);abUspring(sp,'r','rv',tr,8,.45,dt);abUspring(sp,'h','hv',tp,14,.3,dt);
   P[abCI.sx]+=sp.p;P[abCI.hpx]+=sp.p*.25;P[abCI.sz]+=sp.r*.5;P[abCI.nx]-=sp.h*.5;P[abCI.nz]-=sp.r*.3;
   // bank into turns (whole body leans toward the inside of the curve)
-  P[abCI.bz]+=clamp(-s.yr*s.v*.035,-.32,.32)*s.gw;
   // sprint start: lean with acceleration, sit back when braking
-  P[abCI.sx]+=clamp(s.af*.012,-.12,.18)*s.gw;
 }
 
 // ---------- kicks (right-footed tracks, mirrored for the left foot), tackles, falls ----------
@@ -10323,14 +10321,14 @@ function abAnim(c,o,dt,spd){
     if(ct<.4){const k=abHump(0,.4,ct);s.wr[0]+=k*.6;s.wr[1]+=k*.6;Pp[abCI.eL]+=.25*k;Pp[abCI.eR]+=.25*k;}}
    if(!o.isGK&&G.g>.3){Pp[abCI.ny]-=Pp[abCI.sy]*.65*G.g;Pp[abCI.nx]-=Pp[abCI.sx]*(.45+.2*G.wsp)*(1-.6*w)*G.g;}
    {const af=clamp((s.af||0)/40,-1,1),al=clamp((s.al||0)/40,-1,1),mv=Math.min(1,s.v/3)*G.g,BANK=window.__bank??1;
-    Pp[abCI.sx]+=af*.2*mv;Pp[abCI.hpx]+=af*.06*mv;Pp[abCI.bz]+=BANK*al*.22*mv*(.5+.5*G.wsp);Pp[abCI.sz]+=BANK*al*.1*mv;
+    
     if(af<-.35&&s.v>2)s.wantWide=Math.max(s.wantWide,(-af-.35)*.9);
     if(hb&&!s.hbPrev)s.trapT=clock;s.hbPrev=hb;const tw=s.trapT!=null?abHump(0,.45,clock-s.trapT):0;
     if(tw>0&&G.wsp<.6&&!o.isGK){const q=tw*(1-G.wsp);Pp[abCI.ikR]*=1-.85*q;Pp[abCI.lRx]-=.45*q;Pp[abCI.kR]+=.6*q;Pp[abCI.sx]+=.08*q;Pp[abCI.aLz]+=.3*q;Pp[abCI.aRz]+=.3*q;Pp[abCI.nx]+=.3*q;}}
    if((o.airH||0)>.05&&!o.isGK&&!o.pose&&!(M&&M.cine&&M.cine.v===5&&o===M.cine.u)){const a=clamp(o.airH/.45,0,1);Pp[abCI.ikL]*=1-a;Pp[abCI.ikR]*=1-a;Pp[abCI.lRx]-=.7*a;Pp[abCI.kR]+=1.1*a;Pp[abCI.lLx]-=.35*a;Pp[abCI.kL]+=.8*a;Pp[abCI.aLz]+=.5*a;Pp[abCI.aRz]+=.5*a;Pp[abCI.sx]+=.1*a;}
-   if(w>.01){Pp[abCI.nx]+=.24*w*q;s.lookW*=1-.35*w*q;Pp[abCI.sx]+=.05*w*sp+.14*sp*(1-.3*w);Pp[abCI.hy]-=.015*w*q+.03*sp;Pp[abCI.hpx]+=.07*sp;
+   if(w>.01){Pp[abCI.nx]+=.24*w*q;s.lookW*=1-.35*w*q;Pp[abCI.hy]-=.015*w*q+.03*sp;
      for(let k=0;k<2;k++){const o4=k?4:0;Pp[abCI.eL+o4]+=.28*w*q;Pp[abCI.aLz+o4]+=.06*w*q;}}
-   if(w<.99){const f=1-w;Pp[abCI.nx]-=.12*f*sp;Pp[abCI.sx]+=.09*f*sp+.2*f*sp;Pp[abCI.hpx]+=.04*f*sp+.07*f*sp;Pp[abCI.hy]-=.03*f*sp;
+   if(w<.99){const f=1-w;Pp[abCI.nx]-=.12*f*sp;Pp[abCI.hy]-=.03*f*sp;
      for(let k=0;k<2;k++){const o4=k?4:0;Pp[abCI.eL+o4]+=.3*f*sp;Pp[abCI.aLz+o4]-=.05*f*sp;}}}
   s.exh+=(((o.stam!=null&&!sit)?abSst(.42,.32,o.stam):0)*(1-s.gw)-s.exh)*Math.min(1,dt*1.5);
   abIdle(c,s,o,dt,an,sit);
@@ -15565,9 +15563,9 @@ function pdrCad(o){const D=pdrCfg(o);const q=(o&&o.isUser&&typeof M!=='undefined
     const lean=cl(D.forward_lean_degrees,0,60)*D2R,burst=cl(D.acceleration_lean_burst_degrees,0,70)*D2R,bank=cl(D.sharp_turn_bank_angle_degrees,0,60)*D2R;
     // forward lean: aim the total trunk pitch at the configured angle (the stock gait already gives about 0.2 rad at a jog and 0.45 at a sprint)
     const ref=((.03+.12*wr)+.2*wsp)*an.lean+.05*wr+.05*wsp,tgt=lean*(.15+.85*abSst(1,9,v)),acc=cl(s.af/14,0,1),brk=cl(-s.af/14,0,1);
-    P[abCI.sx]+=((tgt-ref)+Math.max(0,burst-lean)*acc*(1-(s.sdw||0))-.1*brk)*g;
+    
     // bank into sharp turns: replace the stock bank (max 0.32 rad) by the configured angle
-    const bk=-s.yr*s.v*.035;P[abCI.bz]+=(cl(bk*bank/.32,-bank,bank)-cl(bk,-.32,.32))*s.gw;
+    
     // arms: shoulder swing multiplier (capped at 2 rad), fixed elbow bend, clenched fists
     const back=0,A=g*lerp(.48,lerp(.72,1.5,wsp),wr)*an.armSwing*(1-.55*G.lat),cph=Math.cos(Math.PI*2*(s.ph-.05)),mEff=Math.min(cl(D.shoulder_swing_multiplier,.3,3),Math.max(1,2/Math.max(A,.01))),elb=cl(D.elbow_fixed_bend_degrees,20,140)*D2R,fist=cl(D.hand_clench_weight,0,1),ew=g*abSst(2.3,4.3,v);
     for(let k=0;k<2;k++){const sw=(k?-A:A)*cph,o4=k?4:0,fw=A>1e-3?Math.max(0,-sw/A):0;
@@ -15630,7 +15628,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='168';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='169';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
