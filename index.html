@@ -6273,9 +6273,9 @@ function init3D(){
     r.setPixelRatio(Math.min(2,window.devicePixelRatio||1));r.shadowMap.enabled=true;r.shadowMap.type=touchUI?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;r.outputEncoding=THREE.sRGBEncoding;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.08;
     G3.renderer=r;gl.addEventListener('webglcontextlost',e=>{e.preventDefault();G3.on=false;window.__glLost=(window.__glLost||0)+1;console.warn('WebGL context lost: rendering paused until it is restored');});gl.addEventListener('webglcontextrestored',()=>{try{G3.scene&&G3.scene.traverse(o=>{const m=o.material;if(m)(Array.isArray(m)?m:[m]).forEach(x=>{x.needsUpdate=true;});});G3.on=true;console.info('WebGL context restored');}catch(e){console.warn('context restore failed',e);}});A_initRenderer(r);G3.scene=new THREE.Scene();G3.cam=new THREE.PerspectiveCamera(55,1,.1,600);G3.look=new THREE.Vector3();
     G3.ball=makeBall();G3.scene.add(G3.ball);
-    const rs=()=>{r.setSize(gl.clientWidth,gl.clientHeight,false);G3.cam.aspect=gl.clientWidth/Math.max(1,gl.clientHeight);G3.cam.updateProjectionMatrix();};rs();addEventListener('resize',rs);
+    const rs=()=>{try{const ch=Math.max(1,gl.clientHeight);r.setPixelRatio(clamp(Math.max(Math.min(2,window.devicePixelRatio||1),1080/ch),1,3));}catch(e){}r.setSize(gl.clientWidth,gl.clientHeight,false);G3.cam.aspect=gl.clientWidth/Math.max(1,gl.clientHeight);G3.cam.updateProjectionMatrix();};rs();addEventListener('resize',rs);
     G3.on=true;
-    try{initPost();}catch(e){console.warn('post fx off',e);G3.post=null;r.toneMapping=THREE.ACESFilmicToneMapping;r.setRenderTarget(null);}
+    setInterval(()=>{try{const A=Math.min(8,r.capabilities.getMaxAnisotropy());if(G3.scene)G3.scene.traverse(o=>{const m=o.material;if(!m)return;(Array.isArray(m)?m:[m]).forEach(x=>{for(const k of ['map','normalMap','emissiveMap']){const t=x[k];if(t&&t.anisotropy<A){t.anisotropy=A;t.needsUpdate=true;}}});});}catch(e){}},2500);try{initPost();}catch(e){console.warn('post fx off',e);G3.post=null;r.toneMapping=THREE.ACESFilmicToneMapping;r.setRenderTarget(null);}
     loadRig();
   }catch(e){console.warn('3D unavailable, using 2D view',e);G3.on=false;}
 }
@@ -8533,7 +8533,7 @@ const A_GRADES={
   system:{ex:1.05,lift:[-.02,0,.02],gam:[.97,1.02,1.04],gain:[.92,1.04,1.1],sat:.95,con:1.15,sh:[-.1,.04,.12],hi:[-.04,.06,.1],vig:.55,grain:.035,bl:1.4,thr:1.1},
   dusk:{ex:1.05,lift:[.01,-.004,.01],gam:[1.03,1,.96],gain:[1.1,1.0,.9],sat:1.1,con:1.08,sh:[-.04,-.02,.08],hi:[.1,.04,-.06],vig:.45,grain:.03,bl:1,thr:1.4},
   noir:{ex:1.05,lift:[0,0,0],gam:[1,1,1],gain:[1,1,1],sat:.08,con:1.25,sh:[0,0,.03],hi:[.03,.02,0],vig:.7,grain:.06,bl:.8,thr:1.4}};
-G3.GRADES=A_GRADES;for(const k in A_GRADES){if(k==='noir')continue;const g=A_GRADES[k];g.ex*=1.16;g.vig*=.72;g.lift=g.lift.map(v=>v+.012);g.sat*=1.05;g.ex*=1.06;g.thr*=.7;g.bl*=1.3;g.sat*=1.1;}
+G3.GRADES=A_GRADES;for(const k in A_GRADES){if(k==='noir')continue;const g=A_GRADES[k];g.ex*=1.16;g.vig*=.72;g.lift=g.lift.map(v=>v+.012);g.sat*=1.05;g.ex*=1.06;g.thr*=.7;g.bl*=1.3;g.sat*=1.1;g.ex*=.92;g.sat*=1.04;g.con*=1.12;g.lift=g.lift.map(v=>v-.034);g.sh=g.sh.map(v=>v*1.2);g.vig*=1.1;g.thr*=1.28;g.bl*=.85;}
 {let last=performance.now(),acc=0,n=0,tier=0;const fg=t=>{try{const dt=t-last;last=t;if(tier<2&&dt<400&&!document.hidden){acc+=dt;n++;if(n>=150){const avg=acc/n;acc=0;n=0;if(avg>30&&G3&&G3.scene){tier++;const ms=tier===1?2048:1024;G3.scene.traverse(o=>{if(o.isLight&&o.shadow&&o.shadow.mapSize.x>ms){o.shadow.mapSize.set(ms,ms);if(o.shadow.map){o.shadow.map.dispose();o.shadow.map=null;}}});window.__frameGuard=tier+':'+avg.toFixed(1);}}}}catch(e){}requestAnimationFrame(fg);};requestAnimationFrame(fg);}
 G3.world={crowd(v){const S=G3.stages&&G3.stages[G3.stage];if(S&&S.crowdG)S.crowdG.visible=!!v;}};
 function A_gradeTarget(SC3){let g=SC3&&SC3.userData&&SC3.userData.grade;if(!g)g=G3.grade;if(!g&&SC3===G3.scene)g=mode==='menu'?'menu':G3.stage;if(typeof g==='string')g=A_GRADES[g]||A_GRADES.night;return g||A_GRADES.night;}
@@ -8717,6 +8717,14 @@ function A_lights(env,kind,S){
   if(!night&&!train&&!roster){const f=new THREE.DirectionalLight(LIN('#cfe0ff'),.4);f.position.set(-28,32,-24);env.add(f);}
   if(roster){const a=new THREE.DirectionalLight(LIN('#59e1ff'),.95);a.position.set(-3,3,-4);env.add(a);const b=new THREE.DirectionalLight(LIN('#ffc04a'),.65);b.position.set(3.5,2.5,-3.5);env.add(b);}
 }
+const _lgA=A_lights;
+A_lights=function(env,kind,S){_lgA.apply(this,arguments);
+  try{if(kind==='roster')return;
+    for(const o of env.children){if(o.isHemisphereLight)o.intensity*=.78;}
+    const sun=S&&S.sun;if(!sun)return;sun.intensity*=1.12;
+    const off=S.sunOff;off.y*=.84;sun.position.copy(off);S.sunDir=off.clone().normalize();S.lx=null;
+    const rim=new THREE.DirectionalLight(LIN(kind==='night'?'#9cc4ff':'#b8d4ff'),kind==='night'?.55:.42);rim.position.set(-off.x*.9,off.y*.5,-off.z*.9);env.add(rim);
+  }catch(e){console.warn('lighting tweak failed',e);}};
 function A_envMap(kind,sky,S){
   const r=G3.renderer,s=new THREE.Scene(),night=kind==='night',train=kind==='training',roster=kind==='roster',tmp=[];
   const add=(g,c,x,y,z,rx,side)=>{const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:c,side:side||THREE.FrontSide}));m.position.set(x,y,z);if(rx!=null)m.rotation.x=rx;s.add(m);tmp.push(m);return m;};
@@ -15622,7 +15630,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='166';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='167';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
