@@ -6275,7 +6275,7 @@ function init3D(){
     G3.ball=makeBall();G3.scene.add(G3.ball);
     const rs=()=>{try{const ch=Math.max(1,gl.clientHeight);r.setPixelRatio(clamp(Math.max(Math.min(2,window.devicePixelRatio||1),(G3.resT||2160)/ch),1,4));}catch(e){}r.setSize(gl.clientWidth,gl.clientHeight,false);G3.cam.aspect=gl.clientWidth/Math.max(1,gl.clientHeight);G3.cam.updateProjectionMatrix();};rs();addEventListener('resize',rs);
     G3.on=true;
-    setInterval(()=>{try{const A=Math.min(8,r.capabilities.getMaxAnisotropy());if(G3.scene)G3.scene.traverse(o=>{const m=o.material;if(!m)return;(Array.isArray(m)?m:[m]).forEach(x=>{for(const k of ['map','normalMap','emissiveMap']){const t=x[k];if(t&&t.anisotropy<A){t.anisotropy=A;t.needsUpdate=true;}}});});}catch(e){}},2500);G3.resT=2160;(function(){let last=performance.now(),acc=0,n=0;const step=t=>{try{const dt=t-last;last=t;if(document.hidden||dt>400){acc=0;n=0;}else if(mode==='match'){acc+=dt;n++;if(n>=90){const avg=acc/n;acc=0;n=0;if(avg>25&&G3.resT>1080){G3.resT=G3.resT>1440?1440:1080;window.__resStep=G3.resT;window.dispatchEvent(new Event('resize'));}}}}catch(e){}requestAnimationFrame(step);};requestAnimationFrame(step);})();try{initPost();}catch(e){console.warn('post fx off',e);G3.post=null;r.toneMapping=THREE.ACESFilmicToneMapping;r.setRenderTarget(null);}
+    setInterval(()=>{try{const A=r.capabilities.getMaxAnisotropy();if(G3.scene)G3.scene.traverse(o=>{const m=o.material;if(!m)return;(Array.isArray(m)?m:[m]).forEach(x=>{for(const k of ['map','normalMap','emissiveMap']){const t=x[k];if(t&&t.anisotropy<A){t.anisotropy=A;t.needsUpdate=true;}}});});}catch(e){}},2500);G3.resT=2160;(function(){let last=performance.now(),acc=0,n=0;const step=t=>{try{const dt=t-last;last=t;if(document.hidden||dt>400){acc=0;n=0;}else if(mode==='match'){acc+=dt;n++;if(n>=90){const avg=acc/n;acc=0;n=0;if(avg>25&&G3.resT>1080){G3.resT=G3.resT>1440?1440:1080;window.__resStep=G3.resT;window.dispatchEvent(new Event('resize'));}}}}catch(e){}requestAnimationFrame(step);};requestAnimationFrame(step);})();try{initPost();}catch(e){console.warn('post fx off',e);G3.post=null;r.toneMapping=THREE.ACESFilmicToneMapping;r.setRenderTarget(null);}
     loadRig();
   }catch(e){console.warn('3D unavailable, using 2D view',e);G3.on=false;}
 }
@@ -8413,7 +8413,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
         vec2 es0=vec2((q.x+.042)/.03,(q.y+.05)/.034);float skinT=(r==3.)?smoothstep(.08,.14,c.r-c.b):1.;float Mw=M*max(max(skinT,(r==3.)?smoothstep(.0,-.03,q.y):0.),1.-smoothstep(.95,1.2,length(es0)));
         float bn=nEN(q.xy*95.)*.5+nEN(q.xy*280.)*.3+.2;
         vec3 bone=mix(vec3(.24,.22,.3),vec3(.86,.84,.88),bn);
-        bone*=vec3(.86,.82,1.04);
+        bone*=vec3(.86,.82,1.04);bone*=.82+.36*(nEN(q.xy*520.)*.55+nEN(q.xy*1400.)*.3+nEN(q.xy*3200.)*.15);
         bone*=.3+.7*smoothstep(0.,.02,edgeD);
         float ck=nEN(vec2(q.x*62.+q.y*41.,q.y*58.-q.x*37.));
         bone=mix(bone,vec3(.03,.02,.05),smoothstep(.035,.0,abs(ck-.5))*.9);
@@ -15828,7 +15828,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='185';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='186';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16231,8 +16231,9 @@ function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!R
   const N=110,pos=new Float32Array(N*3),col=new Float32Array(N*3),aS=new Float32Array(N),aA=new Float32Array(N),seed=[];
   for(let i=0;i<N;i++)seed.push({x:-(.004+Math.random()*.075)*u,y:(-.14+Math.random()*.2)*u,z:(.03+Math.random()*.07)*u,ph:Math.random(),sp:.45+Math.random()*.7,sz:.6+Math.random()*.9,tw:Math.random()*6.28});
   const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));pg.setAttribute('color',new THREE.BufferAttribute(col,3));pg.setAttribute('aS',new THREE.BufferAttribute(aS,1));pg.setAttribute('aA',new THREE.BufferAttribute(aA,1));
-  const tex=canvasTex(64,64,(x,w,h)=>{const id=x.createImageData(w,h),ph=[Math.random()*9,Math.random()*9,Math.random()*9];for(let py=0;py<h;py++)for(let px=0;px<w;px++){const dx=(px+.5)/w*2-1,dy=(py+.5)/h*2-1,r=Math.sqrt(dx*dx+dy*dy);
+  const tex=canvasTex(256,256,(x,w,h)=>{const id=x.createImageData(w,h),ph=[Math.random()*9,Math.random()*9,Math.random()*9];for(let py=0;py<h;py++)for(let px=0;px<w;px++){const dx=(px+.5)/w*2-1,dy=(py+.5)/h*2-1,r=Math.sqrt(dx*dx+dy*dy);
       const n=.5+.25*Math.sin(dx*5+ph[0])*Math.cos(dy*4+ph[1])+.25*Math.sin((dx+dy)*7+ph[2]);let a=Math.max(0,1-r);a=a*a*(3-2*a)*(.55+.55*n);const o=(py*w+px)*4;id.data[o]=id.data[o+1]=id.data[o+2]=255;id.data[o+3]=Math.min(255,Math.round(a*255));}x.putImageData(id,0,0);});
+  try{tex.generateMipmaps=true;tex.minFilter=THREE.LinearMipmapLinearFilter;tex.magFilter=THREE.LinearFilter;tex.anisotropy=G3.renderer.capabilities.getMaxAnisotropy();tex.needsUpdate=true;}catch(e){}
   const mat=new THREE.PointsMaterial({map:tex,size:.05*u,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.9,depthWrite:false,blending:THREE.AdditiveBlending,fog:false});
   mat.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('void main() {','attribute float aS;attribute float aA;varying float vAA;\nvoid main() {').replace('gl_PointSize = size;','gl_PointSize = size*aS;vAA=aA;');
     sh.fragmentShader=sh.fragmentShader.replace('void main() {','varying float vAA;\nvoid main() {').replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.a*=vAA;');};
