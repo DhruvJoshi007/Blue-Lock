@@ -4648,7 +4648,7 @@ function syncUI(){
 
 // ================= CUTSCENE ENGINE =================
 function playCutscene(shots,onEnd){mode='cutscene';show(null);CS={shots,i:0,t:0,li:0,chars:0,onEnd,ev:0,lt0:0,dt:.016};if(typeof stQueue==='function')stQueue(shots);startShot();syncUI();}
-function startShot(){const sh=CS.shots[CS.i];try{if(typeof ST!=='undefined')ST.egoOn=false;}catch(e){}CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
+function startShot(){const sh=CS.shots[CS.i];try{if(typeof ST!=='undefined'){ST.egoOn=false;ST.egoActor=false;ST.egoNagi=false;if(ST.bench)ST.bench.visible=false;}}catch(e){}CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
 function curLine(){const sh=CS.shots[CS.i];return sh.lines&&CS.li<sh.lines.length?sh.lines[CS.li]:null;}
 function showLine(){
   const L=curLine();
@@ -6286,8 +6286,8 @@ function drawRadar(){fxRadar();}
 const CHAPTERS=[
   {title:'The Greatest Duo',sub:'Play a match with Isagi as the Twin Stars',start:()=>playCutscene(SC.prologue,()=>{startMatch(1);showHowTo('duo');})},
   {title:'The Rainy Night',sub:'Cutscene · Isagi is taken',start:()=>playCutscene(SC.rain,()=>CHAPTERS[2].start())},
-  {title:'Benched',sub:'Cutscene · blamed, benched and released',start:()=>playCutscene(SC.bench,()=>CHAPTERS[3].start())},
-  {title:'Awakening',sub:'Cutscene · Nagi\'s ego awakens',start:()=>CHAPTERS[4].start()},
+  {title:'The Park Bench',sub:'Cutscene · Nagi meets his ego',start:()=>playCutscene(SC.parkEgo,()=>CHAPTERS[3].start())},
+  {title:'Selection Exam',sub:'Cutscene · Kurogane SC open selection',start:()=>playCutscene(SC.selection,()=>playCutscene(SC.benchMatch,()=>CHAPTERS[4].start()))},
   {title:'The Trial',sub:'Steal the ball from an out-of-control player',start:()=>playCutscene(SC.trialIntro,()=>{startTrial();showHowTo('trial');})},
   {title:'The Wall',sub:'Debut match as a centre back for Kurogane SC',start:()=>playCutscene(SC.debut,()=>{startMatch(6);showHowTo('wall');})},
   {title:'Return to Aoba',sub:'Face your old team as the striker. Dap Shot unlocked',start:()=>playCutscene(SC.reunion,()=>{startMatch(7);showHowTo('return');})},
@@ -6322,7 +6322,7 @@ const ULT={ZONE:.4,CD:45,DUR:6.5};
 function ultOno(){if(FX_ONO.DOKUN)return;FX_ONO.DOKUN={j:'ドクン',e:'BA-DUMP',c:'#eaf4ff',c2:'#2f6bff'};FX_ONO.TON={j:'トン',e:'tap',c:'#ffffff',c2:'#59a8ff'};FX_ONO.ZAZ={j:'ザッ',e:'ZAK!',c:'#dfe9ff',c2:'#24324a'};}
 function ultGoalX(){return (M.home.dir||1)>0?PW:0;}
 function ultInZone(u){return Math.abs(ultGoalX()-u.x)<ULT.ZONE*1750;}
-function ultState(){const u=M&&M.user;if(!u||mode!=='match'||M.cine||M.pick||M.freeze>0||M.ball.owner!==u||!ultInZone(u))return 0;return (M.ultCd||0)>M.time?1:2;} // 0 hidden, 1 charging, 2 ready
+function ultState(){const u=M&&M.user;if(M&&M.ch===1)return 0;if(!u||mode!=='match'||M.cine||M.pick||M.freeze>0||M.ball.owner!==u||!ultInZone(u))return 0;return (M.ultCd||0)>M.time?1:2;} // 0 hidden, 1 charging, 2 ready
 const uw=(t,segs)=>{let a=0,p=0;for(const [t1,r] of segs){if(t<=t1)return a+(t-p)*r;a+=(t1-p)*r;p=t1;}return a+(t-p);};   // warped time: [[until, rate],...]
 
 function startUltCineV2(){
@@ -7962,6 +7962,7 @@ Object.assign(VC.ext,{"r1": "voice/narrator/N1.mp3", "r2": "voice/narrator/N2.mp
 Object.assign(VC.ext,{"m1": "voice/nagi/M1.mp3", "m2": "voice/nagi/M2.mp3", "m3": "voice/nagi/M3.mp3", "m4": "voice/nagi/M4.mp3"});Object.assign(VC_LINES,{"Nagi|...Mendokusai. Just keep the ball moving.": "m1", "Nagi|...Mendokusai. Fine.": "m2", "Nagi|...Mendokusai. Fine. Let's go.": "m3", "Nagi|...Then why is this so boring?": "m4"});
 Object.assign(VC.ext,{"j1": "voice/isagi/J1.mp3", "j2": "voice/isagi/J2.mp3", "j3": "voice/isagi/J3.mp3", "j4": "voice/isagi/J4.mp3"});Object.assign(VC_LINES,{"Isagi|Aoba will press us hard today.": "j1", "Isagi|Then keep up with me.": "j2", "Isagi|Second half. Together.": "j3", "Isagi|They still can't read us.": "j4"});
 Object.assign(VC.ext,{"q1": "voice/rin/R1.mp3"});Object.assign(VC_LINES,{"Rin|Top corner. Every time.": "q1"});
+Object.assign(VC.ext,{"zn1": "voice/nagi/T1.mp3", "zn2": "voice/nagi/T2.mp3", "zn3": "voice/nagi/T3.mp3", "zn4": "voice/nagi/T4.mp3", "zn5": "voice/nagi/T5.mp3", "zn6": "voice/nagi/T6.mp3", "zn7": "voice/nagi/T7.mp3", "zn8": "voice/nagi/T8.mp3", "zn9": "voice/nagi/T9.mp3", "zn10": "voice/nagi/T10.mp3", "zn11": "voice/nagi/T11.mp3", "ze1": "voice/ego/G1.mp3", "ze2": "voice/ego/G2.mp3", "ze3": "voice/ego/G3.mp3", "ze4": "voice/ego/G4.mp3", "ze5": "voice/ego/G5.mp3", "ze6": "voice/ego/G6.mp3", "ze7": "voice/ego/G7.mp3", "ze8": "voice/ego/G8.mp3", "ze9": "voice/ego/G9.mp3", "ze10": "voice/ego/G10.mp3", "ze11": "voice/ego/G11.mp3"});Object.assign(VC_LINES,{"Nagi|Back then, whatever task they gave me, I avoided it. Not because I was scared. I was just too lazy to try.": "zn1", "Nagi|I was not a good friend. I was not a good player either.": "zn2", "Nagi|Who is that?": "zn3", "Nagi|What is happening? And what do you mean, give up? I tried my best. I just could not do it.": "zn4", "Nagi|But I am not like you.": "zn5", "Nagi|...Fine. I will come.": "zn6", "Nagi|...Troublesome.": "zn7", "Nagi|Will I ever be able to do this?": "zn8", "Nagi|Yes. I get it...": "zn9", "Nagi|...Yes, coach.": "zn10", "Nagi|I have not fully understood it. I have not mastered it. But I can do it, and I will do it.": "zn11", "SYSTEM|So you are giving up without trying.": "ze1", "SYSTEM|I am you. The inner ego of you.": "ze2", "SYSTEM|You mean this was your best? If I were you, I could have become the best in the world.": "ze3", "SYSTEM|Giving up is a choice you make. It is not an option. In my mind, in my world, the game I play has two choices. Win, or win.": "ze4", "SYSTEM|I am the ego of you. One part of you. I am you. A genius, not a lazy one.": "ze5", "SYSTEM|Show the world what happens when you are finally the one. The one who is best. The one who is better than anyone. Show the world who you are!": "ze6", "SYSTEM|Let us do it, my Lazy Genius.": "ze7", "SYSTEM|Doubting yourself is better than giving up. Analyse his dribbling. Analyse every player out here. Understand how they think and how they play, and you become the best in the world.": "ze8", "SYSTEM|Do you understand?": "ze9", "SYSTEM|Let us show them what you have got, Lazy Genius.": "ze10", "SYSTEM|He is not the same. He keeps evolving. He keeps practising.": "ze11"});
 window.__vc={VC,vcPlay,vcBusy,vcPreload,ac:()=>AC};
 
 // ---------- hard tacklers: a few opponents per match who close fast, tackle hard and read a skill move they have already seen ----------
@@ -8336,19 +8337,22 @@ function nGenInfo(st){const g=N.geo[st]||N.geo.straight;if(!g)return null;if(g.u
   return g.userData.gi;}
 function nMat(d,kit,st,o={}){
   const f=d.face||{},tone=NSKIN[d.skin]||NSKIN.light,hair=st==='dome'?darker(tone,.86):(d.hair&&d.hair.color)||'#222';
-  const orig=d.model?1:0,key=[d.model?(N.cm[d.model]?d.model:'wait'):'',st,d.skin,hair,f.eyeColor||'',kit.jersey,kit.shorts,kit.accent,kit.trim||'',kit.sleeve||'',kit.boots||'',kit.gloves||'',kit.num,o.ol?1:0,d.skinLin?d.skinLin.getHexString():''].join('|');
+  const orig=d.model?1:0,key=[d.model?(N.cm[d.model]?d.model:'wait'):'',st,d.skin,hair,f.eyeColor||'',kit.jersey,kit.shorts,kit.accent,kit.trim||'',kit.sleeve||'',kit.boots||'',kit.gloves||'',kit.num,o.ol?1:0,d.skinLin?d.skinLin.getHexString():'',d.egoKey||''].join('|');
   if(N.mats.has(key))return N.mats.get(key);
   const base=N.skinBase,t=d.skinLin?d.skinLin.clone():NLIN(tone);
   const U={nJer:{value:NLIN(kit.jersey||'#3a6cd8')},nSho:{value:NLIN(kit.shorts||kit.jersey||'#3a6cd8')},nAcc:{value:NLIN(kit.trim||kit.accent||'#4a5ad8')},
     nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},...(()=>{let hs=null;try{hs=d.model?nHeadSkin(d.model):null;}catch(e){}return {nFaceT:{value:hs?new THREE.Vector3(hs.r,hs.g,hs.b):new THREE.Vector3(1,1,1)},nFaceL:{value:hs?Math.pow(Math.max(.02,.2126*hs.r+.7152*hs.g+.0722*hs.b),1/2.2):-1}};})(),nSkT:{value:(()=>{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);})()},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
     nBoot:{value:NLIN(kit.boots||'#e8e8ee')},nGlove:{value:NLIN(kit.gloves||'#000')},nGl:{value:kit.gloves?1:0},nUniRef:{value:N.uniRef},nInner:{value:NLIN(kit.sleeve||'#1d2233')},
     nNumT:{value:nNumTex(kit.num,kit.jersey||'#3a6cd8',kit.accent||'#fff')},nNumR:{value:new THREE.Vector4(N.slot.num[0]/2048,N.slot.num[1]/1024,N.slot.num[2]/2048,N.slot.num[3]/1024)},
-    nAwake:{value:0},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nGB:{value:gi?V4(gi.brw):new THREE.Vector4(0,0,1,0)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
+    nAwake:{value:0},nEgoSk:{value:0},nEgoT:{value:0},nEgoU:{value:(typeof RIG!=='undefined'&&RIG&&RIG.height?RIG.height/1.8:1.056)},nEgoC:{value:(N.hp?new THREE.Vector3(0,N.hp.y+.07,N.hp.z+.01):new THREE.Vector3(0,1.6,0))},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nGB:{value:gi?V4(gi.brw):new THREE.Vector4(0,0,1,0)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
   const m=new THREE.MeshStandardMaterial({map:(d.model&&N.cm[d.model]?N.cm[d.model].tex:N.atlas),roughness:.82,metalness:0,skinning:true,side:THREE.DoubleSide});m.userData.nU=U;m.extensions={derivatives:true};
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
 flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;float nFx=0.;uniform vec4 nGE;uniform vec4 nGM;uniform vec4 nGN;uniform vec3 nSkB;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nFaceT;uniform float nFaceL;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
+uniform float nEgoSk,nEgoU,nEgoT;uniform vec3 nEgoC;vec3 nEgoE=vec3(0.);
+float nEH(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float nEN(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(nEH(i),nEH(i+vec2(1.,0.)),f.x),mix(nEH(i+vec2(0.,1.)),nEH(i+vec2(1.,1.)),f.x),f.y);}
 float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smoothstep(.45,.52,x)*.22;float soft=saturate((x+.25)/1.25);soft=soft*soft*(3.-2.*soft);float b0=mix(toon,soft,nReal);return mix(b0,soft*.8+.2,nSkF*.9);}`)
     .replace('#include <map_fragment>',`vec4 tx=texture2D(map,vUv);vec3 c=tx.rgb;float r=floor(vReg+.5);float l=dot(c,vec3(.299,.587,.114));nSkF=(r==2.||r==13.||r==12.||(nOrig>.5&&r==0.))?1.:0.;
   if(r==8.)discard;if(r==14.&&nAwake<.5)discard;
@@ -8387,6 +8391,49 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
   if(nOrig>.5&&(r==0.||r==2.||r==3.||r==13.)){float cl=dot(c,vec3(.299,.587,.114)),Lt=max(.05,dot(nSkT,vec3(.299,.587,.114)));float sw=(r==3.?smoothstep(.17,.21,c.r-c.b):smoothstep(.07,.15,c.r-c.b))*smoothstep(.16,.32,cl);
     vec3 sk=nSkT*.72*clamp(cl/Lt,.8,1.0);c=mix(c,sk,sw*.94);}
   if(nSkF>.5)c*=(nOrig>.5?.95:.78);
+  if(nEgoSk>.5&&nOrig>.5&&(r==0.||r==2.||r==3.||r==13.||r==4.||r==14.)){
+    vec3 q=(vOP-nEgoC)/nEgoU;
+    float bx=-.003+.005*sin(q.y*150.)+.004*sin(q.y*61.+1.7)+.003*sin(q.y*23.);
+    float side=smoothstep(bx+.004,bx-.004,q.x);
+    float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(-.06,-.01,q.z)*smoothstep(-.17,-.14,q.y)*smoothstep(.09,.05,q.y);
+    float M=side*inH;
+    if(r==4.||r==14.){if(M>.02)discard;}
+    else{
+      vec3 G=vec3(.02,1.,.2),P=vec3(.4,.05,.85);
+      float tw=.88+.12*sin(nEgoT*9.+q.y*60.);
+      float edgeD=(bx-q.x);
+      float eg=exp(-pow(edgeD/.007,2.))*inH;
+      if(M>.001){
+        vec2 es0=vec2((q.x+.042)/.03,(q.y+.05)/.034);float skinT=(r==3.)?smoothstep(.08,.14,c.r-c.b):1.;float Mw=M*max(skinT,1.-smoothstep(.95,1.2,length(es0)));
+        float bn=nEN(q.xy*95.)*.5+nEN(q.xy*280.)*.3+.2;
+        vec3 bone=mix(vec3(.5,.48,.54),vec3(.99,.97,.9),bn);
+        bone*=vec3(.86,.82,1.04);
+        bone*=.5+.5*smoothstep(0.,.014,edgeD);
+        float ck=nEN(vec2(q.x*75.+q.y*34.,q.y*170.));
+        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.02,.0,abs(ck-.5))*.85);
+        float ck2=nEN(vec2(q.x*40.-q.y*60.,q.y*120.+3.));
+        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.014,.0,abs(ck2-.5))*.7);
+        vec2 es=vec2((q.x+.042)/.03,(q.y+.05)/.034);float ed=length(es);
+        float sock=1.-smoothstep(.82,1.,ed);
+        bone=mix(bone,vec3(.008,.004,.02),sock);
+        float core=smoothstep(.46,.0,ed);
+        bone=mix(bone,bone*.45,smoothstep(1.7,1.0,ed)*(1.-sock)*.6);nEgoE+=M*(G*core*1.9*tw+P*sock*(1.-core)*1.3+P*smoothstep(1.45,.95,ed)*(1.-sock)*.28+bone*.14);
+        vec2 nn=vec2((q.x+.012)/.011,(q.y+.098)/.016);bone=mix(bone,vec3(.01,.005,.02),1.-smoothstep(.7,1.,length(nn)));
+        float tx=-q.x-.004;
+        float ty=smoothstep(-.142,-.137,q.y)*smoothstep(-.104,-.109,q.y);
+        if(tx>0.&&tx<.062){
+          float yy=q.y+.122;float cell=tx/.0105+(yy<0.?.5:0.),tt=1.-smoothstep(.3,.4,abs(fract(cell)-.5));
+float lip=smoothstep(.0035,.0015,abs(yy));
+          vec3 tooth=vec3(1.,.99,.92)*(.88+.12*nEN(q.xy*420.));
+          vec3 tc=mix(vec3(.03,.02,.04),tooth,tt);tc=mix(tc,vec3(.02,.01,.03),lip);
+          float tm=ty*smoothstep(.062,.05,tx);bone=mix(bone,tc,tm);
+          nEgoE+=M*tm*tt*.12;
+        }
+        c=mix(c,bone,Mw);nSkF=0.;
+      }
+      nEgoE+=eg*mix(P,G,.5+.5*sin(q.y*85.+nEgoT*3.))*(1.1+.5*sin(nEgoT*7.+q.y*40.));
+    }
+  }
   diffuseColor.rgb*=c;`)
     .replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );')
     .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\nif(nFx>.5)normal=normalize(vFwd);').replace('#include <lights_fragment_begin>',THREE.ShaderChunk.lights_fragment_begin.split('directLight.color *= all(').join('if(nFx<.5)directLight.color *= all(')).replace('#include <aomap_fragment>',`#include <aomap_fragment>
@@ -8399,7 +8446,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
     reflectedLight.directDiffuse+=diffuseColor.rgb*1.1*hb+vec3(.05)*hb;}
   if(floor(vReg+.5)==14.)reflectedLight.indirectDiffuse+=diffuseColor.rgb*2.;
   if(floor(vReg+.5)==4.&&nFx<.5)reflectedLight.indirectDiffuse+=diffuseColor.rgb*1.1;
-  reflectedLight.directDiffuse+=diffuseColor.rgb*nFlash;`);
+  reflectedLight.directDiffuse+=diffuseColor.rgb*nFlash+nEgoE;`);
     sh.fragmentShader=sh.fragmentShader.replace('#include <lights_physical_pars_fragment>',THREE.ShaderChunk.lights_physical_pars_fragment.replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );'));};
   m.customProgramCacheKey=()=>'nToon';N.mats.set(key,m);return m;}
 // ink outline: inverted hull along the normal, width grows a little with distance so it stays visible
@@ -12366,7 +12413,7 @@ function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!R
   const gp=sk.position.clone();gp.z+=.006*u;const gl=stGlow('#a96bff',.13*u,.8);gl.position.copy(gp);g.add(gl);const co=stGlow('#ffffff',.04*u,1);co.position.copy(gp);g.add(co);
   g.userData={gl,co,R:.065*u};a.bones.Head.add(g);a.stMask=g;return g;}
 window.__egoMk=a=>stEgoMask(a);
-function stEgoSync(a){const c=CAST[a.stKey];if(!c||c[0]!=='ren')return;if(ST.egoOn){const m=stEgoMask(a);if(m){m.visible=true;const k=1+.16*Math.sin(performance.now()*.011);m.userData.gl.scale.setScalar(m.userData.R*2*k);m.userData.gl.material.opacity=.7+.2*Math.sin(performance.now()*.017);}}else if(a.stMask)a.stMask.visible=false;}
+function stEgoSync(a){const c=CAST[a.stKey];if(!c||c[0]!=='ren')return;if(a.stKey==='renEgo'||ST.egoNagi||(ST.egoOn&&!ST.egoActor)){const m=stEgoMask(a);if(m){m.visible=true;const k=1+.16*Math.sin(performance.now()*.011);m.userData.gl.scale.setScalar(m.userData.R*2*k);m.userData.gl.material.opacity=.7+.2*Math.sin(performance.now()*.017);}}else if(a.stMask)a.stMask.visible=false;}
 function stPolCap(a){if(!a||a.stCap||!a.bones||!a.bones.Head||!RIG.skull||!RIG.headCenterLocal)return;a.stCap=1;
   const R=RIG.skull.r,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
   const navy=M3('#1b2a4d',{r:.7}),blk=M3('#0b0e16',{r:.4});
@@ -15803,7 +15850,298 @@ function safeStandReset(p){
   // root cause of 'stuck lying on the pitch': the Dap scene's own pose writer (d3Apply) ran again after endCine() had cleared the pose, leaving pose='raw' on Nagi, the mate, the keeper and the defenders
   if(c&&c.v===5&&M.cine!==c){const L=[c.u,c.mate,c.gk].concat((c.D||[]).map(d=>d&&d.o));for(const o of L){if(o&&o.pose==='raw'){safeStandReset(o);}}}
   }catch(e){}return r;};}
-stAttach();stP2();squadAttach();
+// ======================= w201: the park bench story =======================
+DESIGNS.chigiri=D('Hyoma Chigiri','Kurogane trials','Right winger','light',{n:'ponytail',style:'ponytail',color:'#d4506a'},{h:1.06,w:.92,bulk:.9},{eyes:'sharp',brows:'soft',nose:'small',mouth:'neutral',jaw:'narrow',eyeColor:'#8a3350'},
+  {kit:'training',num:'',look:'Long rose-red hair tied back, tall and lean. The fastest sprinter in the exam.',aura:'#ff6f8f'});
+DESIGNS.barou=D('Shoei Barou','Kurogane trials','Striker','light',{n:'spiky',style:'spiky',color:'#e6d9a8'},{h:1.08,w:1.06,bulk:1.12},{eyes:'sharp',brows:'thick',nose:'small',mouth:'neutral',jaw:'square',eyeColor:'#4aa3c8'},
+  {kit:'training',num:'',look:'Pale blond hair, sharp blue eyes, a striker who thinks the goal is his.',aura:'#9fd4ff'});
+Object.assign(CAST,{renEgo:['ren',{...KITS.training,num:''}],exB:['bachira',{...KITS.training,num:''}],exC:['chigiri',{...KITS.training,num:''}],exR:['barou',{...KITS.training,num:''}]});
+Object.assign(STD,{Chigiri:'chigiri',Barou:'barou'});
+Object.assign(STC,{Chigiri:'#ff8fa8',Barou:'#9fd4ff'});
+Object.assign(STI,{Chigiri:'HC',Barou:'SB'});
+SPOSE.benchSit={...SPS,hy:-.44,sx:.32,nx:.3,aLx:-.55,aLz:.08,eL:1.25,aRx:-.55,aRz:.08,eR:1.25,cL:.6,cR:.6};
+function stBenchMk(){const b=new THREE.Group(),wood=M3('#6a4a2c',{r:.7}),iron=M3('#1c1f26',{r:.5,m:.5});
+  for(let i=0;i<4;i++)b.add(mesh(box(1.9,.04,.1),wood,0,.47,-.13+i*.12));
+  for(let i=0;i<3;i++)b.add(mesh(box(1.9,.1,.03),wood,0,.66+i*.14,-.26));
+  for(const sx of [-.85,.85]){b.add(mesh(box(.05,.47,.05),iron,sx,.235,-.2));b.add(mesh(box(.05,.47,.05),iron,sx,.235,.2));b.add(mesh(box(.05,.5,.05),iron,sx,.72,-.26));b.add(mesh(box(.05,.05,.5),iron,sx,.47,0));}
+  b.children.forEach(c=>{c.castShadow=true;c.receiveShadow=true;});return b;}
+function stPark(){
+  const PI=Math.PI,g=new THREE.Group(),Q=lowQ(),S={g,bg:LIN('#050912'),fog:new THREE.FogExp2(LIN('#0b1426'),.045)};ST.scene.add(g);
+  const gt=canvasTex(512,512,(x,w,h)=>{x.fillStyle='#16301f';x.fillRect(0,0,w,h);for(let i=0;i<14000;i++){x.fillStyle=Math.random()<.5?'rgba(0,0,0,.18)':'rgba(120,190,120,.08)';x.fillRect(Math.random()*w,Math.random()*h,1,2+Math.random()*3);}});
+  gt.wrapS=gt.wrapT=THREE.RepeatWrapping;gt.repeat.set(10,10);
+  const gr=new THREE.Mesh(new THREE.PlaneGeometry(90,90),new THREE.MeshStandardMaterial({map:gt,roughness:.95,color:LIN('#8fa896')}));gr.rotation.x=-PI/2;gr.receiveShadow=true;g.add(gr);
+  const pa=new THREE.Mesh(new THREE.PlaneGeometry(40,2.4),M3('#4b4a47',{r:.95}));pa.rotation.x=-PI/2;pa.position.set(0,.01,4.2);pa.receiveShadow=true;g.add(pa);
+  const bn=stBenchMk();g.add(bn);
+  const lamp=new THREE.Group();lamp.position.set(-2.7,0,-.9);g.add(lamp);lamp.add(mesh(cyl(.04,.06,3.3,8),M3('#15181e',{r:.5,m:.5}),0,1.65,0));lamp.add(mesh(box(.5,.12,.3),M3('#15181e',{r:.5,m:.5}),.12,3.3,0));
+  S.lampG=stGlow('#ffd08a',2.4,.9);S.lampG.position.set(-2.58,3.2,-.9);g.add(S.lampG);S.lamp=new THREE.PointLight(LIN('#ffc77a'),5.5,12,1.4);S.lamp.position.set(-2.55,3.1,-.9);g.add(S.lamp);
+  const lc=stGlow('#ffe3b0',.7,1);lc.position.copy(S.lampG.position);g.add(lc);
+  const lm=M3('#0e2a1a',{r:.95}),tm=M3('#2a1c14',{r:.95});
+  for(let i=0;i<16;i++){const a=-PI*.95+i/15*PI*.9,r=8+(i%3)*3.2,x=Math.cos(a+PI/2)*r,z=-Math.abs(Math.sin(a+PI/2))*r-3;const t=new THREE.Group();t.position.set(x,0,z);g.add(t);const h=2.4+(i%4)*.5;t.add(mesh(cyl(.17,.25,h,7),tm,0,h/2,0));
+    for(let k=0;k<3;k++){const s=mesh(sph(1.15-k*.22,8,6),lm,(k-1)*.25,h+.5+k*.65,(k%2)*.3);s.scale.y=.85;t.add(s);}}
+  const sw=new THREE.Group();sw.position.set(4.6,0,-3.2);g.add(sw);const im=M3('#3a3f4a',{r:.5,m:.5});
+  for(const sx of [-1.1,1.1]){const l1=mesh(cyl(.04,.04,2.5,6),im,sx,1.2,.55);l1.rotation.x=.38;sw.add(l1);const l2=mesh(cyl(.04,.04,2.5,6),im,sx,1.2,-.55);l2.rotation.x=-.38;sw.add(l2);}
+  const bar=mesh(cyl(.04,.04,2.4,6),im,0,2.35,0);bar.rotation.z=PI/2;sw.add(bar);
+  for(const sx of [-.55,.55]){sw.add(mesh(box(.015,2.0,.015),im,sx,1.35,0));sw.add(mesh(box(.42,.04,.18),M3('#6a4a2c',{r:.7}),sx,.38,0));}
+  const moon=new THREE.Mesh(new THREE.CircleGeometry(4,32),MB('#eef3ff',{fog:false}));moon.position.set(-60,38,-90);moon.lookAt(0,0,0);g.add(moon);const mg=stGlow('#9fc0ff',46,.5);mg.position.copy(moon.position);g.add(mg);
+  const sg=new THREE.BufferGeometry(),sp=[];for(let i=0;i<500;i++){const a=Math.random()*PI2,e=Math.random()*1.2+.1;sp.push(Math.cos(a)*Math.cos(e)*300,Math.sin(e)*300,Math.sin(a)*Math.cos(e)*300);}sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));
+  g.add(new THREE.Points(sg,new THREE.PointsMaterial({color:LIN('#dfe8ff'),size:1.5,sizeAttenuation:false,fog:false,transparent:true,opacity:.8})));
+  g.add(new THREE.HemisphereLight(LIN('#7f98cc'),LIN('#14201a'),1.35));
+  const ml=new THREE.DirectionalLight(LIN('#b9d0ff'),1.6);ml.position.set(-8,12,-10);ml.target.position.set(0,0,0);g.add(ml,ml.target);
+  if(!Q){ml.castShadow=true;const sh=ml.shadow;sh.mapSize.set(1024,1024);sh.camera.left=-7;sh.camera.right=7;sh.camera.top=7;sh.camera.bottom=-7;sh.camera.near=1;sh.camera.far=40;sh.bias=-.0006;}
+  const fl=new THREE.DirectionalLight(LIN('#9fb4e8'),1.1);fl.position.set(4,6,9);g.add(fl);
+  S.upd=(t,dt)=>{const k=1+.06*Math.sin(clock*9)+(Math.random()<.02?-.2:0);S.lamp.intensity=5.5*k;S.lampG.material.opacity=.85*k;};
+  return S;}
+SETS.park=stPark;
+
+function stRank(title,rows,t){const s=sc(),k=ease(clamp(t*2.2,0,1));if(k<=0)return;const p=W>=H,w=Math.min(W-32,(p?320:340)*s),rh=Math.round(22*s+6),hh=Math.round(30*s+8),h=hh+rows.length*rh+8,x=p?W-w-Math.max(16,W*.03):W/2-w/2,y=p?H*.1:H*.07;
+  ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(6,10,18,.9)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
+  smallText(title,x+14,y+hh*.55,Math.round(12*s+3),'#59e1ff','left',FS,700);
+  rows.forEach((r,i)=>{const a=clamp((t-.35-i*.16)*4,0,1);if(a<=0)return;const yy=y+hh+i*rh;ctx.globalAlpha=k*a;if(r[2]){ctx.fillStyle='rgba(255,192,74,.22)';ctx.fillRect(x+4,yy,w-8,rh-2);}
+    smallText(String(r[0]),x+16,yy+rh*.5,Math.round(14*s+3),r[2]?'#ffc04a':'#8fa3bb','left',FS,700);smallText(r[1],x+46,yy+rh*.5,Math.round(14*s+3),r[2]?'#ffe9b8':'#eef3f8','left',FS,r[2]?700:500);});
+  ctx.restore();}
+function stLineup(t){const s=sc(),k=ease(clamp(t*2,0,1));if(k<=0)return;const p=W>=H,w=Math.min(W-32,(p?300:320)*s),h=w*1.1,x=p?W-w-Math.max(16,W*.03):W/2-w/2,y=p?H*.1:H*.07;
+  ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(8,36,22,.92)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.strokeRect(x+10,y+26,w-20,h-36);ctx.beginPath();ctx.moveTo(x+10,y+26+(h-36)/2);ctx.lineTo(x+w-10,y+26+(h-36)/2);ctx.stroke();
+  smallText('KUROGANE SC · STARTING LINE-UP',x+w/2,y+14,Math.round(11*s+3),'#59e1ff','center',FS,700);
+  const dots=[['BACHIRA · LW',.22,.62,'#ffd34a'],['BAROU · ST',.5,.3,'#9fd4ff'],['CHIGIRI · RW',.78,.62,'#ff8fa8']];
+  dots.forEach((d,i)=>{const a=clamp((t-.3-i*.25)*3,0,1);ctx.globalAlpha=k*a;const dx=x+10+(w-20)*d[1],dy=y+26+(h-36)*d[2];ctx.fillStyle=d[3];ctx.beginPath();ctx.arc(dx,dy,9*s,0,7);ctx.fill();smallText(d[0],dx,dy+20*s,Math.round(10*s+3),'#eef3f8','center',FS,700);});
+  const a=clamp((t-1.3)*3,0,1);ctx.globalAlpha=k*a;smallText('BENCH · NAGI (REPLACEMENT STRIKER)',x+w/2,y+h-12,Math.round(10*s+3),'#ffc04a','center',FS,700);ctx.restore();}
+
+function stP3(){
+  const PI=Math.PI;
+  // ---------- 2D fallbacks ----------
+  const parkBG=(t,o)=>{o=o||{};ctx.fillStyle=grad(['#050912','#0a1426','#102418']);ctx.fillRect(0,0,W,H);const s=sc();glow(W*.82,H*.16,H*.5,'rgba(160,190,255,.14)');ctx.fillStyle='#0b1a10';ctx.fillRect(0,H*.7,W,H*.3);
+    ctx.fillStyle='#15181e';ctx.fillRect(W*.14,H*.34,6*s,H*.42);glow(W*.14+3*s,H*.34,120*s,'rgba(255,200,120,.35)');
+    ctx.fillStyle='#4a3420';ctx.fillRect(W*.34,H*.78,W*.32,8*s);ctx.fillRect(W*.34,H*.7,W*.32,6*s);rain(t,.18);};
+  const park2=(t,f)=>{parkBG(t);const s=sc();if(f&&f.sit)figure(W*.5,H*.8,1.45*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',pose:'sit',face:1});else figure(W*.4,H*.9,1.5*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});
+    if(f&&f.ego)figure(W*.64,H*.9,1.7*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:-1,aura:'rgba(169,107,255,.45)',eye:'#a96bff'});};
+  const exam2=(t,f)=>{sceneTraining(t);const s=sc();figure(W*.3,H*.88,1.4*s,{...RENO,jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',face:1});
+    if(f&&f.b)figure(W*.5,H*.88,1.4*s,{jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',hair:'#2b2420',face:1});if(f&&f.c)figure(W*.62,H*.88,1.45*s,{jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',hair:'#d4506a',face:1});
+    if(f&&f.r)figure(W*.74,H*.88,1.5*s,{jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',hair:'#e6d9a8',face:1});if(f&&f.i)figure(W*.86,H*.88,1.45*s,{...ISHI,face:-1});};
+  const NG='Nagi',EG='SYSTEM',NR='Narration',CI='Coach Ishida';
+  // ---------- chapter 3: the park bench ----------
+  SC.parkEgo=[
+    {dur:1.8,draw:t=>chapterCard(3,'The Park Bench',t,'Kurosawa Park · after midnight')},
+    {dur:1,draw:t=>{park2(t,{sit:1});},lines:[{who:NR,text:'After Isagi vanished, Nagi went to the park where they used to play together, and sat alone on the old bench.'},{who:NG,text:'Back then, whatever task they gave me, I avoided it. Not because I was scared. I was just too lazy to try.'},{who:NG,text:'I was not a good friend. I was not a good player either.'}],
+      s3:{set:'park',cast:['renC'],toon:0,
+        d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC');stP(N,0,-.04,0,{pose:'benchSit',ex:li>=1?'sad':'neutral'});stBall(.7,.12,1.15);
+          if(li<=0){const u=clamp(lt/8,0,1);stC(stE(5.2,3.8,u),stE(1.9,1.4,u),stE(6.0,4.4,u),0,.75,0,36);}
+          else if(li===1){const u=clamp(lt/7,0,1),h=stHv(N,-.02);stCv(RP(0,-.04,0,stE(2.6,2.0,u),.55,1.05),h,30,.03);}
+          else{const u=clamp(lt/5,0,1);stC(stE(-1.9,-1.4,u),1.05,stE(1.9,1.5,u),0,.82,0,28,-.03);}ST.focus.set(0,0,0);},
+        ov(t,li){if(li<=0)stStamp('KUROSAWA PARK · 00:52',t);stTint('#04060b',.12);}}},
+    {dur:1,draw:t=>{park2(t,{sit:1});},lines:[{who:EG,text:'So you are giving up without trying.'},{who:NG,text:'Who is that?'},{who:EG,text:'I am you. The inner ego of you.'}],
+      s3:{set:'park',cast:['renC'],toon:0,
+        d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC');
+          if(li<=0)stP(N,0,-.04,0,{pose:'benchSit',hd:{nx:-.5},ex:'shock'});else stP(N,0,.5,0,{pose:'stand',look:stLk(0,1.7,2.4),ex:'shock'});stBall(.7,.12,1.15);
+          if(li<=0){const u=clamp(lt/4,0,1),h=stHv(N,-.02);stCv(RP(0,-.04,0,stE(1.9,1.5,u),.25,.95),h,26,-.02);stShake(.002);}
+          else if(li===1){const u=clamp(lt/3,0,1);stC(stE(2.4,1.9,u),1.4,stE(2.4,1.6,u),0,1.45,.5,34,.06);}
+          else{const u=clamp(lt/4,0,1);stC(stE(-2.8,-2.2,u),1.2,stE(.2,.5,u),0,1.4,2.2,40,-.07);stShake(.003);}ST.focus.set(0,0,.5);},
+        ov(t,li,lt){stTint('#0a0614',.28);if(li!==1)stGlitch(Math.random()<.12?.45:0);if(li===2&&lt<.6)stTint('#a96bff',.18*(1-lt/.6));}}},
+    {dur:2.4,sfx:'glitch',draw:t=>{park2(t,{ego:1});},
+      s3:{set:'park',cast:['renC','renEgo'],toon:0,
+        d3(t,dt){ST.egoActor=true;const N=stA('renC');stP(N,0,.3,0,{pose:'stand',look:stLk(0,1.7,2.3),ex:'shock'});
+          if(t>.55){const E=stA('renEgo');stP(E,0,2.3,PI,{pose:'armsCrossed',look:stLk(0,1.6,.3),ex:'determined'});stEyes(E,clamp((t-.7)*2,0,1));}
+          stSys(0,2.3,{t:Math.max(0,t-.3),panels:[],aura:clamp(t*.9,0,1),ring:clamp(t*1.2,0,1),beam:clamp(1.3-t,.1,1)*.8,light:clamp(t,0,1)});
+          const u=clamp(t/2.4,0,1);stC(stE(3.4,2.6,u),1.5,stE(-1.4,-.6,u),0,1.25,1.4,stE(44,36,u));stShake(t<.7?.01:.002);ST.focus.set(0,0,1.2);},
+        ov(t){stGlitch(t<1?1-t:0);if(t>.45&&t<.7)stTint('#e6d5ff',(.7-t)*3.4);}}},
+    {dur:1,draw:t=>{park2(t,{ego:1});},lines:[{who:NG,text:'What is happening? And what do you mean, give up? I tried my best. I just could not do it.'},{who:EG,text:'You mean this was your best? If I were you, I could have become the best in the world.'},{who:EG,text:'Giving up is a choice you make. It is not an option. In my mind, in my world, the game I play has two choices. Win, or win.'},{who:NG,text:'But I am not like you.'},{who:EG,text:'I am the ego of you. One part of you. I am you. A genius, not a lazy one.'}],
+      s3:{set:'park',cast:['renC','renEgo'],toon:0,
+        d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC'),E=stA('renEgo'),en=li===1||li===2||li===4;stEyes(E,1);
+          stP(N,0,.3,0,{pose:li===3?'lookDown':'stand',look:li===3?null:stLk(0,1.7,2.3),ex:li===0?'shock':li===3?'sad':'focus'});
+          stP(E,0,2.3,PI,{pose:li===2?'accuse':li===4?'hero':'armsCrossed',look:stLk(0,1.6,.3),ex:li===2?'angry':'determined'});
+          if(li===0)stOTS(E,N,1.0,.42,1.6,30,0);
+          else if(li===1){const u=clamp(lt/5,0,1);stOTS(N,E,stE(1.1,.85,u),.42,1.64,stE(32,27,u),.03);}
+          else if(li===2){const u=clamp(lt/6,0,1),h=stHv(E,0);stCv(RP(0,2.3,PI,stE(2.0,1.4,u),-.35,1.5),[h[0],h[1]-.05,h[2]],30,-.05);}
+          else if(li===3){const u=clamp(lt/3,0,1);stOTS(E,N,stE(1.0,.8,u),.42,1.56,stE(32,27,u),0);}
+          else{const u=clamp(lt/5,0,1);stC(stE(1.6,1.0,u),stE(.6,1.0,u),stE(3.6,3.1,u),0,stE(1.5,1.7,u),2.3,36,-.04);}ST.focus.set(0,0,1.2);},
+        ov(t,li,lt){if(li===2&&lt<.4)stTint('#ff5a4f',.1*(1-lt/.4));}}},
+    {dur:2.6,draw:t=>{park2(t,{});},
+      s3:{set:'park',cast:['renC'],toon:0,
+        d3(t){ST.egoActor=true;const N=stA('renC');stP(N,0,.3,0,{pose:'lookDown',ex:'sad'});const u=clamp(t/2.6,0,1),h=stHv(N,-.02);stCv(RP(0,.3,0,stE(2.2,1.2,u),.3,1.3),h,28,.02);ST.focus.set(0,0,.3);},
+        ov(t){stTint('#04060b',.25);smallText('. . .',W/2,H*.3,Math.round(30*sc()),'rgba(220,226,236,.85)','center',FS,700);}}},
+    {dur:1,draw:t=>{park2(t,{ego:1});},lines:[{who:EG,text:'Show the world what happens when you are finally the one. The one who is best. The one who is better than anyone. Show the world who you are!'}],
+      s3:{set:'park',cast:['renC','renEgo'],toon:0,
+        d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC'),E=stA('renEgo');stEyes(E,1);stP(N,0,.3,0,{pose:'lookDown',ex:'determined'});stP(E,0,2.3,PI,{pose:'fistUp',look:stLk(0,1.6,.3),ex:'angry'});
+          const u=clamp(lt/6,0,1);stC(stE(.7,.2,u),stE(.5,.8,u),stE(4.2,3.2,u),0,stE(1.9,2.1,u),2.3,stE(38,30,u),-.05);stShake(.004+.006*Math.sin(lt*14)*Math.sin(lt*14));
+          stSys(0,2.3,{t:lt,panels:[],aura:1,ring:1,beam:.6,light:.7});ST.focus.set(0,0,1.2);},
+        ov(t,li,lt){const s=sc();stBurst(W*.5,H*.42,W*.5,'rgba(169,107,255,.35)',.6+.4*Math.sin(lt*10));if(lt>.2)stSfx('SHOW THE WORLD!!',W*.5,H*.82,Math.round(34*s),'#d9c2ff',lt-.2,-.04);}}},
+    {dur:1,sfx:'sys',draw:t=>{park2(t,{});},lines:[{who:EG,text:'Let us do it, my Lazy Genius.'}],
+      s3:{set:'park',cast:['renC'],toon:0,
+        d3(t,dt,li,lt){ST.egoActor=true;ST.egoNagi=true;ST.egoOn=true;const N=stA('renC');stP(N,0,.3,0,{pose:lt<1.2?'lookDown':'hero',hd:lt<1.2?null:{nx:-.1},ex:lt<1.2?'sad':'determined'});stEyes(N,clamp((lt-1)*1.5,0,1));
+          const u=clamp(lt/5,0,1),h=stHv(N,-.01);stCv(RP(0,.3,0,stE(1.5,.85,u),.3+(lt<.6?0:-.15)*0,1.28),h,stE(30,24,u),.02);ST.focus.set(0,0,.3);},
+        ov(t,li,lt){if(lt<.5)stTint('#ffffff',.9*(1-lt/.5));stGlitch(lt<.8?1-lt/.8:0);stVig(.5,'rgba(30,10,60,1)');}}},
+    {dur:1,draw:t=>{parkBG(t);const s=sc();figure(W*.5,H*.88,1.5*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(0,0,W,H);},lines:[{who:NR,text:'From that night on, Nagi trained on that same ground every single day, from dawn until the lights went out.'}],
+      s3:{set:'pitch',cast:['renC'],toon:0,rain:0,
+        d3(t,dt,li,lt){const N=stA('renC'),a=lt*1.2;stP(N,0,0,.75+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(Math.sin(.75+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.75+Math.sin(a)*.5)*.45);
+          const o=lt*.12;stC(Math.sin(o+.6)*5.2,1.5,Math.cos(o+.6)*5.2,0,1.0,0,38);ST.focus.set(0,0,0);},
+        ov(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);stTint(n%2?'#0a1a30':'#3a2a10',.12);}}},
+    {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.62,H*.88,1.45*s,{...ISHI,face:-1});},lines:[{who:CI,text:'I have been watching you train for days. Nobody practices like that just for fun.'},{who:CI,text:'My club, Kurogane SC, holds its selection exam tomorrow. Come and show me what you have.'},{who:NG,text:'...Fine. I will come.'}],
+      s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+        d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi');stP(N,-1.1,0,PI/2,{pose:li===2?'hero':'stand',look:stLk(1.1,1.6,0),ex:li===2?'determined':'neutral'});stP(I,1.1,0,-PI/2,{pose:li===1?'talk':'armsCrossed',look:stLk(-1.1,1.6,0),ex:'focus'});stBall(-.7,.15,.5);
+          if(li===0)stOTS(N,I,1.0,.42,1.6,30,0);else if(li===1){const u=clamp(lt/6,0,1);stOTS(N,I,stE(1.0,.8,u),.42,1.58,stE(32,27,u),0);}else stOTS(I,N,1.0,.42,1.6,30,0);ST.focus.set(0,0,0);},
+        ov(t,li){if(li===0)stStamp('KUROSAWA PARK GROUND · DAWN',t);}}}
+  ];
+  // ---------- chapter 4: the selection exam ----------
+  const bnc=()=>{if(!ST.bench){ST.bench=stBenchMk();ST.grp.add(ST.bench);}ST.bench.visible=true;return ST.bench;};
+  const mkRank=(names,me)=>names.map((n,i)=>[i+1,n,n===me]);
+  const R1=mkRank(['CHIGIRI','BAROU','NAGI','BACHIRA','GORO BANDA'],'NAGI'),
+        R2=mkRank(['BACHIRA','CHIGIRI','BAROU','KENJI','NAGI'],'NAGI'),
+        R3=mkRank(['BAROU','NAGI','CHIGIRI','BACHIRA','TARO'],'NAGI'),
+        R4=mkRank(['BACHIRA','CHIGIRI','NAGI','BAROU','KENJI'],'NAGI'),
+        R5=mkRank(['BAROU','CHIGIRI','GORO BANDA','BACHIRA','TARO','SHUN','NAGI'],'NAGI');
+  const ex=(p)=>({set:'training',cast:p.cast,toon:1,d3:p.d3,ov:p.ov});
+  SC.selection=[
+    {dur:1.8,draw:t=>chapterCard(4,'Selection Exam',t,'Kurogane SC · open selection')},
+    {dur:1,draw:t=>exam2(t,{b:1,c:1,r:1,i:1}),lines:[{who:CI,text:'Five tests. Sprint, dribbling, shooting, passing, defending. Finish every round. The best will be selected.'},{who:NR,text:'Among the hopefuls, two names stood out. Meguru Bachira, a monster of a dribbler.'},{who:'Bachira',text:'Hey, you are the sleepy one. Let us have some fun!'},{who:NG,text:'...Troublesome.'}],
+      s3:ex({cast:['renT','exB','exC','exR','ishi'],d3(t,dt,li,lt){const N=stA('renT'),B=stA('exB'),C=stA('exC'),R=stA('exR'),I=stA('ishi');
+          stP(N,-2.4,0,0,{look:stLk(0,1.6,6),ex:li===3?'neutral':'neutral'});stP(B,-.8,0,0,{ex:li===2?'grin':'smile',pose:li===2?'talk':'stand',look:li===2?stLk(-2.4,1.6,0):null});stP(C,.8,0,0,{ex:'focus'});stP(R,2.4,0,0,{ex:'determined'});stP(I,0,2.6,PI,{pose:li===0?'talk':'armsCrossed',ex:'focus'});
+          if(li===0){const u=clamp(lt/7,0,1);stC(stE(-3.4,-1.0,u),1.5,stE(8.0,6.4,u),0,1.1,0,34);}
+          else if(li===1){const u=clamp(lt/5,0,1),h=stHv(B,0);stCv(RP(-.8,0,0,stE(2.6,1.8,u),-.5,1.2),h,28,.03);}
+          else if(li===2)stOTS(N,B,1.0,.42,1.56,30,0);else stOTS(B,N,1.0,.42,1.62,30,0);ST.focus.set(0,0,0);},
+        ov(t,li){if(li===0)stStamp('KUROGANE SC · SELECTION EXAM · 09:00',t);}})},
+    {dur:1,draw:t=>exam2(t,{b:1,c:1}),lines:[{who:NR,text:'Round one, the sprint. Nagi ran across the map and crossed the line in third place.'}],
+      s3:ex({cast:['renT','exB','exC','exR'],d3(t,dt,li,lt){const run=(a,x,z,v)=>stP(a,Math.min(10,-9+v*t),z,PI/2,{ex:'determined'});
+          const xs={c:7.7,r:7.3,n:7.0,b:6.4};stA('renT');stA('exB');stA('exC');stA('exR');
+          run(stA('exC'),0,-1.6,xs.c);run(stA('exR'),0,-.55,xs.r);run(stA('renT'),0,.55,xs.n);run(stA('exB'),0,1.6,xs.b);
+          const lx=Math.min(10,-9+xs.c*t);stC(lx-2.5,1.3,7.0,lx+1.2,1.0,0,36);ST.focus.set(lx,0,0);},
+        ov(t,li,lt){stStamp('ROUND 1 · SPRINT',t);if(t>2.4)stRank('SPRINT · RESULTS',R1,t-2.4);}})},
+    {dur:1,draw:t=>exam2(t,{b:1}),lines:[{who:NR,text:'Round two, dribbling. For the first time, Nagi saw a real dribbler. Bachira was unstoppable.'},{who:NG,text:'Will I ever be able to do this?'},{who:EG,text:'Doubting yourself is better than giving up. Analyse his dribbling. Analyse every player out here. Understand how they think and how they play, and you become the best in the world.'},{who:NR,text:'Nagi finished the dribbling test in fifth place.'}],
+      s3:ex({cast:['renT','exB'],d3(t,dt,li,lt){const N=stA('renT'),B=stA('exB'),tt=li===0?lt:6+lt*0,bx=-5+Math.min(tt,9)*1.1,bz=Math.sin(Math.min(tt,9)*2.6)*1.0;
+          stP(B,bx,bz,PI/2+Math.cos(Math.min(tt,9)*2.6)*.5,{ex:'grin'});stBall(bx+.55,.14,bz+.1,6*ST.dt/.15);
+          stP(N,2.2,3.0,-2.2,{pose:li>=2?'armsCrossed':'stand',look:stLk(bx,1.2,bz),ex:li===1?'sad':li>=2?'focus':'shock'});
+          if(li===0){stC(bx-1.4,1.0,5.2,bx+1.6,.9,bz,34);}
+          else if(li===1){const h=stHv(N,0);stCv(RP(2.2,3.0,-2.2,1.5,.3,1.5),h,30,.03);}
+          else if(li===2){const u=clamp(lt/8,0,1),h=stHv(N,0);stCv(RP(2.2,3.0,-2.2,stE(1.7,1.2,u),.35,1.45),h,stE(30,26,u),.03);}
+          else{stC(1.0,1.5,6.5,2.2,1.0,3.0,32);}ST.focus.set(1,0,2);},
+        ov(t,li,lt){if(li===0)stStamp('ROUND 2 · DRIBBLING',t);if(li===3)stRank('DRIBBLING · RESULTS',R2,lt);}})},
+    {dur:1,draw:t=>exam2(t,{r:1}),lines:[{who:NR,text:'Round three, shooting. Nagi struck clean and came second, behind Barou.'}],
+      s3:ex({cast:['renT','exR'],d3(t){const N=stA('renT'),R=stA('exR');stP(N,-1.4,0,PI/2*.6,{pose:'ballFoot',ex:'determined'});stP(R,1.6,1.2,-PI/2*.6,{ex:'cocky',pose:'armsCrossed'});stBall(-1.4+Math.sin(PI/2*.6)*.4,.14,Math.cos(PI/2*.6)*.4);
+          const u=clamp(t/6,0,1);stC(stE(-4.6,-3.2,u),1.5,stE(4.4,3.6,u),1.5,1.0,0,36);ST.focus.set(0,0,0);},
+        ov(t){stStamp('ROUND 3 · SHOOTING',t);if(t>1.8)stRank('SHOOTING · RESULTS',R3,t-1.8);}})},
+    {dur:1,draw:t=>exam2(t,{c:1}),lines:[{who:NR,text:'Round four, passing. Nagi came third.'}],
+      s3:ex({cast:['renT','exC'],d3(t){const N=stA('renT'),C=stA('exC');stP(N,-2.2,0,PI/2,{pose:'ballFoot',ex:'focus'});stP(C,2.2,0,-PI/2,{ex:'focus'});stBall(-2.2+.4,.14,.1);
+          const u=clamp(t/6,0,1);stC(stE(-.8,.6,u),1.6,stE(6.4,5.6,u),0,1.0,0,38);ST.focus.set(0,0,0);},
+        ov(t){stStamp('ROUND 4 · PASSING',t);if(t>1.6)stRank('PASSING · RESULTS',R4,t-1.6);}})},
+    {dur:1,draw:t=>exam2(t,{r:1}),lines:[{who:NR,text:'Round five, defending. Nagi finished seventh.'}],
+      s3:ex({cast:['renT','exR'],d3(t){const N=stA('renT'),R=stA('exR'),x=Math.min(t,2.4)*.6;stP(R,-1.2+x,0,PI/2,{ex:'cocky'});stBall(-.55+x,.14,.1);stP(N,1.0+x*.2,.2,-PI/2,{pose:'shield',ex:'shock',look:stLk(-1,1.2,0)});
+          const u=clamp(t/6,0,1);stC(stE(-.6,.4,u),1.4,stE(5.6,4.8,u),0,1.1,0,36);ST.focus.set(0,0,0);},
+        ov(t){stStamp('ROUND 5 · DEFENDING',t);if(t>1.6)stRank('DEFENDING · RESULTS',R5,t-1.6);}})},
+    {dur:1,draw:t=>exam2(t,{b:1,c:1,r:1,i:1}),lines:[{who:CI,text:'Seishiro Nagi. Good scores, but not the best in any test. You start on the bench, as a replacement striker.'},{who:NR,text:'Bachira would play left wing. Chigiri, first in the sprint, right wing. Barou, first in shooting, at striker.'},{who:EG,text:'Do you understand?'},{who:NG,text:'Yes. I get it...'}],
+      s3:ex({cast:['renT','exB','exC','exR','ishi'],d3(t,dt,li,lt){bnc().position.set(-3.6,0,3.0);const N=stA('renT'),B=stA('exB'),C=stA('exC'),R=stA('exR'),I=stA('ishi');
+          stP(N,-3.6,3.0,0,{pose:'benchSit',ex:li>=3?'determined':'sad',look:li===2?null:stLk(0,1.2,-1)});
+          stP(B,-1.6,-.4,.2,{ex:'grin'});stP(R,0,-1.6,0,{ex:'cocky',pose:'armsCrossed'});stP(C,1.6,-.4,-.2,{ex:'focus'});stP(I,0,2.6,PI,{pose:li===0?'talk':'armsCrossed',ex:'focus'});
+          if(li===0){const u=clamp(lt/7,0,1);stC(stE(-5.4,-4.4,u),1.5,stE(6.4,5.6,u),-1.6,1.0,1.2,34);}
+          else if(li===1){const u=clamp(lt/7,0,1);stC(stE(-1.5,1.5,u),1.3,6.4,0,1.1,-.8,34);}
+          else if(li===2){const h=stHv(N,0);stCv(RP(-3.6,3.0,0,1.9,.4,1.1),h,28,.03);}
+          else{const u=clamp(lt/4,0,1),h=stHv(N,-.01);stCv(RP(-3.6,3.0,0,stE(1.7,1.2,u),.35,1.1),h,stE(28,24,u),.03);}ST.focus.set(-1,0,1);},
+        ov(t,li,lt){if(li===1)stLineup(lt);}})}
+  ];
+}
+Object.assign(CAST,{barK:['barou',{...KITS.kuro,num:11,name:'Barou'}],sB:['s4',{...KITS.seiran,num:4}],sC:['s10',{...KITS.seiran,num:10}],sD:['s11',{...KITS.seiran,num:11}]});
+function stScoreOv(t,a,b,hold){const s=sc(),k=ease(clamp(t*2.4,0,1));if(k<=0)return;const w=Math.min(W-32,460*s),h=Math.round(64*s+10),x=W/2-w/2,y=H*(W<H?.09:.1);
+  ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(6,8,12,.9)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
+  smallText('KUROGANE',x+w*.2,y+h*.5,Math.round(12*s+3),'#59e1ff','center',FS,700);smallText('SEIRAN',x+w*.8,y+h*.5,Math.round(12*s+3),'#ff8a80','center',FS,700);
+  bigText(a+'  –  '+b,W/2,y+h*.5,Math.min(44*s,w/9),'#eef3f8',{skew:0});ctx.restore();}
+function stP4(){
+  const PI=Math.PI,NG='Nagi',EG='SYSTEM',NR='Narration',CI='Coach Ishida',CM='Commentator';
+  const sd=(t)=>{sceneStadium(t,{bright:.6,cols:['#59e1ff','#2b303a','#ffffff','#b9a6ff']});};
+  const fig=(x,y,s,o)=>figure(x,y,s,o);
+  const bench2=(t,mask)=>{sd(t);const s=sc();ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#2a3240';ctx.fillRect(W*.05,H*.8,W*.5,10*s);fig(W*.25,H*.92,1.35*s,{...KURO,hair:'#eeeff3',pose:'sit',face:1,aura:mask?'rgba(169,107,255,.5)':null,eye:mask?'#a96bff':undefined});
+    for(let i=0;i<3;i++)fig(W*(.65+i*.1)+Math.sin(t*2+i)*10,H*.72,.55*s,{...AOBA,hair:'#222',pose:'run',t:t+i});};
+  const BX=-8,BZ=46.4,HP=(a)=>stHv(a,0);
+  const bn=()=>{if(!ST.bench){ST.bench=stBenchMk();ST.grp.add(ST.bench);}ST.bench.visible=true;ST.bench.position.set(BX,0,BZ);ST.bench.rotation.y=PI;return ST.bench;};
+  const stand=(a,x,z,yaw,o)=>stP(a,x,z,yaw,o||{});
+  // both teams level: little back and forth in the background
+  const play=(t,n)=>{const ks=['bachK','kenji','sB','sC'],out=[];ks.slice(0,n).forEach((k,i)=>{const a=stA(k);stP(a,-4+Math.sin(t*.6+i*1.7)*7+i*2,18-Math.cos(t*.5+i)*4-i*2,Math.sin(t*.6+i*1.7+1)>0?PI/2:-PI/2,{});out.push(a);});};
+  const WIN={set:'night',toon:1};
+  SC.benchMatch=[
+    {dur:1.8,draw:t=>chapterCard(5,'First Match',t,'Kurogane SC vs Seiran FC · Nagi on the bench')},
+    {dur:1,draw:t=>bench2(t),lines:[{who:NR,text:'Kurogane SC faced Seiran FC. Both teams were level, and Nagi watched from the bench, studying every player on the pitch.'},{who:NR,text:'Then Seiran scored first.'}],
+      s3:{...WIN,cast:['renK9','bachK','kenji','sB','sC'],crowd:.7,
+        d3(t,dt,li,lt){bn();const N=stA('renK9');stP(N,BX,BZ-.05,PI,{pose:'benchSit',look:stLk(BX,1.3,10),ex:li>=1?'sad':'focus',hd:{nx:-.35}});play(t,4);
+          if(li<=0){const u=clamp(lt/9,0,1);stC(stE(-4.6,-6.0,u),stE(1.7,1.5,u),stE(36.5,35.6,u),stE(-8,-6,u),1.0,22,36);}
+          else{const u=clamp(lt/5,0,1),h=HP(N);stCv(RP(BX,BZ-.05,PI,stE(2.2,1.7,u),.5,1.1),h,30,.03);}ST.focus.set(BX,0,28);},
+        ov(t,li,lt){if(li<=0)stStamp('KUROGANE SC 0 – 0 SEIRAN FC · FIRST HALF',t);if(li>=1)stScoreOv(lt,'0','1');}}},
+    {dur:1,draw:t=>sd(t),lines:[{who:NR,text:'At the start of the second half, Barou was running with the ball when a Seiran player shoved him hard from behind.'},{who:CI,text:'That was a foul! Referee! Are you blind?!'}],
+      s3:{...WIN,cast:['barK','sB','ishi'],crowd:.6,
+        d3(t,dt,li,lt){const B=stA('barK'),S4=stA('sB'),I=stA('ishi');const tt=li<=0?lt:99,hit=tt>2.6||li>=1,bx=hit?-1.2:-8+tt*2.0,sx=hit?-2.0:-12+tt*2.35;
+          stP(B,bx,12,PI/2,{pose:hit?'fallen':null,ex:hit?'pain':'determined'});stP(S4,sx,12.3,PI/2,{ex:hit?'smirk':'angry',pose:hit?'accuse':null});stBall(hit?3.0+Math.min(lt*.5,2):bx+.55,.14,12+(hit?.4:0));
+          stP(I,BX+1.5,BZ-2.2,PI,{pose:li>=1?'accuse':'armsCrossed',ex:li>=1?'shock':'focus'});
+          if(li<=0){stC(stE(-11,-6,clamp(tt/4,0,1)),1.4,19,bx,1.0,12,34);}else{const u=clamp(lt/4,0,1);stC(stE(BX+4,BX+2.4,u),1.5,stE(BZ-5,BZ-4.6,u),BX+1.5,1.5,BZ-2.2,34);}ST.focus.set(bx,0,12);},
+        ov(t,li,lt){if(li<=0&&t>2.6&&t<2.9)stImpact(1,t*7);if(li<=0&&t>2.6)stSfx('SHOVE!',W*.4,H*.28,Math.round(40*sc()),'#ff8a3d',t-2.6,-.08);if(li>=1&&lt<.5)stTint('#ff5a4f',.1*(1-lt*2));}}},
+    {dur:1,sfx:'sys',draw:t=>bench2(t,1),lines:[{who:NR,text:'Then Coach Ishida felt it. A fierce, heavy, terrifying will, coming from the bench.'},{who:CI,text:'...What is this pressure?'},{who:NR,text:'Nagi\'s ego was only imaginary to the world. Only someone who carries an ego could see its mask on him.'},{who:CI,text:'Nagi. You are up. Go in as striker.'},{who:NG,text:'...Yes, coach.'}],
+      s3:{...WIN,cast:['renK9','ishi'],crowd:.4,
+        d3(t,dt,li,lt){bn();const N=stA('renK9'),I=stA('ishi');ST.egoActor=true;ST.egoNagi=li>=1&&li<=3;
+          stP(N,BX,BZ-.05,PI,{pose:'benchSit',hd:{nx:-.55},ex:li>=1&&li<=3?'determined':'focus',look:li>=4?null:stLk(BX,1.8,20)});if(li>=1&&li<=3)stEyes(N,1);
+          stP(I,BX+2.6,BZ-1.8,PI+.9,{pose:li===3?'accuse':'armsCrossed',ex:li===0||li===1?'shock':'focus',look:stLk(BX,1.4,BZ)});
+          if(li<=0){stC(BX+5.5,1.5,BZ-6,BX+2.6,1.6,BZ-1.8,40);stShake(.003);}
+          else if(li===1){const h=HP(I);stCv(RP(BX+2.6,BZ-1.8,PI+.9,1.6,.3,1.5),[h[0],h[1],h[2]],28,.04);}
+          else if(li===2){const u=clamp(lt/8,0,1),h=HP(N);stCv(RP(BX,BZ-.05,PI,stE(2.3,1.0,u),.3,1.25),[h[0],h[1]-.02,h[2]],stE(32,26,u),.02);stSys(BX,BZ,{t:lt,panels:[],aura:.7,ring:.5,beam:.2,light:.4});}
+          else if(li===3){const h=HP(I);stCv(RP(BX+2.6,BZ-1.8,PI+.9,1.5,.3,1.5),h,28,.04);}
+          else{const u=clamp(lt/4,0,1),h=HP(N);stCv(RP(BX,BZ-.05,PI,stE(2.4,2.0,u),.4,1.25),h,30,.03);}ST.focus.set(BX,0,BZ);},
+        ov(t,li,lt){if(li===2){stGlitch(lt<.8?1-lt/.8:0);stVig(.5,'rgba(30,10,60,1)');}if(li===0&&t<.5)stTint('#ffffff',.2*(1-t*2));}}},
+    {dur:1,draw:t=>bench2(t),lines:[{who:EG,text:'Let us show them what you have got, Lazy Genius.'},{who:CM,text:'A change for Kurogane SC. Seishiro Nagi comes on for the injured Barou.'}],
+      s3:{...WIN,cast:['renK9','renEgo'],crowd:.7,
+        d3(t,dt,li,lt){const N=stA('renK9'),E=stA('renEgo');stEyes(E,1);const x=li<=0?BX:BX+Math.min(lt*2.2,9),z=li<=0?BZ-1.6:BZ-1.6-Math.min(lt*2.2,4);
+          stP(N,x,z,li<=0?PI:PI-.5,{pose:li<=0?'hero':null,ex:'determined',look:li<=0?stLk(x,1.9,z-6):null});
+          stP(E,BX+(li<=0?0:Math.min(lt*2.2,9)),BZ-4.2-(li<=0?0:Math.min(lt*2.2,4)),PI,{pose:'armsCrossed',look:stLk(BX,1.6,BZ),ex:'determined'});
+          if(li<=0){const u=clamp(lt/5,0,1);stC(stE(BX-4,BX-2.4,u),1.1,stE(BZ-8,BZ-6.5,u),BX,1.3,BZ-2.6,34);}else{stC(x-3.2,1.5,z+4.5,x,1.2,z-1.4,38);}ST.focus.set(x,0,z);},
+        ov(t,li,lt){if(li===0)stBurst(W*.55,H*.4,W*.3,'rgba(169,107,255,.18)',.5+.3*Math.sin(lt*6));}}},
+    {dur:1,draw:t=>sd(t),lines:[{who:NR,text:'Nagi\'s first shot was the Dap Shot.'}],
+      s3:{...WIN,cast:['renK9','sB','sC','sD','kenji'],crowd:.35,
+        d3(t,dt,li,lt){const N=stA('renK9'),T=Math.min(lt,5.2),ph=T<1.4?0:T<2.2?1:2;
+          stP(N,47.5,0,PI/2,{pose:'ballFoot',ex:'determined',pt:lt});stEyes(N,clamp(lt-.3,0,1));
+          const bx=ph<2?48.1:48.1+(T-2.2)*30,by=ph<2?.14:.14+Math.sin(clamp((T-2.2)/1.3,0,1)*PI)*2.2+(T-2.2)*.5;stBall(Math.min(bx,70.3),by,ph<2?.1:(T-2.2)*.9);
+          stP(stA('sB'),53.5,-1.4,-PI/2,{ex:ph>=2?'shock':'focus'});stP(stA('sC'),56,2.0,-PI/2,{ex:ph>=2?'shock':'focus'});stP(stA('sD'),58.5,-.4,-PI/2,{ex:ph>=2?'shock':'focus'});stP(stA('kenji'),41.5,3,PI/2,{ex:'shock'});
+          if(ph===0){const u=clamp(T/1.4,0,1);stC(stE(43.5,45.9,u),1.1,stE(-3.2,-1.4,u),48.1,.5,0,stE(36,28,u));}
+          else if(ph===1){stCv(RP(47.5,0,PI/2,.9,.55,.45),[48.1,.15,0],24,.04);stShake(.004);}
+          else{stC(Math.min(47.5+(T-2.2)*16,65),2.0,-5.4,Math.min(48.1+(T-2.2)*30,69),1.3,.5,40);}ST.focus.set(52,0,0);},
+        ov(t,li,lt){const s=sc();if(lt>1.4&&lt<1.7)stImpact(1,lt*7);if(lt>1.45)stSfx('DAP!',W*.5,H*.3,Math.round(56*s),'#bff8ff',lt-1.45,-.06);if(lt>2.2&&lt<2.5)stTint('#ffffff',.7*(1-(lt-2.2)/.3));}}},
+    {dur:3.4,draw:t=>sd(t),
+      s3:{...WIN,cast:['renK9','sB','sC','sD','kenji','bachK'],crowd:.1,
+        d3(t){const N=stA('renK9');stP(N,48.5,0,PI/2,{pose:'hero',ex:'determined'});stEyes(N,1);stBall(70.3,.4,.6);
+          stP(stA('sB'),53.5,-1.4,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sC'),56,2.0,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sD'),58.5,-.4,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('kenji'),41.5,3,PI/2,{pose:'handsHead',ex:'shock'});stP(stA('bachK'),43.5,-4,PI/2,{pose:'stand',ex:'shock'});
+          const u=clamp(t/3.4,0,1);stC(stE(43.5,41.9,u),1.3,stE(5.4,4.8,u),49.5,1.35,.5,stE(40,32,u));ST.focus.set(49.5,0,0);},
+        ov(t){stStamp('KUROGANE SC 1 – 1 SEIRAN FC',t);stScoreOv(t,'1','1');stTone(.1);if(t<2.4)stSfx('. . . . . .',W*.5,H*.62,Math.round(30*sc()),'#eef3f8',t,0);}}},
+    {dur:1,draw:t=>bench2(t,1),lines:[{who:CI,text:'This is not the Nagi from the selection exam. He is different.'},{who:EG,text:'He is not the same. He keeps evolving. He keeps practising.'}],
+      s3:{...WIN,cast:['ishi','renEgo'],crowd:.3,
+        d3(t,dt,li,lt){const I=stA('ishi');stP(I,BX+2.0,BZ-1.2,PI+.7,{pose:'armsCrossed',ex:li===0?'shock':'smile',look:stLk(14,1.4,6)});
+          if(li===1){const E=stA('renEgo');stEyes(E,1);stP(E,BX+.6,BZ-1.6,PI+.2,{pose:'armsCrossed',look:stLk(14,1.4,6),ex:'determined'});}
+          const u=clamp(lt/6,0,1),h=HP(I);stCv(RP(BX+2.0,BZ-1.2,PI+.7,stE(1.8,1.3,u),.4,1.5),h,stE(30,26,u),.03);ST.focus.set(BX,0,BZ);}}},
+    {dur:1,draw:t=>sd(t),lines:[{who:NG,text:'I have not fully understood it. I have not mastered it. But I can do it, and I will do it.'}],
+      s3:{...WIN,cast:['renK9','sB','sC','sD'],crowd:.35,
+        d3(t,dt,li,lt){const N=stA('renK9'),T=Math.min(lt,7),nx=31.5+T*3.0,nz=Math.sin(T*2.2)*2.0;stEyes(N,1);
+          stP(N,nx,nz,PI/2+Math.cos(T*2.2)*.5,{ex:'determined'});stBall(nx+.6,.14+.05*Math.abs(Math.sin(T*9)),nz+.1,5*ST.dt/.15);
+          const D=(k,i)=>{const dx=43.5+i*6,fall=nx>dx-.5;stP(stA(k),dx+(fall?.6:0),Math.sin(T*2.2+i)*2.2*(fall?.2:1),-PI/2,{ex:fall?'shock':'focus',pose:fall?'fallen':null});};D('sB',0);D('sC',1);D('sD',2);
+          stC(nx-4.4,1.5,nz+4.6,nx+1.4,1.0,nz,36);ST.focus.set(nx,0,nz);},
+        ov(t,li,lt){if(lt<.5)stStamp('KUROGANE SC 1 – 1 SEIRAN FC',lt);}}},
+    {dur:3.6,draw:t=>sd(t),
+      s3:{...WIN,cast:['renK9','sB','sC','sD','kenji','bachK'],crowd:.1,
+        d3(t){const N=stA('renK9');const k=clamp(t/.8,0,1);stP(N,55.5,.2,PI/2,{pose:t<.8?'ballFoot':'hero',ex:'determined'});stEyes(N,1);stBall(t<.8?56.1:Math.min(56.1+(t-.8)*34,70.3),t<.8?.14:.5+Math.sin(clamp((t-.8)/.6,0,1)*PI)*.6,t<.8?.2:.2+(t-.8)*.9);
+          stP(stA('sB'),48.5,.5,-PI/2,{pose:'fallen',ex:'pain'});stP(stA('sC'),50.5,-1.2,-PI/2,{pose:'fallen',ex:'pain'});stP(stA('sD'),52.5,1.0,-PI/2,{pose:'fallen',ex:'pain'});stP(stA('kenji'),49.5,-5,PI/2,{pose:'handsHead',ex:'shock'});stP(stA('bachK'),47.5,5,PI/2,{pose:'stand',ex:'grin'});
+          const u=clamp(t/3.6,0,1);if(t<.8)stC(51.5,1.4,-4.4,56.1,.6,.2,34);else stC(Math.min(55.5+(t-.8)*8,67.5),1.8,-5.6,Math.min(56.1+(t-.8)*30,70),1.0,.6,38);ST.focus.set(61,0,0);},
+        ov(t){stScoreOv(t,'2','1');if(t>.9)stSfx('GOAL',W*.5,H*.78,Math.round(46*sc()),'#ffc04a',t-.9,-.04);stStamp('KUROGANE SC 2 – 1 SEIRAN FC · THE LEAD',t);}}}
+  ];
+}
+// ---- w204: ego skin (shader) + aura (glow sprites and sparks); later declarations replace the w200 floating-mask versions ----
+{let _e=null;Object.defineProperty(DESIGNS,'renEgo',{configurable:true,enumerable:false,get(){return _e||(_e={...DESIGNS.ren,egoKey:'ego'});}});}
+CAST.renEgo=['renEgo',{...KITS.training,num:''}];
+function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!RIG.headCenterLocal)return null;
+  const u=(RIG.height||1.8)/1.8,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
+  const gp=new THREE.Vector3(-.042*u,-.05*u,.1*u);
+  const gl=stGlow('#6a1fd0',.15*u,.55);gl.position.copy(gp);g.add(gl);const co=stGlow('#1dff52',.05*u,.8);co.position.copy(gp);g.add(co);
+  const gl2=stGlow('#39ff66',.11*u,.35);gl2.position.set(-.05*u,-.1*u,.08*u);g.add(gl2);
+  const N=36,pos=new Float32Array(N*3),col=new Float32Array(N*3),seed=[];for(let i=0;i<N;i++){seed.push({x:-(.005+Math.random()*.07)*u,y:(-.14+Math.random()*.14)*u,z:(.04+Math.random()*.05)*u,ph:Math.random(),sp:.5+Math.random()*.8});const gr=i%2===0;col[i*3]=gr?.2:.5;col[i*3+1]=gr?1:.12;col[i*3+2]=gr?.35:1;}
+  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));pg.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(pg,new THREE.PointsMaterial({map:canvasTex(32,32,(x,w,h)=>{const gg=x.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);gg.addColorStop(0,'rgba(255,255,255,1)');gg.addColorStop(.4,'rgba(255,255,255,.55)');gg.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=gg;x.fillRect(0,0,w,h);}),size:.014*u,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.95,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));pts.frustumCulled=false;g.add(pts);
+  g.userData={gl,co,gl2,pts,seed,R:.1*u,u};a.bones.Head.add(g);a.stMask=g;return g;}
+window.__egoMk=a=>stEgoMask(a);
+function stEyes(a,amt){a.stEyeA=(a.stKey==='renEgo'||ST.egoNagi)?0:amt;}
+function stEgoSync(a){const c=CAST[a.stKey];if(!c||(c[0]!=='ren'&&c[0]!=='renEgo'))return;const on=c[0]==='renEgo'||!!ST.egoNagi||(!!ST.egoOn&&!ST.egoActor);
+  const U=a.nMat&&a.nMat.userData&&a.nMat.userData.nU,now=performance.now()/1000;if(U&&U.nEgoSk){U.nEgoSk.value=on?1:0;U.nEgoT.value=now;}
+  const m=on?stEgoMask(a):a.stMask;if(!m)return;m.visible=on;if(!on)return;const D=m.userData,k=1+.18*Math.sin(now*11);
+  D.gl.scale.setScalar(D.R*2*k);D.gl.material.opacity=.65+.2*Math.sin(now*17);D.co.scale.setScalar(D.R*.7*(1+.25*Math.sin(now*23)));D.gl2.scale.setScalar(D.R*1.1*(1+.2*Math.sin(now*9+1)));
+  const P=D.pts.geometry.attributes.position.array;D.seed.forEach((s,i)=>{const t=((now*.35*s.sp+s.ph)%1);P[i*3]=s.x+Math.sin(now*3+i)*.006*D.u-t*.02*D.u;P[i*3+1]=s.y+t*.16*D.u;P[i*3+2]=s.z+.02*D.u*t;});D.pts.geometry.attributes.position.needsUpdate=true;}
+stAttach();stP2();stP3();stP4();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
