@@ -4653,7 +4653,7 @@ function curLine(){const sh=CS.shots[CS.i];return sh.lines&&CS.li<sh.lines.lengt
 function showLine(){
   const L=curLine();
   if(!L){ui.dlg.hidden=true;return;}
-  ui.dlg.hidden=false;CS.lt0=CS.t;try{if(typeof ST!=='undefined')ST.egoOn=L.who==='SYSTEM';}catch(e){}try{voxLine(L);}catch(e){}try{lipStart(L);}catch(e){}
+  ui.dlg.hidden=false;CS.lt0=CS.t;CS.doneAt=0;try{if(typeof ST!=='undefined')ST.egoOn=L.who==='SYSTEM';}catch(e){}try{voxLine(L);}catch(e){}try{lipStart(L);}catch(e){}
   const cls={SYSTEM:'sys',Isagi:'gold','Coach Hara':'red',Objective:'obj',Controls:'obj',Quest:'obj',Narration:'nar'}[L.who]||'';
   ui.dlg.className=cls;void ui.dlg.offsetWidth;ui.dlg.classList.add('pop');
   ui.dlg.style.setProperty('--c',(typeof STC==='object'&&STC[L.who])||'#4fb3ff');
@@ -4674,7 +4674,12 @@ function updateCutscene(dt){
   const sh=CS.shots[CS.i];CS.t+=dt;CS.dt=dt;
   if(sh.events)while(CS.ev<sh.events.length&&CS.t>=sh.events[CS.ev][0]){sh.events[CS.ev][1]();CS.ev++;}
   const L=curLine();try{lipTick();}catch(e){}
-  if(L){CS.chars+=dt*46;ui.dlg.querySelector('.txt').textContent=L.text.slice(0,Math.floor(CS.chars));ui.dlg.classList.toggle('done',CS.chars>=L.text.length);}
+  if(L){const nar=L.who==='Narration';CS.chars+=dt*(nar?54:46);ui.dlg.querySelector('.txt').textContent=L.text.slice(0,Math.floor(CS.chars));ui.dlg.classList.toggle('done',CS.chars>=L.text.length);
+    try{if(nar&&CS.chars>=L.text.length&&!(typeof SC!=='undefined'&&CS.shots===SC.trailer)){
+      if(!CS.doneAt)CS.doneAt=CS.t;
+      const talking=vcBusy()||VC.want||(window.speechSynthesis&&speechSynthesis.speaking);
+      if(!talking&&CS.t-CS.doneAt>.6&&CS.t-CS.doneAt>(muted?1.2+L.text.length*.012:0)){CS.li++;CS.chars=0;showLine();}
+    }}catch(e){}}
   else if(CS.t>=sh.dur&&!G3.stHold)nextShot();
   if(hit('adv'))advance();
   if(hit('esc'))endCutscene();
@@ -4840,7 +4845,7 @@ SC.rain=[
       ctx.restore();},
     lines:[{who:'Narration',text:'Yoichi Isagi vanished that night. An ambulance nobody called took him from the road, and never reached a hospital.'},{who:'Narration',text:'That same week, Aoba United signed a new forward, Daichi Vance, to take his place.'}]},
   {dur:1,draw:t=>{sceneStreet(t+9);const s=sc();glow(W*.5,H*.82,120*s,'rgba(255,200,120,.35)');ctx.fillStyle='#e9e4d6';ctx.fillRect(W*.5-10*s,H*.78,20*s,30*s);figure(W*.38,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',pose:'kneel'});rain(t+9,.45);},
-    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted you gone.'},{who:'SYSTEM',text:'Then stop sitting in the rain. Get stronger. Find him. And this time, protect him.'}]},
+    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted you gone.'}]},
 ];
 SC.bench=[
   {dur:1.8,draw:t=>chapterCard(3,'Benched',t,'Aoba United without Isagi')},
@@ -7600,7 +7605,7 @@ const VOXP={ren:{pitch:.8,rate:.9},kaito:{pitch:1.1,rate:1.05},Nagi:{pitch:.8,ra
 function voxVoice(){if(VOX.picked)return VOX.voice;const vs=speechSynthesis.getVoices();if(!vs.length)return null;VOX.picked=true;
   VOX.voice=vs.find(v=>/en(-|_)(GB|US)/i.test(v.lang)&&/male|daniel|alex|guy|david/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang))||vs[0];return VOX.voice;}
 function voxSay(text,who,keep){if(muted||!window.speechSynthesis||!text||vcBusy()||/^(ren|kaito|Nagi|Isagi)$/.test(who))return;try{const S=speechSynthesis;if(S.speaking&&!keep)S.cancel();
-  const u=new SpeechSynthesisUtterance(String(text).replace(/["*_]/g,'').replace(/\.\.\./g,', '));const v=dapVoicePick(who)||voxVoice();if(v)u.voice=v;const p=VOXP[who]||dapVoiceProf(who);u.pitch=p.pitch||1;u.rate=p.rate||1;u.volume=1;S.speak(u);VOX.last=text;}catch(e){}}
+  const u=new SpeechSynthesisUtterance(String(text).replace(/["*_]/g,'').replace(/\.\.\./g,', '));const v=dapVoicePick(who)||voxVoice();if(v)u.voice=v;const p=VOXP[who]||dapVoiceProf(who);u.pitch=p.pitch||1;u.rate=(p.rate||1)*(who==='Narration'?1.12:1);u.volume=1;S.speak(u);VOX.last=text;}catch(e){}}
 function voxLine(L){if(!L||!L.who||L.who==='Objective')return;try{const vk=VC_LINES[L.who+'|'+L.text];if(vk&&vcPlay(vk))return;}catch(e){}voxSay(L.text,L.who);}
 
 // ---------- drift phonk for matches (original, made in the browser): cowbell riff, gliding distorted 808, trap hats, half-time clap ----------
@@ -7952,7 +7957,7 @@ function vcPreload(){if(!AC)return;for(const k in VC.src)vcLoad(k);for(const k i
 function vcPlay(k,gap){if(muted||!AC||!(VC.src[k]||(VC.ext&&VC.ext[k])))return false;const now=performance.now()/1000;if(gap&&now-(VC.last[k]||-99)<gap)return false;
   const b=VC.buf[k];if(!b){VC.want=k;VC.wantT=performance.now();vcLoad(k);VC.last[k]=now;return true;}
   try{if(AC.state==='suspended')AC.resume();if(VC.node)try{VC.node.stop();}catch(e){}if(window.speechSynthesis)speechSynthesis.cancel();
-    const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;g.gain.value=1.25;const lm=AC.createDynamicsCompressor();lm.threshold.value=-4;lm.knee.value=0;lm.ratio.value=20;lm.attack.value=.002;lm.release.value=.1;s.connect(g);g.connect(lm);lm.connect(AC.destination);s.start();VC.node=s;VC.until=now+b.duration;VC.last[k]=now;VC.want=null;s.onended=()=>{if(VC.node===s)VC.node=null;};}catch(e){return false;}return true;}
+    const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;const nr=/^r\d+$/.test(k)?1.12:1;s.playbackRate.value=nr;g.gain.value=1.25;const lm=AC.createDynamicsCompressor();lm.threshold.value=-4;lm.knee.value=0;lm.ratio.value=20;lm.attack.value=.002;lm.release.value=.1;s.connect(g);g.connect(lm);lm.connect(AC.destination);s.start();VC.node=s;VC.until=now+b.duration/nr;VC.last[k]=now;VC.want=null;s.onended=()=>{if(VC.node===s)VC.node=null;};}catch(e){return false;}return true;}
 function vcBusy(){return performance.now()/1000<VC.until;}
 VC.ext={"v0": "voice/nagi/finish.mp3", "v1": "voice/nagi/promise.mp3", "v2": "voice/nagi/training.mp3", "v3": "voice/nagi/vance.mp3", "v4": "voice/nagi/understood.mp3", "v5": "voice/nagi/finished.mp3", "v6": "voice/nagi/watch.mp3", "v7": "voice/nagi/chance.mp3", "v8": "voice/nagi/anypos.mp3", "v9": "voice/nagi/onematch.mp3", "v10": "voice/nagi/L1.mp3", "v11": "voice/nagi/L2.mp3", "v12": "voice/nagi/L3.mp3", "v13": "voice/nagi/L4.mp3", "v14": "voice/nagi/L5.mp3", "v15": "voice/nagi/L6.mp3", "v16": "voice/nagi/L7.mp3", "v17": "voice/nagi/L8.mp3", "v18": "voice/nagi/L9.mp3", "v19": "voice/nagi/L10.mp3", "v20": "voice/nagi/L11.mp3", "v21": "voice/nagi/L12.mp3", "v22": "voice/nagi/L13.mp3", "v23": "voice/nagi/L14.mp3", "v24": "voice/nagi/L15.mp3", "v25": "voice/nagi/L16.mp3", "v26": "voice/nagi/L17.mp3", "v27": "voice/nagi/L18.mp3", "v28": "voice/nagi/L19.mp3", "v29": "voice/nagi/L20.mp3", "v30": "voice/nagi/L21.mp3", "v31": "voice/isagi/I1.mp3", "v32": "voice/isagi/I2.mp3", "v33": "voice/isagi/I3.mp3", "v34": "voice/isagi/I4.mp3", "v35": "voice/isagi/I5.mp3", "v36": "voice/isagi/I6.mp3", "v37": "voice/isagi/I7.mp3", "v38": "voice/isagi/I8.mp3", "v39": "voice/isagi/I9.mp3", "v40": "voice/isagi/I10.mp3", "v41": "voice/isagi/I11.mp3", "v42": "voice/isagi/I12.mp3", "v43": "voice/isagi/I13.mp3", "v44": "voice/isagi/I14.mp3", "v45": "voice/isagi/I15.mp3", "v46": "voice/isagi/I16.mp3", "v47": "voice/isagi/I17.mp3", "v48": "voice/isagi/I18.mp3"};
 const VC_LINES={"Nagi|And we finish it together.": "v0", "Nagi|Promise. Nobody splits the Twin Stars.": "v1", "Nagi|Isagi... you were supposed to be at training.": "v2", "Nagi|Vance signs the same week you disappear. Somebody wanted you gone.": "v3", "Nagi|...Understood.": "v4", "Nagi|Everyone thinks I am finished. Maybe they are right.": "v5", "Nagi|Isagi. Watch me.": "v6", "Nagi|Give me one chance. Any position.": "v7", "Nagi|I told you, coach. Any position.": "v8", "Nagi|One match down, Isagi. I am just getting started.": "v9", "Nagi|If I were strong enough to play for both of us... strong enough to find out who did this...": "v10", "Nagi|Where is Isagi, Vance? Beat me and I will not ask again. Lose, and you tell me everything.": "v11", "Nagi|Mendokusai. But I will go and get him.": "v12", "Nagi|Mendokusai. How do we get in?": "v13", "Nagi|Where is Isagi?": "v14", "Nagi|Isagi. It is me. Why are your eyes like that?": "v15", "Nagi|Mendokusai. ...But fine.": "v16", "Nagi|Finally. Less running.": "v17", "Nagi|Then I will do something I have never done.": "v18", "Nagi|Isagi. The river road. Training at eight. You told me not to be late.": "v19", "Nagi|Together. Now.": "v20", "Nagi|Watch him.": "v21", "Nagi|Mendokusai. I only came to get you. That is all.": "v22", "Nagi|I will come every day. ...Mendokusai.": "v23", "Nagi|Eleven. Show-off.": "v24", "Nagi|Your first touch is worse than mine.": "v25", "Nagi|The Twin Stars. ...Mendokusai, but okay.": "v26", "Nagi|Five months I waited for your passes.": "v27", "Nagi|In Japan we call it efficient.": "v28", "Nagi|And now you are going to win the World Cup. Mendokusai. Let's go.": "v29", "Nagi|World champions. ...Can I sleep now?": "v30", "Isagi|Same as always, Nagi. You open the space, I make the noise.": "v31", "Isagi|Did you hear them? Next season it is Europe. Both of us. Promise?": "v32", "Isagi|Yeah, Nagi. Training at eight. Do not be late this time, okay?": "v33", "Isagi|Nagi. ...You are the target I was built to stop.": "v34", "Isagi|Target: Seishiro Nagi. Predicting... every move you have ever made.": "v35", "Isagi|...To...gether...": "v36", "Isagi|Nagi... I cannot feel my legs.": "v37", "Isagi|You came all this way. Lazy guy, you ran the whole way here.": "v38", "Isagi|Then I learn it again. Faster than last time.": "v39", "Isagi|Ten steps. Without the rail.": "v40", "Isagi|Everyone's first touch is worse than yours.": "v41", "Isagi|He already knows where I will be. He always did.": "v42", "Isagi|Japan U-20. Both of us.": "v43", "Isagi|And the first match is against the senior national team. They will not go easy.": "v44", "Isagi|Five months I waited for a hard game.": "v45", "Isagi|Final next. Brazil.": "v46", "Isagi|Nagi. One year ago I could not walk.": "v47", "Isagi|We did it, Nagi. Together.": "v48"};
@@ -12656,8 +12661,10 @@ function stAttach(){const PI=Math.PI,A=(k,i,o)=>{if(SC[k]&&SC[k][i])SC[k][i].s3=
     ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,560*s);stTint('#04060b',.42);stPaper(W/2-(p&&li>=1?W*.08:0),H*(p?.4:.34),clamp(t*2.5,0,1),pw,-.03,'AOBA STAR YOICHI ISAGI, 17,','MISSING AFTER HIT-AND-RUN','No one at the scene. Police appeal for witnesses.','THE AOBA DAILY');
       if(li>=1)stPaper(W/2+(p?W*.17:W*.04),H*(p?.52:.5),clamp(lt*3,0,1),pw*.62,.06,'AOBA UNITED SIGN','FORWARD DAICHI VANCE','"He will take the number nine role."','SPORTS · AOBA DAILY');}});
   A('rain',5,{set:'street',cast:['renA','polA','polB'],toon:0,
-    d3(t,dt,li,lt){const R=stA('renA');stPolice(t,li);stP(R,-2.2,3.9,-.35,{pose:li>=2?'stand':'slump',ex:li>=2?'angry':'sad',look:li<2?stLk(-3,1.5,4.7):null});
-      if(li<=1){const u=clamp(t/8,0,1);stC(stE(-4.6,-4.1,u),1.55,stE(6.6,6.1,u),-2.6,1.45,4.3,stE(40,36,u),0);}else{const u=clamp(lt/5,0,1),h=stHv(R,0);stC(-.7,1.5,2.5+.1*u,h[0],h[1]-.02,h[2],stE(34,28,u),.04);}ST.focus.set(-2.2,0,3.9);},
+    d3(t,dt,li,lt){const R=stA('renA');stPolice(t,li);
+      const mx=Math.min(t*2.2,8.8),x=-11+mx,mv=mx<8.8,sw=Math.sin(t*2.4);
+      stP(R,x,3.9,PI/2,{pose:mv?'walk':'stand',ex:mv?'focus':'angry',look:mv?stLk(x+2.2,1.5,3.9-3.2*sw):stLk(-.4+1.6*Math.sin(lt*1.1),1.2,-1.7+3.4*Math.sin(lt*.9))});
+      if(mv){stC(x-.2,1.5,7.4,x+.9,1.4,3.9,38,0);}else{const u=clamp((t-4)/5,0,1);stC(stE(-4.8,-3.7,u),1.45,stE(6.4,5.5,u),-2.2,1.4,3.9,stE(36,30,u),0);}ST.focus.set(x,0,3.9);},
     ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,420*s);if(li<=1){stTint('#04060b',.25);stPaper(p?W*.72:W/2,H*(p?.42:.3),clamp(t*2,0,1)*.95,pw,.04,'MISSING · YOICHI ISAGI, 17','HAVE YOU SEEN HIM?','Last seen on the river road, 22:40. Call Aoba Police.','MISSING PERSON');}
       if(li>=2){stTint('#59e1ff',lt<.3?.25*(1-lt/.3):0);}stStamp('RIVER ROAD · ONE WEEK LATER',t);}});
   A('bench',1,{set:'night',cast:['renA','r9','r10'],toon:1,crowd:.8,
@@ -15850,7 +15857,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='192';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='193';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16293,7 +16300,7 @@ function stP7(){
 }
 function lipWho(a,who){const key=a.stKey;if(who==='SYSTEM')return key==='renEgo';if(who==='Nagi')return key==='renC'||key==='ren';
   const nm=((a.design&&a.design.name)||'').toLowerCase(),w=String(who).toLowerCase().replace(/^coach /,'');return !!nm&&(nm.includes(w)||w.includes(nm.split(' ').pop()));}
-function lipStart(L){CS.talkWho=L.who;const k=typeof VC_LINES==='object'&&VC_LINES[L.who+'|'+L.text];let d=0;try{const b=k&&VC.buf&&VC.buf[k];d=b?b.duration:0;}catch(e){}CS.talkEnd=clock+(d||Math.max(1,L.text.length*.065)+.2);}
+function lipStart(L){CS.talkWho=L.who;const k=typeof VC_LINES==='object'&&VC_LINES[L.who+'|'+L.text];let d=0;try{const b=k&&VC.buf&&VC.buf[k];d=b?b.duration/(/^r\d+$/.test(k)?1.12:1):0;}catch(e){}CS.talkEnd=clock+(d||Math.max(1,L.text.length*.065)+.2);}
 function lipTick(){if(!CS||typeof ST==='undefined'||!ST.actors)return;const on=clock<(CS.talkEnd||0);ST.actors.forEach(a=>{const F=a&&a.dzF;if(F)F.talk=(on&&lipWho(a,CS.talkWho))?1:0;});}
 // leaf pool used by the wind / tornado entrance (positions are recomputed every frame from the shot time)
 function stLeavesMk(){if(ST.leaves)return ST.leaves;const N=260,pos=new Float32Array(N*3),col=new Float32Array(N*3),seed=[],pal=[[.2,.55,.12],[.35,.62,.15],[.62,.55,.12],[.7,.4,.1],[.45,.3,.1],[.25,.45,.1]];
