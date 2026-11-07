@@ -4648,12 +4648,12 @@ function syncUI(){
 
 // ================= CUTSCENE ENGINE =================
 function playCutscene(shots,onEnd){mode='cutscene';show(null);CS={shots,i:0,t:0,li:0,chars:0,onEnd,ev:0,lt0:0,dt:.016};if(typeof stQueue==='function')stQueue(shots);startShot();syncUI();}
-function startShot(){const sh=CS.shots[CS.i];try{if(typeof ST!=='undefined'){ST.egoOn=false;ST.egoActor=false;ST.egoNagi=false;if(ST.bench)ST.bench.visible=false;}}catch(e){}CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
+function startShot(){const sh=CS.shots[CS.i];try{if(typeof ST!=='undefined'){ST.egoOn=false;ST.egoActor=false;ST.egoNagi=false;if(ST.bench)ST.bench.visible=false;if(ST.leaves)ST.leaves.visible=false;}}catch(e){}CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
 function curLine(){const sh=CS.shots[CS.i];return sh.lines&&CS.li<sh.lines.length?sh.lines[CS.li]:null;}
 function showLine(){
   const L=curLine();
   if(!L){ui.dlg.hidden=true;return;}
-  ui.dlg.hidden=false;CS.lt0=CS.t;try{if(typeof ST!=='undefined')ST.egoOn=L.who==='SYSTEM';}catch(e){}try{voxLine(L);}catch(e){}
+  ui.dlg.hidden=false;CS.lt0=CS.t;try{if(typeof ST!=='undefined')ST.egoOn=L.who==='SYSTEM';}catch(e){}try{voxLine(L);}catch(e){}try{lipStart(L);}catch(e){}
   const cls={SYSTEM:'sys',Isagi:'gold','Coach Hara':'red',Objective:'obj',Controls:'obj',Quest:'obj',Narration:'nar'}[L.who]||'';
   ui.dlg.className=cls;void ui.dlg.offsetWidth;ui.dlg.classList.add('pop');
   ui.dlg.style.setProperty('--c',(typeof STC==='object'&&STC[L.who])||'#4fb3ff');
@@ -4673,7 +4673,7 @@ function endCutscene(){const f=CS.onEnd;CS=null;ui.dlg.hidden=true;if(typeof stS
 function updateCutscene(dt){
   const sh=CS.shots[CS.i];CS.t+=dt;CS.dt=dt;
   if(sh.events)while(CS.ev<sh.events.length&&CS.t>=sh.events[CS.ev][0]){sh.events[CS.ev][1]();CS.ev++;}
-  const L=curLine();
+  const L=curLine();try{lipTick();}catch(e){}
   if(L){CS.chars+=dt*46;ui.dlg.querySelector('.txt').textContent=L.text.slice(0,Math.floor(CS.chars));ui.dlg.classList.toggle('done',CS.chars>=L.text.length);}
   else if(CS.t>=sh.dur&&!G3.stHold)nextShot();
   if(hit('adv'))advance();
@@ -11833,7 +11833,7 @@ function faceUpdate(c,o,dt){const F=c&&c.dzF;if(!F)return;dt=dt>0?Math.min(dt,.1
   const gx=clamp(gy*.6,-.26,.26),gv=clamp(-gp*.6,-.2,.16);U.dzGaze.value.set(gx,gv,-gx,gv);
   const hw=DZ.R.hw*.035;const by=cur[0]*hw,sq=Math.max(0,-cur[1])*hw*.12;U.dzBrow.value.set(by+(F.micro&&F.micro.k==='brow'&&name===F.base?hw*.25:0),by,cur[1],sq);
   let mc=T[4];if(name==='talk'||name==='tired'){if(Math.sin(clock*(name==='talk'?14:7)+F.seed)<-.1)mc=name==='talk'?0:4;}else if(F.micro&&F.micro.k==='smirk'&&name===F.base&&mc===0)mc=9;
-  if(mc!==F.mouth){F.mouth=mc;F.mT=0;}F.mT+=dt;const pop=1+.18*Math.exp(-F.mT*10)*Math.sin(F.mT*30);
+  if(F.talk>0){const lv=Math.sin(clock*12+F.seed)+.7*Math.sin(clock*19.3+F.seed*2.1);mc=lv>.9?3:lv>-.1?10:lv>-.8?0:10;}if(mc!==F.mouth){F.mouth=mc;F.mT=0;}F.mT+=dt;const pop=1+.18*Math.exp(-F.mT*10)*Math.sin(F.mT*30);
   U.dzMouth.value.set(mc%4,3-Math.floor(mc/4),pop,pop);
   // glowing SYSTEM eyes pulse
   if(F.glow)U.dzEyeP.value.w=.75+.25*Math.sin(clock*3.1);
@@ -12472,7 +12472,7 @@ function stA(k){let a=ST.actors.get(k);if(!a){const c=CAST[k],d=DESIGNS[c[0]];a=
 function stQueue(shots){ST.q.length=0;for(const s of shots)if(s.s3){const k='@'+s.s3.set;if(SETS[s.s3.set]&&!ST.sets[s.s3.set]&&!ST.q.includes(k))ST.q.push(k);if(s.s3.cast)for(const k of s.s3.cast)if(!ST.actors.has(k)&&!ST.q.includes(k))ST.q.push(k);}}
 function stPre(){if(!ST.q.length||!stOK())return;try{stInit();const k=ST.q.shift();if(k[0]==='@'){const n=k.slice(1);if(!ST.sets[n]){ST.sets[n]=SETS[n]();ST.sets[n].g.visible=false;}}else if(CAST[k]&&!ST.actors.has(k)){const a=stA(k);a.root.visible=false;a.stUsed=false;}}catch(e){console.warn('story preload',e);ST.q.length=0;}}   // builds one queued set/actor per frame while a 2D card shows
 // o: pose, pt (pose time), look {x,y,z}, hd {nx,ny}, ex (expression), sitT, cel/celT (B celebrations), frz (freeze frame)
-function stP(a,x,z,yaw,o,h){o=o||{};const q=a.stO||(a.stO={});q.x=x/S3+PW/2;q.y=z/S3+PH/2;q.fx=Math.sin(yaw);q.fy=Math.cos(yaw);q.pose=o.pose==='walk'?null:(o.pose||'stand');q.poseT=o.pt||0;q.lookAt=o.look||null;q.hd=o.hd||null;q.sitT=o.sitT||0;q.celebrate=o.cel;q.celebT=o.celT;
+function stP(a,x,z,yaw,o,h){o=o||{};const q=a.stO||(a.stO={});if(a.stKey==='renEgo'&&z>1.9&&z<2.7)z+=1.1;q.x=x/S3+PW/2;q.y=z/S3+PH/2;q.fx=Math.sin(yaw);q.fy=Math.cos(yaw);q.pose=o.pose==='walk'?null:(o.pose||'stand');q.poseT=o.pt||0;q.lookAt=o.look||null;q.hd=o.hd||null;q.sitT=o.sitT||0;q.celebrate=o.cel;q.celebT=o.celT;
   if(ST.cut){if(a.ab)a.ab.tele=true;a.stSnap=true;}a.stX=x;a.stZ=z;a.stYaw=yaw;a.stH=h||0;
   placeActor(a,q,o.frz?0:ST.dt,h||0);if(o.ex)stEx(a,o.ex);return a;}
 function stEx(a,n){if(a.stExN===n&&clock-a.stExT<1.2)return;a.stExN=n;a.stExT=clock;if(typeof setExpr==='function')setExpr(a,n,2);}
@@ -15848,7 +15848,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='190';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='191';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -15973,13 +15973,13 @@ function stP3(){
     {dur:1,draw:t=>{park2(t,{ego:1});},lines:[{who:NG,text:'What is happening? And what do you mean, give up? I tried my best. I just could not do it.'},{who:EG,text:'You mean this was your best? If I were you, I could have become the best in the world.'},{who:EG,text:'Giving up is a choice you make. It is not an option. In my mind, in my world, the game I play has two choices. Win, or win.'},{who:NG,text:'But I am not like you.'},{who:EG,text:'I am the ego of you. One part of you. I am you. A genius, not a lazy one.'}],
       s3:{set:'park',cast:['renC','renEgo'],toon:0,
         d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC'),E=stA('renEgo'),en=li===1||li===2||li===4;stEyes(E,1);
-          stP(N,0,.3,0,{pose:li===3?'lookDown':'stand',look:li===3?null:stLk(0,1.7,2.3),ex:li===0?'shock':li===3?'sad':'focus'});
+          stP(N,0,.3,0,{pose:li===3?'lookDown':'stand',look:li===3?null:stLk(0,1.7,3.4),ex:li===0?'shock':li===3?'sad':'focus'});
           stP(E,0,2.3,PI,{pose:li===2?'accuse':li===4?'hero':'armsCrossed',look:stLk(0,1.6,.3),ex:li===2?'angry':'determined'});
           if(li===0)stOTS(E,N,1.0,.42,1.6,30,0);
           else if(li===1){const u=clamp(lt/5,0,1);stOTS(N,E,stE(1.1,.85,u),.42,1.64,stE(32,27,u),.03);}
-          else if(li===2){const u=clamp(lt/6,0,1),h=stHv(E,0);stCv(RP(0,2.3,PI,stE(2.0,1.4,u),-.35,1.5),[h[0],h[1]-.05,h[2]],30,-.05);}
+          else if(li===2){const u=clamp(lt/6,0,1),h=stHv(E,0);stCv(RP(0,3.4,PI,stE(2.0,1.4,u),-.35,1.5),[h[0],h[1]-.05,h[2]],30,-.05);}
           else if(li===3){const u=clamp(lt/3,0,1);stOTS(E,N,stE(1.0,.8,u),.42,1.56,stE(32,27,u),0);}
-          else{const u=clamp(lt/5,0,1);stC(stE(1.6,1.0,u),stE(.6,1.0,u),stE(3.6,3.1,u),0,stE(1.5,1.7,u),2.3,36,-.04);}ST.focus.set(0,0,1.2);},
+          else{const u=clamp(lt/5,0,1);stC(stE(1.6,1.0,u),stE(.6,1.0,u),stE(4.7,4.2,u),0,stE(1.5,1.7,u),3.4,36,-.04);}ST.focus.set(0,0,1.2);},
         ov(t,li,lt){if(li===2&&lt<.4)stTint('#ff5a4f',.1*(1-lt/.4));}}},
     {dur:2.6,draw:t=>{park2(t,{});},
       s3:{set:'park',cast:['renC'],toon:0,
@@ -15988,8 +15988,8 @@ function stP3(){
     {dur:1,draw:t=>{park2(t,{ego:1});},lines:[{who:EG,text:'Show the world what happens when you are finally the one. The one who is best. The one who is better than anyone. Show the world who you are!'}],
       s3:{set:'park',cast:['renC','renEgo'],toon:0,
         d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC'),E=stA('renEgo');stEyes(E,1);stP(N,0,.3,0,{pose:'lookDown',ex:'determined'});stP(E,0,2.3,PI,{pose:'fistUp',look:stLk(0,1.6,.3),ex:'angry'});
-          const u=clamp(lt/6,0,1);stC(stE(.7,.2,u),stE(.5,.8,u),stE(4.2,3.2,u),0,stE(1.9,2.1,u),2.3,stE(38,30,u),-.05);stShake(.004+.006*Math.sin(lt*14)*Math.sin(lt*14));
-          stSys(0,2.3,{t:lt,panels:[],aura:1,ring:1,beam:.6,light:.7});ST.focus.set(0,0,1.2);},
+          const u=clamp(lt/6,0,1);stC(stE(.7,.2,u),stE(.5,.8,u),stE(5.3,4.3,u),0,stE(1.9,2.1,u),3.4,stE(38,30,u),-.05);stShake(.004+.006*Math.sin(lt*14)*Math.sin(lt*14));
+          stSys(0,3.4,{t:lt,panels:[],aura:1,ring:1,beam:.6,light:.7});ST.focus.set(0,0,1.2);},
         ov(t,li,lt){const s=sc();stBurst(W*.5,H*.42,W*.5,'rgba(169,107,255,.35)',.6+.4*Math.sin(lt*10));if(lt>.2)stSfx('SHOW THE WORLD!!',W*.5,H*.82,Math.round(34*s),'#d9c2ff',lt-.2,-.04);}}},
     {dur:1,sfx:'sys',draw:t=>{park2(t,{});},lines:[{who:EG,text:'Let us do it, my Lazy Genius.'}],
       s3:{set:'park',cast:['renC'],toon:0,
@@ -16001,7 +16001,7 @@ function stP3(){
         d3(t,dt,li,lt){const N=stA('renC'),a=lt*1.2;stP(N,0,0,.75+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(Math.sin(.75+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.75+Math.sin(a)*.5)*.45);
           const o=lt*.12;stC(Math.sin(o+.6)*5.2,1.5,Math.cos(o+.6)*5.2,0,1.0,0,38);ST.focus.set(0,0,0);},
         ov(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);stTint(n%2?'#0a1a30':'#3a2a10',.12);}}},
-    {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.62,H*.88,1.45*s,{...ISHI,face:-1});},lines:[{who:CI,text:'I have been watching you train for days. Nobody practices like that just for fun.'},{who:CI,text:'My club, Kurogane SC, holds its selection exam tomorrow. Come and show me what you have.'},{who:NG,text:'...Fine. I will come.'}],
+    {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.62,H*.88,1.45*s,{...ISHI,face:-1});},lines:[{who:CI,text:'I have been watching you train for days. Nobody practices like that just for fun.'},{who:CI,text:'Why don\'t you try your skills in tomorrow\'s selection exam at my club, Kurogane SC?'},{who:NG,text:'...Fine. I will come.'}],
       s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
         d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi');stP(N,-1.1,0,PI/2,{pose:li===2?'hero':'stand',look:stLk(1.1,1.6,0),ex:li===2?'determined':'neutral'});stP(I,1.1,0,-PI/2,{pose:li===1?'talk':'armsCrossed',look:stLk(-1.1,1.6,0),ex:'focus'});stBall(-.7,.15,.5);
           if(li===0)stOTS(N,I,1.0,.42,1.6,30,0);else if(li===1){const u=clamp(lt/6,0,1);stOTS(N,I,stE(1.0,.8,u),.42,1.58,stE(32,27,u),0);}else stOTS(I,N,1.0,.42,1.6,30,0);ST.focus.set(0,0,0);},
@@ -16228,7 +16228,7 @@ function stP6(){
           const u=clamp(t/4.4,0,1);stC(x+stE(2.4,4.8,u),1.45,stE(3.4,5.4,u),x+.8,1.2,0,stE(34,28,u));ST.focus.set(x,0,0);},
         ov(t){cap6('NAGI LEFT AOBA UNITED.',t,.5,4.2,.82,'#ff8a80');stTint('#0a1020',.12);stVig(.45,'rgba(0,0,0,1)');}}},
     {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.8,H*.8,1.0*s,{...ISHI,face:-1});},
-      lines:[{who:NR,text:'Day after day he practised alone. And every morning, someone watched him from the far side of the ground: Coach Ishida.'}],
+      lines:[{who:NR,text:'Day after day he practised alone. One morning, on his way home, Coach Ishida stopped outside the nets of the ground and watched.'}],
       s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
         d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi'),a=lt*1.3;stP(N,-3,0,.8+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(-3+Math.sin(.8+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.8+Math.sin(a)*.5)*.45);
           stP(I,9,-7,-2.3,{pose:'armsCrossed',look:stLk(-3,1.6,0),ex:'focus'});
@@ -16289,7 +16289,64 @@ function stP7(){
   T.splice(10,0,clip(walk,2.6,{t0:.7,noSrc:1,ov:t=>cap('NAGI LEFT AOBA.',t,.2,2.4,{c:'#ff8a80'})}));
   T.splice(12,0,clip(coach,2.8,{li:0,lt0:1.2,noSrc:1,ov:t=>cap('AND THE COACH WAS WATCHING.',t,.2,2.6,{c:'#d9c2ff'})}));
 }
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();squadAttach();
+function lipWho(a,who){const key=a.stKey;if(who==='SYSTEM')return key==='renEgo';if(who==='Nagi')return key==='renC'||key==='ren';
+  const nm=((a.design&&a.design.name)||'').toLowerCase(),w=String(who).toLowerCase().replace(/^coach /,'');return !!nm&&(nm.includes(w)||w.includes(nm.split(' ').pop()));}
+function lipStart(L){CS.talkWho=L.who;const k=typeof VC_LINES==='object'&&VC_LINES[L.who+'|'+L.text];let d=0;try{const b=k&&VC.buf&&VC.buf[k];d=b?b.duration:0;}catch(e){}CS.talkEnd=clock+(d||Math.max(1,L.text.length*.065)+.2);}
+function lipTick(){if(!CS||typeof ST==='undefined'||!ST.actors)return;const on=clock<(CS.talkEnd||0);ST.actors.forEach(a=>{const F=a&&a.dzF;if(F)F.talk=(on&&lipWho(a,CS.talkWho))?1:0;});}
+// leaf pool used by the wind / tornado entrance (positions are recomputed every frame from the shot time)
+function stLeavesMk(){if(ST.leaves)return ST.leaves;const N=260,pos=new Float32Array(N*3),col=new Float32Array(N*3),seed=[],pal=[[.2,.55,.12],[.35,.62,.15],[.62,.55,.12],[.7,.4,.1],[.45,.3,.1],[.25,.45,.1]];
+  for(let i=0;i<N;i++){seed.push({x0:Math.random()*24-12,z0:Math.random()*16-4,hh:Math.random(),hn:Math.random(),sp:Math.random(),ph:Math.random()*6.28,rn:Math.random()});const c=pal[i%pal.length];col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2];}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const tex=canvasTex(64,64,(x,w,h)=>{x.clearRect(0,0,w,h);x.translate(w/2,h/2);x.rotate(-.5);x.fillStyle='#fff';x.beginPath();x.moveTo(-w*.42,0);x.quadraticCurveTo(0,-h*.34,w*.42,0);x.quadraticCurveTo(0,h*.34,-w*.42,0);x.fill();x.strokeStyle='rgba(0,0,0,.55)';x.lineWidth=2;x.beginPath();x.moveTo(-w*.4,0);x.lineTo(w*.4,0);x.stroke();});
+  const m=new THREE.PointsMaterial({map:tex,size:.2,sizeAttenuation:true,vertexColors:true,transparent:true,alphaTest:.35,depthWrite:true,fog:false});
+  const p=new THREE.Points(g,m);p.frustumCulled=false;p.userData={seed,N};ST.grp.add(p);ST.leaves=p;return p;}
+function stLeaves(o){const p=stLeavesMk(),D=p.userData,P=p.geometry.attributes.position.array,wind=o.wind||0,tor=o.tor||0;
+  p.visible=wind>.01||tor>.01;if(!p.visible)return;const act=Math.max(wind*.55,tor);
+  D.seed.forEach((s,i)=>{if(i/D.N>act+.02){P[i*3]=0;P[i*3+1]=-20;P[i*3+2]=0;return;}
+    const wx=(((s.x0+o.t*(5+5*s.sp))%24)+24)%24-12,wy=.25+s.hh*3.2+Math.sin(o.t*4+s.ph*9)*.35,wz=s.z0+Math.sin(o.t*2.3+s.ph)*.6;
+    const th=o.t*(3+s.sp*2.2)+s.ph,y=s.hn*3.4*Math.min(1,.25+tor),rho=(.12+y*.38)*(.7+.6*s.rn),tx=o.cx+Math.cos(th)*rho,tz=o.cz+Math.sin(th)*rho;
+    P[i*3]=wx*(1-tor)+tx*tor;P[i*3+1]=wy*(1-tor)+y*tor+.1;P[i*3+2]=wz*(1-tor)+tz*tor;});
+  p.geometry.attributes.position.needsUpdate=true;}
+function stP8(){
+  const PI=Math.PI;
+  const A=SC.parkEgo;if(!A||A.__w210)return;A.__w210=1;
+  const ix=A.findIndex(x=>x&&x.sfx==='glitch'&&x.dur===2.4);if(ix<0)return;
+  A[ix]={dur:6.4,sfx:'swoosh',draw:t=>{park2(t,{ego:t>3.6});},
+    s3:{set:'park',cast:['renC','renEgo'],toon:0,
+      d3(t,dt){ST.egoActor=true;const N=stA('renC');
+        const wind=ease(clamp(t/1.3,0,1))*(1-.6*ease(clamp((t-4.2)/1.8,0,1))),tor=ease(clamp((t-1.3)/1.9,0,1))*(1-ease(clamp((t-4.9)/1.5,0,1)));
+        stP(N,0,.3,0,{pose:t<.8?'stand':'shield',look:stLk(0,1.5,5.8),ex:'shock'});
+        stLeaves({t,wind,tor,cx:0,cz:5.8});
+        let zE=5.8;
+        if(t>3.2){const E=stA('renEgo'),u=clamp((t-3.2)/2.9,0,1);zE=5.8-2.4*u;stP(E,0,zE,PI,{pose:u<1?'walk':'armsCrossed',look:stLk(0,1.6,.3),ex:'determined'});stEyes(E,1);
+          stSys(0,zE,{t:t-3.2,panels:[],aura:clamp((t-3.2)*.8,0,1),ring:0,beam:.2,light:.7});}
+        if(t<3.2){const u=clamp(t/3.2,0,1);stC(stE(1.0,.3,u),stE(1.0,1.3,u),stE(-2.4,-1.4,u),0,stE(1.2,2.0,u),5.6,stE(40,32,u));ST.focus.set(0,0,3);}
+        else{const u=clamp((t-3.2)/3.2,0,1);stC(stE(2.2,1.3,u),stE(.5,.75,u),zE-stE(2.2,2.6,u),0,1.25,zE,stE(34,38,u),-.03);ST.focus.set(0,0,zE);}
+        stShake(.006*wind*(1-tor*.5));},
+      ov(t){const w=ease(clamp(t/1.3,0,1));stTint('#0d1c0f',.14*w);stVig(.45,'rgba(0,10,4,1)');if(t>2.9&&t<3.3)stTint('#e6ffd9',(.4-(t-2.9))*.7);}}};
+}
+function stP9(){
+  const PI=Math.PI,A=SC.parkEgo;if(!A||A.__w211)return;A.__w211=1;
+  const xi=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/stopped outside the nets/.test(x.lines[0].text));
+  const ii=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/I have been watching/.test(x.lines[0].text));
+  if(xi<0||ii<0)return;
+  const ball=(t)=>{if(t<1.2)return [-2.7+Math.sin(t*5)*.05,.13+.1*Math.abs(Math.sin(t*6)),.25];const u=clamp((t-1.2)/1.7,0,1),e=1-Math.pow(1-u,2.2);return [-2.7+5.8*e,.12+.1*Math.abs(Math.sin(u*14))*(1-u),.25-3.75*e];};
+  const Y={dur:4.6,draw:t=>{sceneTraining(t);const s=sc();figure(W*.3,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*(.85-.1*clamp(t/2.4,0,1)),H*.8,1.0*s,{...ISHI,face:-1,pose:'walk',t});},
+    s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+      d3(t,dt){const N=stA('renC'),I=stA('ishi'),b=ball(t);
+        stP(N,-3,0,.9,{pose:t<1.1?'ballFoot':'stand',pt:t,look:stLk(b[0],.3,b[2]),ex:t<1.2?'determined':'shock'});
+        const wu=clamp(t/2.4,0,1),ix=7.5+(3.9-7.5)*wu,iz=-6.5+(-3.9+6.5)*wu+Math.sin(wu*PI)*1.4,yaw=Math.atan2(b[0]-ix,b[2]-iz);
+        if(t<2.4)stP(I,ix,iz,yaw,{pose:'walk',ex:'neutral'});else stP(I,3.9,-3.9,Math.atan2(-3-3.9,0+3.9),{pose:t<3.4?'ballFoot':'armsCrossed',pt:t,look:stLk(-3,1.4,0),ex:'focus'});
+        const bb=t>2.5?[3.55,.12,-3.75]:b;stBall(bb[0],bb[1],bb[2]);
+        if(t<2.2){const u=clamp(t/2.2,0,1);stC(stE(1.5,2.0,u),stE(1.8,1.5,u),stE(7.2,6.6,u),0,.9,-2.5,stE(44,40,u));ST.focus.set(0,0,-2);}
+        else{const u=clamp((t-2.2)/2.4,0,1);stC(stE(7.4,6.2,u),stE(1.2,.9,u),stE(-.2,-1.4,u),3.5,stE(.5,.6,u),-3.8,stE(32,28,u));ST.focus.set(3.5,0,-3.8);}},
+      ov(t){if(t<2)stStamp('OUTSIDE THE NETS · KUROSAWA PARK GROUND · DAWN',t);stTint('#3a2a10',.1);}}};
+  A.splice(xi+1,0,Y);
+  // the invitation shot: Ishida now has the ball at his feet
+  const inv=A.find(x=>x&&x.lines&&x.lines[0]&&/I have been watching/.test(x.lines[0].text));
+  if(inv&&inv.s3&&inv.s3.d3&&!inv.__bl){inv.__bl=1;const d0=inv.s3.d3;inv.s3.d3=function(t,dt,li,lt){d0.apply(this,arguments);stBall(.8,.12,.15);};}
+}
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
