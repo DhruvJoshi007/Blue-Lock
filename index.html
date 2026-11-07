@@ -15980,13 +15980,13 @@ function stGround(){
   const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xfff3d0,size:2,sizeAttenuation:false,transparent:true,opacity:.5,fog:false,depthWrite:false}));g.add(dust);
   S.upd=(t,dt,s3)=>{S.rig(s3.tod??.15);const p=dust.geometry.attributes.position.array;for(let i=0;i<90;i++){p[i*3+1]+=dt*.08;p[i*3]+=Math.sin(clock*.5+i)*dt*.1;if(p[i*3+1]>6)p[i*3+1]=0;}dust.geometry.attributes.position.needsUpdate=true;};
   (async()=>{try{
-    const [js,bin]=await Promise.all([fetch('assets/mini/mini_stadium.json').then(r=>r.json()),fetch('assets/mini/mini_stadium.bin').then(r=>r.arrayBuffer())]);
+    const [js,bin]=await Promise.all([fetch('assets/mini/mini_stadium.json').then(r=>r.json()),fetch('assets/mini/mini_stadium.wav').then(r=>r.arrayBuffer())]);
     const [tg,ts]=await Promise.all([stLdTex('mini_grass.jpg',1),stLdTex('mini_stone.jpg',1)]);
     const M={post:stMk('#2a2929'),glass:stMk('#2c7d46',{r:.3,e:'#46ff8a',ds:1}),stoq:stMk('#b8b5ab',{r:.9}),grass:stMk('#4a9a46',{map:tg,r:.95,up:1}),stone:stMk('#b0aca2',{map:ts,r:.9,up:1}),net:stMk('#1c3d28',{r:.85,ds:1}),dark:stMk('#202226'),white:stMk('#ececec',{r:.6})};
     S.gmat=[M.glass];const cg=new THREE.Group();cg.position.y=-.1;stLoadChunks(js,bin,M,cg,Q,['net','white','post']);S.court.add(cg);S.fb.visible=false;S.ready=true;
   }catch(e){window.__gndE=String(e&&e.stack||e).slice(0,200);}
   try{
-    const [js,bin]=await Promise.all([fetch('assets/mini/maple.json').then(r=>r.json()),fetch('assets/mini/maple.bin').then(r=>r.arrayBuffer())]);
+    const [js,bin]=await Promise.all([fetch('assets/mini/maple.json').then(r=>r.json()),fetch('assets/mini/maple.wav').then(r=>r.arrayBuffer())]);
     const [tl,tb]=await Promise.all([stLdTex('leaf.png',0),stLdTex('bark.jpg',0)]);
     const mkg=d=>{const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(bin,d.pos,d.n*3),3));geo.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(bin,d.nrm,d.n*3),3));geo.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(bin,d.uv,d.n*2),2));geo.setIndex(new THREE.BufferAttribute(new Uint16Array(bin,d.idx,d.ni),1));geo.computeBoundingSphere();return geo;};
     const gb=mkg(js.bark),gl=mkg(js.leaf);
@@ -16020,7 +16020,7 @@ function stLake(){
   S.upd=(t,dt,s3)=>{S.rig(s3.tod??.55);const w=ST.wind||0;WIND.value=.28+w*2.2;TT.value=clock;ST.wind=0;
     const R=ST.ripple;ST.ripple=null;for(let i=0;i<3;i++){const r=S.rip[i];if(!R){r.visible=false;continue;}const ph=((clock*.55+i/3)%1);r.visible=true;r.position.set(R.x,R.y+.02,R.z);r.scale.setScalar(.25+ph*2.6);r.material.opacity=.55*(1-ph);}};
   (async()=>{try{
-    const [js,bin]=await Promise.all([fetch('assets/mini/park.json').then(r=>r.json()),fetch('assets/mini/park.bin').then(r=>r.arrayBuffer())]);
+    const [js,bin]=await Promise.all([fetch('assets/mini/park.json').then(r=>r.json()),fetch('assets/mini/park.wav').then(r=>r.arrayBuffer())]);
     const [tg,tb,tl,tr]=await Promise.all([stLdTex('park_ground.jpg',1),stLdTex('park_bark.jpg',0),stLdTex('park_leaves.png',0),stLdTex('park_grass.png',0)]);
     const gt=canvasTex(512,512,(x,w,h)=>{x.fillStyle='#4f8f3c';x.fillRect(0,0,w,h);for(let i=0;i<9000;i++){x.fillStyle=Math.random()<.5?'rgba(20,70,20,.35)':'rgba(170,220,110,.25)';x.fillRect(Math.random()*w,Math.random()*h,2,2+Math.random()*5);}for(let i=0;i<14;i++){x.fillStyle='rgba(120,90,50,.18)';x.beginPath();x.arc(Math.random()*w,Math.random()*h,8+Math.random()*26,0,7);x.fill();}});gt.wrapS=gt.wrapT=THREE.RepeatWrapping;gt.repeat.set(18,18);
     const M={ground:stMk('#ffffff',{map:gt,r:.95}),bark:stMk('#ffffff',{map:tb,r:.95}),leaves:stMk('#ffffff',{map:tl,r:.7,ds:1,at:.45}),grass:stMk('#ffffff',{map:tr,r:.8,ds:1,at:.5}),water:new THREE.MeshBasicMaterial({color:LIN('#4aa6c4'),transparent:true,opacity:.88,depthWrite:false,fog:true})};
