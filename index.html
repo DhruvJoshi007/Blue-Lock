@@ -247,7 +247,7 @@ button{font:inherit;cursor:pointer}
         <kbd>Enter</kbd><span>Next line in a cutscene · <kbd>Esc</kbd> skip or pause</span>
       </div>
       <p>The full controls appear before every match.</p>
-      <p class="credits">Ball model: “football/soccer ball” by <a href="https://sketchfab.com/MAD_DUDE" target="_blank" rel="noopener">MAD_DUDE</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/footballsoccer-ball-5311ede6883c4fb39f366f86559f58de" target="_blank" rel="noopener">Sketchfab</a>. Players are built from three CC-BY-4.0 Sketchfab models, merged onto one rig and recoloured: “<a href="https://sketchfab.com/3d-models/bachira-no-es-mio-b724c7e09652410d85be50de71643341" target="_blank" rel="noopener">Bachira no es mio</a>” by <a href="https://sketchfab.com/Donaexplosiva12" target="_blank" rel="noopener">El_yujinas</a> (body, face, kit), “<a href="https://sketchfab.com/3d-models/seishiro-nagi-official-blue-lock-model-12a92d5b590a498996fd2fd4dd37d34b" target="_blank" rel="noopener">Seishiro Nagi - Official Blue Lock Model</a>” by <a href="https://sketchfab.com/YumeOfficial" target="_blank" rel="noopener">Yume Official</a> (messy hair), and “<a href="https://sketchfab.com/3d-models/isagi-free-fire-original-rig-4ebf879314534e58adcb9df6e7019f3c" target="_blank" rel="noopener">Isagi free fire original rig</a>” by <a href="https://sketchfab.com/rocklee.ff" target="_blank" rel="noopener">rocklee.ff</a> (straight hair). Spin-dribble motion capture: “<a href="https://sketchfab.com/3d-models/soccer-dribble-cd888c68bf784776953a1f66792ca61d" target="_blank" rel="noopener">soccer dribble</a>” by <a href="https://sketchfab.com/ayoubboulehmi67" target="_blank" rel="noopener">paintoheaven</a> (CC-BY-4.0). White tiger aura: “White Tiger (RIGGED ANIMATED)” by <a href="https://sketchfab.com/CGJAY1111" target="_blank" rel="noopener">CGJAY1111</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/white-tiger-rigged-animated-9dd099d283e54f99b7cbd40b531b1a29" target="_blank" rel="noopener">Sketchfab</a>, rendered as a ghost face. Isagi model: “Isagi Training Uniform Free Fire Edit” by rocklee.ff123 (Sketchfab, CC-BY-4.0). Stadium: “EMIRATES STADIUM” by PeeJaa (<a href="https://sketchfab.com/3d-models/emirates-stadium-c16874e295b84031877b5ac10f9db23f" target="_blank" rel="noopener">Sketchfab</a>, CC-BY-4.0). Fan project for personal use; Blue Lock characters belong to their owners.</p>
+      <p class="credits">Ball model: “football/soccer ball” by <a href="https://sketchfab.com/MAD_DUDE" target="_blank" rel="noopener">MAD_DUDE</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/footballsoccer-ball-5311ede6883c4fb39f366f86559f58de" target="_blank" rel="noopener">Sketchfab</a>. Players are built from three CC-BY-4.0 Sketchfab models, merged onto one rig and recoloured: “<a href="https://sketchfab.com/3d-models/bachira-no-es-mio-b724c7e09652410d85be50de71643341" target="_blank" rel="noopener">Bachira no es mio</a>” by <a href="https://sketchfab.com/Donaexplosiva12" target="_blank" rel="noopener">El_yujinas</a> (body, face, kit), “<a href="https://sketchfab.com/3d-models/seishiro-nagi-official-blue-lock-model-12a92d5b590a498996fd2fd4dd37d34b" target="_blank" rel="noopener">Seishiro Nagi - Official Blue Lock Model</a>” by <a href="https://sketchfab.com/YumeOfficial" target="_blank" rel="noopener">Yume Official</a> (messy hair), and “<a href="https://sketchfab.com/3d-models/isagi-free-fire-original-rig-4ebf879314534e58adcb9df6e7019f3c" target="_blank" rel="noopener">Isagi free fire original rig</a>” by <a href="https://sketchfab.com/rocklee.ff" target="_blank" rel="noopener">rocklee.ff</a> (straight hair). Spin-dribble motion capture: “<a href="https://sketchfab.com/3d-models/soccer-dribble-cd888c68bf784776953a1f66792ca61d" target="_blank" rel="noopener">soccer dribble</a>” by <a href="https://sketchfab.com/ayoubboulehmi67" target="_blank" rel="noopener">paintoheaven</a> (CC-BY-4.0). White tiger aura: “White Tiger (RIGGED ANIMATED)” by <a href="https://sketchfab.com/CGJAY1111" target="_blank" rel="noopener">CGJAY1111</a>, CC-BY-4.0, from <a href="https://sketchfab.com/3d-models/white-tiger-rigged-animated-9dd099d283e54f99b7cbd40b531b1a29" target="_blank" rel="noopener">Sketchfab</a>, rendered as a ghost face. Isagi model: “Isagi Training Uniform Free Fire Edit” by rocklee.ff123 (Sketchfab, CC-BY-4.0). Stadium: “EMIRATES STADIUM” by PeeJaa (<a href="https://sketchfab.com/3d-models/emirates-stadium-c16874e295b84031877b5ac10f9db23f" target="_blank" rel="noopener">Sketchfab</a>, CC-BY-4.0). Fan project for personal use; Blue Lock characters belong to their owners. 3D models: Mini Stadium by sparshgupta, Maple Tree by atrodler, Low Poly Tree Scene Free by Nicholas-3D (CC-BY 4.0, via Sketchfab).</p>
     </div>
   </div>
 
@@ -4674,12 +4674,7 @@ function updateCutscene(dt){
   const sh=CS.shots[CS.i];CS.t+=dt;CS.dt=dt;
   if(sh.events)while(CS.ev<sh.events.length&&CS.t>=sh.events[CS.ev][0]){sh.events[CS.ev][1]();CS.ev++;}
   const L=curLine();try{lipTick();}catch(e){}
-  if(L){const nar=L.who==='Narration';CS.chars+=dt*(nar?54:46);ui.dlg.querySelector('.txt').textContent=L.text.slice(0,Math.floor(CS.chars));ui.dlg.classList.toggle('done',CS.chars>=L.text.length);
-    try{if(nar&&CS.chars>=L.text.length&&!(typeof SC!=='undefined'&&CS.shots===SC.trailer)){
-      if(!CS.doneAt)CS.doneAt=CS.t;
-      const talking=vcBusy()||VC.want||(window.speechSynthesis&&speechSynthesis.speaking);
-      if(!talking&&CS.t-CS.doneAt>.6&&CS.t-CS.doneAt>(muted?1.2+L.text.length*.012:0)){CS.li++;CS.chars=0;showLine();}
-    }}catch(e){}}
+  if(L){CS.chars+=dt*(L.who==='Narration'?54:46);ui.dlg.querySelector('.txt').textContent=L.text.slice(0,Math.floor(CS.chars));ui.dlg.classList.toggle('done',CS.chars>=L.text.length);}
   else if(CS.t>=sh.dur&&!G3.stHold)nextShot();
   if(hit('adv'))advance();
   if(hit('esc'))endCutscene();
@@ -15858,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='195';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='196';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -15929,6 +15924,115 @@ function stPark(){
   S.upd=(t,dt)=>{const k=1+.06*Math.sin(clock*9)+(Math.random()<.02?-.2:0);S.lamp.intensity=5.5*k;S.lampG.material.opacity=.85*k;};
   return S;}
 SETS.park=stPark;
+// ---------- w216: daylight sets built from the user's models (loaded from assets/mini/): training ground = Mini Stadium + Maple tree;
+// lake park = Low Poly Tree Scene; both lit by one dawn-to-dusk sun rig ----------
+function stDayRig(g,S,Q,td0){
+  const K=[{t:0,el:.15,sc:'#ffb98a',si:2.0,hs:'#8fa7d8',hg:'#585660',hi:.95,top:'#5f86c4',hor:'#f7c9a2'},
+           {t:.35,el:.62,sc:'#fff0d6',si:2.5,hs:'#bcd8ff',hg:'#76805f',hi:1.15,top:'#6ea7e6',hor:'#d6e8f6'},
+           {t:1,el:.08,sc:'#ff7b4f',si:1.7,hs:'#8a80c0',hg:'#463a46',hi:.8,top:'#33457f',hor:'#f29c70'}];
+  const CC=h=>new THREE.Color(h);
+  const cv=document.createElement('canvas');cv.width=8;cv.height=256;const sx=cv.getContext('2d');
+  const skyTex=new THREE.CanvasTexture(cv);skyTex.encoding=THREE.sRGBEncoding;
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(500,24,16),new THREE.MeshBasicMaterial({map:skyTex,side:THREE.BackSide,fog:false,depthWrite:false}));dome.renderOrder=-5;g.add(dome);
+  const sun=new THREE.Mesh(new THREE.CircleGeometry(12,24),MB('#fff3d6',{fog:false}));g.add(sun);const sunG=stGlow('#ffd9a8',150,.75);g.add(sunG);
+  const hemi=new THREE.HemisphereLight(0xffffff,0x444444,1);g.add(hemi);
+  const key=new THREE.DirectionalLight(0xffffff,2);key.target.position.set(0,0,-2);g.add(key,key.target);
+  if(!Q){key.castShadow=true;const sh=key.shadow;sh.mapSize.set(2048,2048);sh.camera.left=-16;sh.camera.right=16;sh.camera.top=16;sh.camera.bottom=-16;sh.camera.near=1;sh.camera.far=180;sh.bias=-.0005;}
+  const fill=new THREE.DirectionalLight(0xffffff,.35);fill.position.set(8,6,14);g.add(fill);
+  S.tod=-9;S.gmat=[];
+  const apply=(td)=>{
+    let a,b,k;if(td<K[1].t){a=K[0];b=K[1];k=td/K[1].t;}else{a=K[1];b=K[2];k=(td-K[1].t)/(K[2].t-K[1].t);}
+    const L=(x,y)=>CC(x).lerp(CC(y),k),lin=c=>c.clone().convertSRGBToLinear(),el=lerp(a.el,b.el,k);
+    const dx=-.55,dz=-.65,n=Math.hypot(dx,dz),c=Math.cos(el),R=240;
+    key.position.set(dx/n*c*60,Math.sin(el)*60,dz/n*c*60);key.color.copy(lin(L(a.sc,b.sc)));key.intensity=lerp(a.si,b.si,k);
+    sun.position.set(dx/n*c*R,Math.sin(el)*R,dz/n*c*R);sun.lookAt(0,0,0);sunG.position.copy(sun.position);sunG.material.color.copy(lin(L(a.sc,b.sc)));
+    hemi.color.copy(lin(L(a.hs,b.hs)));hemi.groundColor.copy(lin(L(a.hg,b.hg)));hemi.intensity=lerp(a.hi,b.hi,k);
+    const top=L(a.top,b.top),hor=L(a.hor,b.hor);
+    const gr=sx.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#'+top.getHexString());gr.addColorStop(.5,'#'+hor.getHexString());gr.addColorStop(1,'#'+hor.getHexString());sx.fillStyle=gr;sx.fillRect(0,0,8,256);skyTex.needsUpdate=true;
+    S.bg.copy(lin(hor));S.fog.color.copy(lin(hor));S.fog.density=lerp(.0075,.011,Math.abs(td-.35)/.65);
+    for(const m of S.gmat)m.emissiveIntensity=td>.8?(td-.8)*4:0;};
+  apply(td0);S.tod=td0;S.rig=(td)=>{td=clamp(td,0,1);if(Math.abs(td-S.tod)>.003){S.tod=td;apply(td);}};
+  return {key,hemi};}
+// loads {chunks:[{mat,n,pos,min,sc,idx,ni,uv?}]} + .bin (uint16-quantised positions, scaled by the mesh) into `parent`
+function stLoadChunks(js,bin,M,parent,Q,castMats){
+  for(const c of js.chunks){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Uint16Array(bin,c.pos,c.n*3),3,true));geo.setIndex(new THREE.BufferAttribute(new Uint16Array(bin,c.idx,c.ni),1));
+    if(c.uv!=null)geo.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(bin,c.uv,c.n*2),2));
+    if(M[c.mat]&&M[c.mat].userData.up){const nn=new Float32Array(c.n*3);for(let i=0;i<c.n;i++)nn[i*3+1]=1;geo.setAttribute('normal',new THREE.BufferAttribute(nn,3));}
+    const m=new THREE.Mesh(geo,M[c.mat]||M.dark);m.position.set(c.min[0],c.min[1],c.min[2]);m.scale.set(c.sc[0],c.sc[1],c.sc[2]);m.frustumCulled=false;m.receiveShadow=c.mat!=='water';if(c.mat==='grass')m.scale.y*=.5;m.castShadow=!Q&&castMats.includes(c.mat);parent.add(m);}}
+function stMk(c,o){o=o||{};const m=new THREE.MeshStandardMaterial({color:LIN(c),roughness:o.r??.8,metalness:o.m??0,flatShading:o.flat!==false&&!o.up,side:o.ds?THREE.DoubleSide:THREE.FrontSide,transparent:!!o.tr,opacity:o.op??1,depthWrite:o.tr?false:true});
+  if(o.map){m.map=o.map;m.color.set(0xffffff);}if(o.at!=null)m.alphaTest=o.at;if(o.e){m.emissive=LIN(o.e);m.emissiveIntensity=0;}if(o.up)m.userData.up=1;return m;}
+function stLdTex(u,rep){return new Promise(res=>{new THREE.TextureLoader().load('assets/mini/'+u,t=>{t.encoding=THREE.sRGBEncoding;t.anisotropy=8;if(rep)t.wrapS=t.wrapT=THREE.RepeatWrapping;res(t);},undefined,()=>res(null));});}
+function stGround(){
+  const PI=Math.PI,g=new THREE.Group(),Q=lowQ();
+  const S={g,bg:new THREE.Color(),fog:new THREE.FogExp2(LIN('#cfe0ef'),.0085)};ST.scene.add(g);
+  stDayRig(g,S,Q,.15);
+  const og=new THREE.Mesh(new THREE.PlaneGeometry(900,900),new THREE.MeshStandardMaterial({color:LIN('#6f9a58'),roughness:1}));og.rotation.x=-PI/2;og.position.y=-.13;og.receiveShadow=true;g.add(og);
+  const path=new THREE.Mesh(new THREE.PlaneGeometry(3.2,60),M3('#b9ab8e',{r:1}));path.rotation.x=-PI/2;path.position.set(9,-.115,-42);path.receiveShadow=true;g.add(path);
+  const path2=new THREE.Mesh(new THREE.PlaneGeometry(90,3),M3('#b9ab8e',{r:1}));path2.rotation.x=-PI/2;path2.position.set(-10,-.114,-23);path2.receiveShadow=true;g.add(path2);
+  const fb=new THREE.Group();g.add(fb);const fpl=new THREE.Mesh(new THREE.PlaneGeometry(39.4,20.6),M3('#3f8f45',{r:.95}));fpl.rotation.x=-PI/2;fpl.position.y=-.01;fpl.receiveShadow=true;fb.add(fpl);S.fb=fb;
+  S.court=new THREE.Group();g.add(S.court);
+  const cone=M3('#ff7a1a',{r:.6});for(const [x,z] of [[-9,-4],[-9,-1.5],[-9,1],[-9,3.5],[6,5],[7.5,5],[9,5]])g.add(mesh(cyl(.02,.13,.3,10),cone,x,.15,z));
+  g.add(mesh(box(.62,.32,.34),M3('#1d3b6b',{r:.8}),-14.5,.16,6.5));g.add(mesh(cyl(.035,.035,.2,8),M3('#7fd0ff',{r:.4,m:.1}),-14.1,.1,6.8));g.add(mesh(box(.4,.05,.3),M3('#ffd23d',{r:.9}),-13.6,.03,5.8));
+  const bb=stBenchMk();bb.position.set(15.5,-.1,-14.2);bb.rotation.y=PI;g.add(bb);const bb2=stBenchMk();bb2.position.set(-4,-.1,-14.2);bb2.rotation.y=PI;g.add(bb2);
+  const cm=M3('#8b97aa',{r:1});for(let i=0;i<40;i++){const a=PI*(.05+.9*i/39)+PI,r=190+Math.random()*60,h=14+Math.random()*60,w=10+Math.random()*16;const b=mesh(box(w,h,w*(.6+Math.random()*.6)),cm,Math.cos(a)*r,h/2,Math.sin(a)*r);b.castShadow=false;g.add(b);}
+  const hm=M3('#5b8a52',{r:1});for(let i=0;i<9;i++){const a=i/9*PI2,h=mesh(sph(60+Math.random()*30,12,8),hm,Math.cos(a)*300,-20,Math.sin(a)*300);h.castShadow=false;g.add(h);}
+  const dp=new Float32Array(90*3),dg=new THREE.BufferGeometry();for(let i=0;i<90;i++){dp[i*3]=Math.random()*40-20;dp[i*3+1]=Math.random()*6;dp[i*3+2]=Math.random()*30-18;}dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+  const dust=new THREE.Points(dg,new THREE.PointsMaterial({color:0xfff3d0,size:2,sizeAttenuation:false,transparent:true,opacity:.5,fog:false,depthWrite:false}));g.add(dust);
+  S.upd=(t,dt,s3)=>{S.rig(s3.tod??.15);const p=dust.geometry.attributes.position.array;for(let i=0;i<90;i++){p[i*3+1]+=dt*.08;p[i*3]+=Math.sin(clock*.5+i)*dt*.1;if(p[i*3+1]>6)p[i*3+1]=0;}dust.geometry.attributes.position.needsUpdate=true;};
+  (async()=>{try{
+    const [js,bin]=await Promise.all([fetch('assets/mini/mini_stadium.json').then(r=>r.json()),fetch('assets/mini/mini_stadium.bin').then(r=>r.arrayBuffer())]);
+    const [tg,ts]=await Promise.all([stLdTex('mini_grass.jpg',1),stLdTex('mini_stone.jpg',1)]);
+    const M={post:stMk('#2a2929'),glass:stMk('#2c7d46',{r:.3,e:'#46ff8a',ds:1}),stoq:stMk('#b8b5ab',{r:.9}),grass:stMk('#4a9a46',{map:tg,r:.95,up:1}),stone:stMk('#b0aca2',{map:ts,r:.9,up:1}),net:stMk('#1c3d28',{r:.85,ds:1}),dark:stMk('#202226'),white:stMk('#ececec',{r:.6})};
+    S.gmat=[M.glass];const cg=new THREE.Group();cg.position.y=-.1;stLoadChunks(js,bin,M,cg,Q,['net','white','post']);S.court.add(cg);S.fb.visible=false;S.ready=true;
+  }catch(e){window.__gndE=String(e&&e.stack||e).slice(0,200);}
+  try{
+    const [js,bin]=await Promise.all([fetch('assets/mini/maple.json').then(r=>r.json()),fetch('assets/mini/maple.bin').then(r=>r.arrayBuffer())]);
+    const [tl,tb]=await Promise.all([stLdTex('leaf.png',0),stLdTex('bark.jpg',0)]);
+    const mkg=d=>{const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(bin,d.pos,d.n*3),3));geo.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(bin,d.nrm,d.n*3),3));geo.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(bin,d.uv,d.n*2),2));geo.setIndex(new THREE.BufferAttribute(new Uint16Array(bin,d.idx,d.ni),1));geo.computeBoundingSphere();return geo;};
+    const gb=mkg(js.bark),gl=mkg(js.leaf);
+    const bm=new THREE.MeshStandardMaterial({map:tb,roughness:.95,color:0xffffff});
+    const lms=['#ffffff','#e8ffd0','#fff0b0','#ffd9a0'].map(c=>{const m=new THREE.MeshStandardMaterial({map:tl,roughness:.7,side:THREE.DoubleSide});m.color.set(c);return m;});
+    const pos=[];let seed=7;const rr=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+    for(let i=0;i<(Q?10:30);i++){const a=rr()*PI2,r=(i<6?26:30)+rr()*(i<6?8:46);pos.push([Math.cos(a)*r,Math.sin(a)*r*(i%2?1:.8),.9+rr()*.9,rr()*PI2,i%5===0?3:i%7===0?2:rr()<.75?0:1]);}
+    for(const x of [-16,-8,0,16,22])pos.push([x,-17-rr()*5,1+rr()*.6,rr()*PI2,0]);
+    for(const [x,z,s,ry,v] of pos){const T=new THREE.Group();T.position.set(x,-.12,z);T.rotation.y=ry;T.scale.setScalar(s);
+      const b=new THREE.Mesh(gb,bm),l=new THREE.Mesh(gl,lms[v]);b.castShadow=l.castShadow=!Q&&Math.hypot(x,z)<34;T.add(b,l);g.add(T);}
+    S.trees=true;
+  }catch(e){window.__treeE=String(e&&e.stack||e).slice(0,200);}})();
+  return S;}
+SETS.ground=stGround;
+// lake park: the user's Low Poly Tree Scene (pond, island, trees) with wind-swayed foliage, a bench at the origin and ripples under the ego
+function stLake(){
+  const PI=Math.PI,g=new THREE.Group(),Q=lowQ();
+  const S={g,bg:new THREE.Color(),fog:new THREE.FogExp2(LIN('#cfe0ef'),.0085)};ST.scene.add(g);
+  stDayRig(g,S,Q,.55);
+  const WIND={value:.3},TT={value:0};S.wind=WIND;
+  const sway=(m,amt)=>{m.onBeforeCompile=sh=>{sh.uniforms.uWind=WIND;sh.uniforms.uT=TT;
+    sh.vertexShader=sh.vertexShader.replace('void main() {','uniform float uWind;uniform float uT;\nvoid main() {').replace('#include <project_vertex>',
+    'vec4 mvPosition=vec4(transformed,1.0);mvPosition=modelViewMatrix*mvPosition;vec3 wp0=(modelMatrix*vec4(transformed,1.0)).xyz;float hh=max(wp0.y+.3,0.);'+
+    'vec3 wo=vec3(sin(uT*2.3+wp0.x*.35+wp0.z*.25)+.5*sin(uT*5.1+wp0.z),0.,cos(uT*1.9+wp0.z*.35)+.4*sin(uT*4.3+wp0.x))*uWind*hh*hh*'+amt+';'+
+    'mvPosition.xyz+=(viewMatrix*vec4(wo,0.0)).xyz;gl_Position=projectionMatrix*mvPosition;');};m.needsUpdate=true;};
+  const fbm=new THREE.Mesh(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:LIN('#6f9a58'),roughness:1}));fbm.rotation.x=-PI/2;fbm.position.y=-.05;fbm.receiveShadow=true;g.add(fbm);S.fb=fbm;
+  const mod=new THREE.Group();{const P0=new THREE.Vector3(6.5,0,8.2),th=2.47,pp=P0.clone().applyAxisAngle(new THREE.Vector3(0,1,0),th);mod.rotation.y=th;mod.position.set(-pp.x,.12,-pp.z);}g.add(mod);S.mod=mod;
+  const bn=stBenchMk();g.add(bn);
+  // ripples that follow the ego over the water
+  S.rip=[];for(let i=0;i<3;i++){const r=new THREE.Mesh(new THREE.RingGeometry(.9,1,48),new THREE.MeshBasicMaterial({color:0xdff6ff,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,fog:false}));r.rotation.x=-PI/2;r.visible=false;g.add(r);S.rip.push(r);}
+  S.upd=(t,dt,s3)=>{S.rig(s3.tod??.55);const w=ST.wind||0;WIND.value=.28+w*2.2;TT.value=clock;ST.wind=0;
+    const R=ST.ripple;ST.ripple=null;for(let i=0;i<3;i++){const r=S.rip[i];if(!R){r.visible=false;continue;}const ph=((clock*.55+i/3)%1);r.visible=true;r.position.set(R.x,R.y+.02,R.z);r.scale.setScalar(.25+ph*2.6);r.material.opacity=.55*(1-ph);}};
+  (async()=>{try{
+    const [js,bin]=await Promise.all([fetch('assets/mini/park.json').then(r=>r.json()),fetch('assets/mini/park.bin').then(r=>r.arrayBuffer())]);
+    const [tg,tb,tl,tr]=await Promise.all([stLdTex('park_ground.jpg',1),stLdTex('park_bark.jpg',0),stLdTex('park_leaves.png',0),stLdTex('park_grass.png',0)]);
+    const gt=canvasTex(512,512,(x,w,h)=>{x.fillStyle='#4f8f3c';x.fillRect(0,0,w,h);for(let i=0;i<9000;i++){x.fillStyle=Math.random()<.5?'rgba(20,70,20,.35)':'rgba(170,220,110,.25)';x.fillRect(Math.random()*w,Math.random()*h,2,2+Math.random()*5);}for(let i=0;i<14;i++){x.fillStyle='rgba(120,90,50,.18)';x.beginPath();x.arc(Math.random()*w,Math.random()*h,8+Math.random()*26,0,7);x.fill();}});gt.wrapS=gt.wrapT=THREE.RepeatWrapping;gt.repeat.set(18,18);
+    const M={ground:stMk('#ffffff',{map:gt,r:.95}),bark:stMk('#ffffff',{map:tb,r:.95}),leaves:stMk('#ffffff',{map:tl,r:.7,ds:1,at:.45}),grass:stMk('#ffffff',{map:tr,r:.8,ds:1,at:.5}),water:new THREE.MeshBasicMaterial({color:LIN('#4aa6c4'),transparent:true,opacity:.88,depthWrite:false,fog:true})};
+    sway(M.leaves,'.0045');sway(M.bark,'.0012');sway(M.grass,'.006');
+    stLoadChunks(js,bin,M,mod,Q,['bark','leaves']);S.fb.visible=false;S.ready=true;
+  }catch(e){window.__lakeE=String(e&&e.stack||e).slice(0,200);}})();
+  return S;}
+SETS.lake=stLake;
+// the ego walks on the water: lift it to the surface and put ripples under it
+{const _sp=stP;stP=function(a,x,z,yaw,o,h){if(a&&a.stKey==='renEgo'&&ST.set==='lake'){if(h==null)h=-.7;ST.ripple={x,z,y:h};}return _sp.call(this,a,x,z,yaw,o,h);};}
+// the sitting pose from the user's drawing: hunched far forward, elbows on the knees, hands clasped between them, head down, knees wide, shins vertical
+SPOSE.benchSit={...SPS,hy:-.44,lLx:-1.5,lRx:-1.5,kL:1.5,kR:1.5,lLz:.62,lRz:.62,fL:0,fR:0,sx:.9,nx:.7,aLx:-.95,aLz:-.22,eL:1.45,aRx:-.95,aRz:-.22,eR:1.45,cL:.8,cR:.8};
 
 function stRank(title,rows,t){const s=sc(),k=ease(clamp(t*2.2,0,1));if(k<=0)return;const p=W>=H,w=Math.min(W-32,(p?320:340)*s),rh=Math.round(22*s+6),hh=Math.round(30*s+8),h=hh+rows.length*rh+8,x=p?W-w-Math.max(16,W*.03):W/2-w/2,y=p?H*.1:H*.07;
   ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(6,10,18,.9)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
@@ -15961,7 +16065,7 @@ function stP3(){
     {dur:1,draw:t=>{park2(t,{sit:1});},lines:[{who:NR,text:'After Isagi vanished, Nagi went to the park where they used to play together, and sat alone on the old bench.'},{who:NG,text:'Back then, whatever task they gave me, I avoided it. Not because I was scared. I was just too lazy to try.'},{who:NG,text:'I was not a good friend. I was not a good player either.'}],
       s3:{set:'park',cast:['renC'],toon:0,
         d3(t,dt,li,lt){ST.egoActor=true;const N=stA('renC');stP(N,0,-.04,0,{pose:'benchSit',ex:li>=1?'sad':'neutral'});stBall(.7,.12,1.15);
-          if(li<=0){const u=clamp(lt/8,0,1);stC(stE(5.2,3.8,u),stE(1.9,1.4,u),stE(6.0,4.4,u),0,.75,0,36);}
+          if(li<=0){const u=clamp(lt/8,0,1);stC(stE(1.8,1.0,u),stE(1.9,1.4,u),stE(5.4,4.0,u),0,.75,0,36);}
           else if(li===1){const u=clamp(lt/7,0,1),h=stHv(N,-.02);stCv(RP(0,-.04,0,stE(2.6,2.0,u),.55,1.05),h,30,.03);}
           else{const u=clamp(lt/5,0,1);stC(stE(-1.9,-1.4,u),1.05,stE(1.9,1.5,u),0,.82,0,28,-.03);}ST.focus.set(0,0,0);},
         ov(t,li){if(li<=0)stStamp('KUROSAWA PARK · 00:52',t);stTint('#04060b',.12);}}},
@@ -16007,12 +16111,12 @@ function stP3(){
           const u=clamp(lt/5,0,1),h=stHv(N,-.01);stCv(RP(0,.3,0,stE(1.5,.85,u),.3+(lt<.6?0:-.15)*0,1.28),h,stE(30,24,u),.02);ST.focus.set(0,0,.3);},
         ov(t,li,lt){if(lt<.5)stTint('#ffffff',.9*(1-lt/.5));stGlitch(lt<.8?1-lt/.8:0);stVig(.5,'rgba(30,10,60,1)');}}},
     {dur:1,draw:t=>{parkBG(t);const s=sc();figure(W*.5,H*.88,1.5*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(0,0,W,H);},lines:[{who:NR,text:'From that night on, Nagi trained on that same ground every single day, from dawn until the lights went out.'}],
-      s3:{set:'pitch',cast:['renC'],toon:0,rain:0,
-        d3(t,dt,li,lt){const N=stA('renC'),a=lt*1.2;stP(N,0,0,.75+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(Math.sin(.75+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.75+Math.sin(a)*.5)*.45);
+      s3:{set:'ground',cast:['renC'],toon:0,rain:0,
+        d3(t,dt,li,lt){this.tod=(lt*.9)%1;const N=stA('renC'),a=lt*1.2;stP(N,0,0,.75+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(Math.sin(.75+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.75+Math.sin(a)*.5)*.45);
           const o=lt*.12;stC(Math.sin(o+.6)*5.2,1.5,Math.cos(o+.6)*5.2,0,1.0,0,38);ST.focus.set(0,0,0);},
-        ov(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);stTint(n%2?'#0a1a30':'#3a2a10',.12);}}},
+        ov(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);stTint(n%2?'#ffe6bd':'#ffd2a4',.05);}}},
     {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.62,H*.88,1.45*s,{...ISHI,face:-1});},lines:[{who:CI,text:'I have been watching you train for days. Nobody practices like that just for fun.'},{who:CI,text:'Why don\'t you try your skills in tomorrow\'s selection exam at my club, Kurogane SC?'},{who:NG,text:'...Fine. I will come.'}],
-      s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+      s3:{set:'ground',tod:.16,cast:['renC','ishi'],toon:0,rain:0,
         d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi');stP(N,-1.1,0,PI/2,{pose:li===2?'hero':'stand',look:stLk(1.1,1.6,0),ex:li===2?'determined':'neutral'});stP(I,1.1,0,-PI/2,{pose:li===1?'talk':'armsCrossed',look:stLk(-1.1,1.6,0),ex:'focus'});stBall(-.7,.15,.5);
           if(li===0)stOTS(N,I,1.0,.42,1.6,30,0);else if(li===1){const u=clamp(lt/6,0,1);stOTS(N,I,stE(1.0,.8,u),.42,1.58,stE(32,27,u),0);}else stOTS(I,N,1.0,.42,1.6,30,0);ST.focus.set(0,0,0);},
         ov(t,li){if(li===0)stStamp('KUROSAWA PARK GROUND · DAWN',t);}}}
@@ -16239,11 +16343,11 @@ function stP6(){
         ov(t){cap6('NAGI LEFT AOBA UNITED.',t,.5,4.2,.82,'#ff8a80');stTint('#0a1020',.12);stVig(.45,'rgba(0,0,0,1)');}}},
     {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.8,H*.8,1.0*s,{...ISHI,face:-1});},
       lines:[{who:NR,text:'Day after day he practised alone. One morning, on his way home, Coach Ishida stopped outside the nets of the ground and watched.'}],
-      s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+      s3:{set:'ground',tod:.1,cast:['renC','ishi'],toon:0,rain:0,
         d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi'),a=lt*1.3;stP(N,-3,0,.8+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(-3+Math.sin(.8+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.8+Math.sin(a)*.5)*.45);
-          stP(I,9,-7,-2.3,{pose:'armsCrossed',look:stLk(-3,1.6,0),ex:'focus'});
-          const u=clamp(lt/8,0,1);stC(stE(11.2,10.2,u),1.75,stE(-8.6,-7.8,u),-3,1.1,0,stE(30,26,u));ST.focus.set(-3,0,0);},
-        ov(t,li,lt){if(lt<2)stStamp('KUROSAWA PARK GROUND · DAWN',t);stTint('#3a2a10',.1);}}}
+          stP(I,8.2,-11.5,Math.atan2(-11.2,11.5),{pose:'armsCrossed',look:stLk(-3,1.6,0),ex:'focus'});
+          const u=clamp(lt/8,0,1);stC(stE(12.8,10.8,u),1.8,stE(-14.8,-13.0,u),-3,1.15,0,stE(30,24,u));ST.focus.set(-3,0,0);},
+        ov(t,li,lt){if(lt<2)stStamp('KUROSAWA PARK GROUND · DAWN',t);stTint('#ffd9a0',.05);}}}
   ];
   const A=SC.parkEgo;if(!A||A.__w206)return;A.__w206=1;
   const mi=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/From that night on/.test(x.lines[0].text));
@@ -16321,17 +16425,17 @@ function stP8(){
   const PI=Math.PI;
   const A=SC.parkEgo;if(!A||A.__w210)return;A.__w210=1;
   const ix=A.findIndex(x=>x&&x.sfx==='glitch'&&x.dur===2.4);if(ix<0)return;
-  A[ix]={dur:6.4,sfx:'swoosh',draw:t=>{park2(t,{ego:t>3.6});},
+  A[ix]={dur:10.4,sfx:'swoosh',draw:t=>{park2(t,{ego:t>3.6});},
     s3:{set:'park',cast:['renC','renEgo'],toon:0,
       d3(t,dt){ST.egoActor=true;const N=stA('renC');
         const wind=ease(clamp(t/1.3,0,1))*(1-.6*ease(clamp((t-4.2)/1.8,0,1))),tor=ease(clamp((t-1.3)/1.9,0,1))*(1-ease(clamp((t-4.9)/1.5,0,1)));
         stP(N,0,.3,0,{pose:t<.8?'stand':'shield',look:stLk(0,1.5,5.8),ex:'shock'});
-        stLeaves({t,wind,tor,cx:0,cz:5.8});
+        stLeaves({t,wind,tor,cx:0,cz:5.8});ST.wind=Math.max(wind,.3+tor*.7);
         let zE=5.8;
-        if(t>3.2){const E=stA('renEgo'),u=clamp((t-3.2)/2.9,0,1);zE=5.8-2.4*u;stP(E,0,zE,PI,{pose:u<1?'walk':'armsCrossed',look:stLk(0,1.6,.3),ex:'determined'});stEyes(E,1);
-          stSys(0,zE,{t:t-3.2,panels:[],aura:clamp((t-3.2)*.8,0,1),ring:0,beam:.2,light:.7});}
+        if(t>3.2){const E=stA('renEgo'),u=clamp((t-3.2)/6.2,0,1);zE=5.8-2.4*u;stP(E,0,zE,PI,{pose:u<1?'walk':'armsCrossed',look:stLk(0,1.6,.3),ex:'determined'});stEyes(E,1);
+          stSys(0,zE,{t:t-3.2,panels:[],aura:clamp((t-3.2)*.8,0,1),ring:0,beam:0,light:0});}
         if(t<3.2){const u=clamp(t/3.2,0,1);stC(stE(1.0,.3,u),stE(1.0,1.3,u),stE(-2.4,-1.4,u),0,stE(1.2,2.0,u),5.6,stE(40,32,u));ST.focus.set(0,0,3);}
-        else{const u=clamp((t-3.2)/3.2,0,1);stC(stE(2.2,1.3,u),stE(.5,.75,u),zE-stE(2.2,2.6,u),0,1.25,zE,stE(34,38,u),-.03);ST.focus.set(0,0,zE);}
+        else{const u=clamp((t-3.2)/6.6,0,1);stC(stE(2.6,1.6,u),stE(1.7,1.3,u),zE-stE(2.8,3.4,u),0,1.0,zE,stE(36,40,u),-.03);ST.focus.set(0,0,zE);}
         stShake(.006*wind*(1-tor*.5));},
       ov(t){const w=ease(clamp(t/1.3,0,1));stTint('#0d1c0f',.14*w);stVig(.45,'rgba(0,10,4,1)');if(t>2.9&&t<3.3)stTint('#e6ffd9',(.4-(t-2.9))*.7);}}};
 }
@@ -16342,13 +16446,13 @@ function stP9(){
   if(xi<0||ii<0)return;
   const ball=(t)=>{if(t<1.2)return [-2.7+Math.sin(t*5)*.05,.13+.1*Math.abs(Math.sin(t*6)),.25];const u=clamp((t-1.2)/1.7,0,1),e=1-Math.pow(1-u,2.2);return [-2.7+5.8*e,.12+.1*Math.abs(Math.sin(u*14))*(1-u),.25-3.75*e];};
   const Y={dur:4.6,draw:t=>{sceneTraining(t);const s=sc();figure(W*.3,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*(.85-.1*clamp(t/2.4,0,1)),H*.8,1.0*s,{...ISHI,face:-1,pose:'walk',t});},
-    s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+    s3:{set:'ground',tod:.14,cast:['renC','ishi'],toon:0,rain:0,
       d3(t,dt){const N=stA('renC'),I=stA('ishi'),b=ball(t);
         stP(N,-3,0,.9,{pose:t<1.1?'ballFoot':'stand',pt:t,look:stLk(b[0],.3,b[2]),ex:t<1.2?'determined':'shock'});
-        const wu=clamp(t/2.4,0,1),ix=7.5+(3.9-7.5)*wu,iz=-6.5+(-3.9+6.5)*wu+Math.sin(wu*PI)*1.4,yaw=Math.atan2(b[0]-ix,b[2]-iz);
+        const wu=clamp(t/2.4,0,1),gk=clamp(wu/.35,0,1),ak=clamp((wu-.35)/.65,0,1),ix=wu<.35?9.4-.4*gk:9+(3.9-9)*ak,iz=wu<.35?-12.8+3.2*gk:-9.6+(-3.9+9.6)*ak+Math.sin(ak*PI)*1.6,yaw=Math.atan2(b[0]-ix,b[2]-iz);
         if(t<2.4)stP(I,ix,iz,yaw,{pose:'walk',ex:'neutral'});else stP(I,3.9,-3.9,Math.atan2(-3-3.9,0+3.9),{pose:t<3.4?'ballFoot':'armsCrossed',pt:t,look:stLk(-3,1.4,0),ex:'focus'});
         const bb=t>2.5?[3.55,.12,-3.75]:b;stBall(bb[0],bb[1],bb[2]);
-        if(t<2.2){const u=clamp(t/2.2,0,1);stC(stE(1.5,2.0,u),stE(1.8,1.5,u),stE(7.2,6.6,u),0,.9,-2.5,stE(44,40,u));ST.focus.set(0,0,-2);}
+        if(t<2.2){const u=clamp(t/2.2,0,1);stC(stE(-1.0,2.0,u),stE(1.9,1.6,u),stE(7.4,6.4,u),stE(3.5,4,u),1.0,stE(-6.5,-6.5,u),stE(46,40,u));ST.focus.set(3,0,-5);}
         else{const u=clamp((t-2.2)/2.4,0,1);stC(stE(7.4,6.2,u),stE(1.2,.9,u),stE(-.2,-1.4,u),3.5,stE(.5,.6,u),-3.8,stE(32,28,u));ST.focus.set(3.5,0,-3.8);}},
       ov(t){if(t<2)stStamp('OUTSIDE THE NETS · KUROSAWA PARK GROUND · DAWN',t);stTint('#3a2a10',.1);}}};
   A.splice(xi+1,0,Y);
@@ -16356,7 +16460,11 @@ function stP9(){
   const inv=A.find(x=>x&&x.lines&&x.lines[0]&&/I have been watching/.test(x.lines[0].text));
   if(inv&&inv.s3&&inv.s3.d3&&!inv.__bl){inv.__bl=1;const d0=inv.s3.d3;inv.s3.d3=function(t,dt,li,lt){d0.apply(this,arguments);stBall(.8,.12,.15);};}
 }
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();squadAttach();
+function stP10(){
+  const A=SC.parkEgo;if(!A||A.__w216)return;A.__w216=1;
+  for(const sh of A){if(sh&&sh.s3&&sh.s3.set==='park'){sh.s3.set='lake';if(sh.s3.tod==null)sh.s3.tod=.55;}}
+}
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
