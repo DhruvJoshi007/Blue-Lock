@@ -12656,13 +12656,13 @@ function stAttach(){const PI=Math.PI,A=(k,i,o)=>{if(SC[k]&&SC[k][i])SC[k][i].s3=
     d3(t){const u=clamp(t/9,0,1);stC(stE(-5,-3,u),stE(7.5,6,u),stE(-3.2,-2.4,u),.5,0,1.6,42,.04);ST.focus.set(0,0,2);},
     ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,560*s);stTint('#04060b',.42);stPaper(W/2-(p&&li>=1?W*.08:0),H*(p?.4:.34),clamp(t*2.5,0,1),pw,-.03,'AOBA STAR YOICHI ISAGI, 17,','MISSING AFTER HIT-AND-RUN','No one at the scene. Police appeal for witnesses.','THE AOBA DAILY');
       if(li>=1)stPaper(W/2+(p?W*.17:W*.04),H*(p?.52:.5),clamp(lt*3,0,1),pw*.62,.06,'AOBA UNITED SIGN','FORWARD DAICHI VANCE','"He will take the number nine role."','SPORTS · AOBA DAILY');}});
-  A('rain',5,{set:'street',cast:['renA','polA','polB'],toon:0,
+  A('rain',5,{set:'street',cast:['renA','polA','polB'],toon:0,day:1,tod:.27,rain:0,
     d3(t,dt,li,lt){const R=stA('renA');stPolice(t,li);
       const mx=Math.min(t*2.2,8.8),x=-11+mx,mv=mx<8.8,sw=Math.sin(t*2.4);
       stP(R,x,3.9,PI/2,{pose:mv?'walk':'stand',ex:mv?'focus':'angry',look:mv?stLk(x+2.2,1.5,3.9-3.2*sw):stLk(-.4+1.6*Math.sin(lt*1.1),1.2,-1.7+3.4*Math.sin(lt*.9))});
       if(mv){stC(x-.2,1.5,7.4,x+.9,1.4,3.9,38,0);}else{const u=clamp((t-4)/5,0,1);stC(stE(-4.8,-3.7,u),1.45,stE(6.4,5.5,u),-2.2,1.4,3.9,stE(36,30,u),0);}ST.focus.set(x,0,3.9);},
-    ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,420*s);if(li<=1){stTint('#04060b',.25);stPaper(p?W*.72:W/2,H*(p?.42:.3),clamp(t*2,0,1)*.95,pw,.04,'MISSING · YOICHI ISAGI, 17','HAVE YOU SEEN HIM?','Last seen on the river road, 22:40. Call Aoba Police.','MISSING PERSON');}
-      if(li>=2){stTint('#59e1ff',lt<.3?.25*(1-lt/.3):0);}stStamp('RIVER ROAD · ONE WEEK LATER',t);}});
+    ov(t,li,lt){const s=sc(),p=W>=H,pw=Math.min(W-40,420*s);if(li<=1){stPaper(p?W*.72:W/2,H*(p?.42:.3),clamp(t*2,0,1)*.95,pw,.04,'MISSING · YOICHI ISAGI, 17','HAVE YOU SEEN HIM?','Last seen on the river road, 22:40. Call Aoba Police.','MISSING PERSON');}
+      if(li>=2){stTint('#59e1ff',lt<.3?.25*(1-lt/.3):0);}stStamp('RIVER ROAD · MORNING, ONE WEEK LATER',t);}});
   A('bench',1,{set:'night',cast:['renA','r9','r10'],toon:1,crowd:.8,
     d3(t){const i=Math.min(2,Math.floor(t/1.2));stP(stA('renA'),0,0,.4,{pose:['handsHead','dejected','kneesHands'][i],ex:'sad'});
       if(i===2){stP(stA('r9'),-5.2,-4.2,2.3,{pose:'celebrate',cel:'fistPump',celT:t-2.2+1.2});stP(stA('r10'),-3.8,-6.4,2.6,{pose:'cheer'});}
@@ -15853,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='197';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='198';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16676,6 +16676,33 @@ function stP11(){
   {const sh=A[7],od=sh.s3.d3,ovo=sh.s3.ov;
     sh.s3=EX({tod:.4,cast:[...sh.s3.cast,'kenji','shun','taro','goro'],d3(t,dt,li,lt){show('dug');od.apply(this,arguments);stSubs(-3.6,3.0,0);},ov:ovo});}
 }
+// street day mode: toggled each frame from the shot's `day` flag, so every other street shot stays a rainy night
+function stDayStreet(){
+  if(SETS.street.__w218)return;const base=SETS.street;
+  const w=function(){
+    const S=base(),g=S.g,Q=lowQ(),n0=g.children.length,bg0=S.bg.clone(),fc0=S.fog.color.clone(),fd0=S.fog.density;
+    const rg=stDayRig(g,S,Q,.27);rg.key.target.position.set(0,0,0);
+    if(rg.key.castShadow){const c=rg.key.shadow.camera;c.left=-24;c.right=24;c.top=24;c.bottom=-24;c.updateProjectionMatrix();}
+    const dayObjs=g.children.slice(n0);for(const o of dayObjs)o.visible=false;
+    const nightOff=[],dim=[];let on=false;
+    const winDay=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#b4bccb';x.fillRect(0,0,w,h);for(let r=0;r<4;r++)for(let c=0;c<4;c++){const g2=x.createLinearGradient(0,r*64+12,0,r*64+48);g2.addColorStop(0,'#8fb4dc');g2.addColorStop(1,'#4f6f98');x.fillStyle=g2;x.fillRect(c*64+9,r*64+12,46,36);x.fillStyle='rgba(255,255,255,.35)';x.fillRect(c*64+9,r*64+12,46,6);}});
+    winDay.wrapS=winDay.wrapT=THREE.RepeatWrapping;
+    S.dayMode=v=>{v=!!v;if(v===on)return;on=v;
+      if(v){nightOff.length=0;dim.length=0;
+        g.traverse(o=>{if(dayObjs.includes(o)||dayObjs.some(d=>d.children&&d.children.includes(o)))return;
+          if(o.isLight&&o.visible){nightOff.push(o);o.visible=false;}
+          else if(o.visible&&(o.isSprite||(o.material&&!Array.isArray(o.material)&&o.material.blending===THREE.AdditiveBlending&&!o.isPoints))){nightOff.push(o);o.visible=false;}
+          else if(o.material&&o.material.isMeshBasicMaterial&&o.material.map&&!dim.some(d=>d[0]===o.material)){dim.push([o.material,o.material.color.clone(),o.material.map]);o.material.map=winDay;o.material.color.setRGB(1,1,1);o.material.needsUpdate=true;}
+          else if(o.material&&o.material.isMeshStandardMaterial&&!o.material.map&&!o.material.transparent&&o.isMesh&&o.material.color.r+o.material.color.g+o.material.color.b<.12&&!dim.some(d=>d[0]===o.material)){dim.push([o.material,o.material.color.clone()]);o.material.color.copy(LIN('#8a93a2'));}});
+        for(const o of dayObjs)o.visible=true;S.tod=-9;S.rig(.27);}
+      else{for(const o of nightOff)o.visible=true;for(const [m,c,mp] of dim){m.color.copy(c);if(mp){m.map=mp;m.needsUpdate=true;}}for(const o of dayObjs)o.visible=false;
+        S.bg.copy(bg0);S.fog.color.copy(fc0);S.fog.density=fd0;}};
+    const u0=S.upd;S.upd=(t,dt,s3)=>{S.dayMode(!!s3.day);
+      if(on){rg.key.position.sub(rg.key.target.position);S.rig(s3.tod??.27);const f=ST.focus;rg.key.target.position.set(f.x,0,f.z);rg.key.position.add(rg.key.target.position);rg.key.target.updateMatrixWorld();}
+      u0(t,dt,s3);if(on){S.fog.density=.006;S.lamp&&(S.lamp.visible=false);}};
+    return S;};
+  w.__w218=1;SETS.street=w;}
+window.__ST=ST;stDayStreet();
 stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
