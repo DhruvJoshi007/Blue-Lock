@@ -8344,13 +8344,13 @@ function nMat(d,kit,st,o={}){
   if(N.mats.has(key))return N.mats.get(key);
   const base=N.skinBase,t=d.skinLin?d.skinLin.clone():NLIN(tone);
   const U={nJer:{value:NLIN(kit.jersey||'#3a6cd8')},nSho:{value:NLIN(kit.shorts||kit.jersey||'#3a6cd8')},nAcc:{value:NLIN(kit.trim||kit.accent||'#4a5ad8')},
-    nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},...(()=>{let hs=null;try{hs=d.model?nHeadSkin(d.model):null;}catch(e){}return {nFaceT:{value:hs?new THREE.Vector3(hs.r,hs.g,hs.b):new THREE.Vector3(1,1,1)},nFaceL:{value:hs?Math.pow(Math.max(.02,.2126*hs.r+.7152*hs.g+.0722*hs.b),1/2.2):-1}};})(),nSkT:{value:(()=>{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);})()},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
+    nSkin:{value:new THREE.Vector3(t.r/base.r,t.g/base.g,t.b/base.b)},...(()=>{let hs=null;try{hs=d.model?nHeadSkin(d.model):null;}catch(e){}return {nFaceT:{value:(()=>{try{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);}catch(e){return hs?new THREE.Vector3(hs.r,hs.g,hs.b):new THREE.Vector3(1,1,1);}})()},nFaceL:{value:hs?Math.pow(Math.max(.02,.2126*hs.r+.7152*hs.g+.0722*hs.b),1/2.2):-1}};})(),nSkT:{value:(()=>{const q=NLIN(NSKIN[d.bodySkin||d.skin]||tone);return new THREE.Vector3(q.r,q.g,q.b);})()},nHair:{value:NLIN(hair)},nHairRef:{value:N.hairRef[st]||.5},nEye:{value:NLIN(f.eyeColor||'#5a3a22')},
     nBoot:{value:NLIN(kit.boots||'#e8e8ee')},nGlove:{value:NLIN(kit.gloves||'#000')},nGl:{value:kit.gloves?1:0},nUniRef:{value:N.uniRef},nInner:{value:NLIN(kit.sleeve||'#1d2233')},
     nNumT:{value:nNumTex(kit.num,kit.jersey||'#3a6cd8',kit.accent||'#fff')},nNumR:{value:new THREE.Vector4(N.slot.num[0]/2048,N.slot.num[1]/1024,N.slot.num[2]/2048,N.slot.num[3]/1024)},
-    nAwake:{value:0},nEgoSk:{value:0},nEgoT:{value:0},nEgoU:{value:(typeof RIG!=='undefined'&&RIG&&RIG.height?RIG.height/1.8:1.056)},nEgoC:{value:(N.hp?new THREE.Vector3(0,N.hp.y+.07,N.hp.z+.01):new THREE.Vector3(0,1.6,0))},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nGB:{value:gi?V4(gi.brw):new THREE.Vector4(0,0,1,0)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
+    nAwake:{value:0},nJaw:{value:0},nEgoSk:{value:0},nEgoT:{value:0},nEgoU:{value:(typeof RIG!=='undefined'&&RIG&&RIG.height?RIG.height/1.8:1.056)},nEgoC:{value:(N.hp?new THREE.Vector3(0,N.hp.y+.07,N.hp.z+.01):new THREE.Vector3(0,1.6,0))},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nGB:{value:gi?V4(gi.brw):new THREE.Vector4(0,0,1,0)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
   const m=new THREE.MeshStandardMaterial({map:(d.model&&N.cm[d.model]?N.cm[d.model].tex:N.atlas),roughness:.82,metalness:0,skinning:true,side:THREE.DoubleSide});m.userData.nU=U;m.extensions={derivatives:true};
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);float exm=smoothstep(-.001,-.008,eq.x)*smoothstep(.17,.13,length(vec2(eq.x*1.15,eq.y+.06)))*smoothstep(-.147,-.14,eq.y)*smoothstep(.09,.05,eq.y)*smoothstep(.0,.04,eq.z);transformed+=normalize(objectNormal)*.0022*nEgoU*exm;}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU,nJaw;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nJaw>.001){if(nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 jq=(position-nEgoC)/nEgoU;float jw=smoothstep(-.092,-.122,jq.y)*(1.-smoothstep(-.17,-.2,jq.y))*smoothstep(-.03,.02,jq.z)*(1.-smoothstep(.1,.14,abs(jq.x)));transformed.y-=nJaw*.027*nEgoU*jw;transformed.z-=nJaw*.006*nEgoU*jw;}else if(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==6.){transformed.y-=nJaw*.02;}}\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);float exm=smoothstep(-.001,-.008,eq.x)*smoothstep(.17,.13,length(vec2(eq.x*1.15,eq.y+.06)))*smoothstep(-.147,-.14,eq.y)*smoothstep(.09,.05,eq.y)*smoothstep(.0,.04,eq.z);transformed+=normalize(objectNormal)*.0022*nEgoU*exm;}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
 flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;float nFx=0.;uniform vec4 nGE;uniform vec4 nGM;uniform vec4 nGN;uniform vec3 nSkB;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nFaceT;uniform float nFaceL;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
 uniform float nEgoSk,nEgoU,nEgoT;uniform vec3 nEgoC;vec3 nEgoE=vec3(0.);vec3 nEgoB=vec3(0.);float nEgoW=0.;
@@ -8395,7 +8395,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
     vec3 sk=nSkT*.72*clamp(cl/Lt,.8,1.0);c=mix(c,sk,sw*.94);}
   if(nSkF>.5)c*=(nOrig>.5?.95:.78);
   if(nEgoSk>.5&&nOrig>.5&&(r==0.||r==2.||r==3.||r==13.||r==4.||r==14.)){
-    vec3 q=(vOP-nEgoC)/nEgoU;
+    vec3 q=(vOP-nEgoC)/nEgoU;q.y=q.y<-.05?-.05+(q.y+.05)*1.13:q.y;
     float wz=nEN(vec2(q.y*38.,1.7))-.5,wy=nEN(vec2(q.y*140.,5.))-.5,wk=max(0.,nEN(vec2(q.y*21.,9.))-.55);float bx=-.002+.03*wz+.01*wy-.03*wk+.004*sin(q.y*61.+1.7);
     float side=smoothstep(bx+.004,bx-.004,q.x);
     float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(.0,.04,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
@@ -12508,7 +12508,7 @@ function stDraw(sh,t,dt){
     const set=stUse(S3d.set);for(const a of ST.actors.values()){a.stUsed=false;a.stEyeA=0;if(a.stPh)a.stPh.visible=false;}if(ST.ball)ST.ball.visible=false;ST.sys.used=false;ST.panels=null;
     const SS=ST.sets.street;if(SS){SS.mem.visible=SS.car.visible=SS.phone.visible=false;if(SS.pol)SS.pol.visible=false;SS.flick=0;SS.carL.intensity=0;SS.flash.intensity=0;}
     const pc=G3.cam;G3.cam=ST.cam;try{S3d.d3(t,dt,li,lt);}finally{G3.cam=pc;}
-    for(const a of ST.actors.values()){if(!a.stUsed)a.root.visible=false;else stEyesApply(a);}if(!ST.sys.used)ST.sys.f.visible=false;
+    for(const a of ST.actors.values()){if(!a.stUsed)a.root.visible=false;else{stEyesApply(a);try{lipApply(a);}catch(e){}}}if(!ST.sys.used)ST.sys.f.visible=false;
     if(set&&set.upd)set.upd(t,dt,S3d);
     stRender(dt,S3d.toon);ST.cut=false;ST.frames++;
     clear2D();if(S3d.vig!==0)stVig(S3d.vig??.55);const lb=S3d.lb===0||ST.panels?0:stLB(t,S3d.lb);if(S3d.ov)S3d.ov(t,li,lt,lb);
@@ -15853,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='201';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='202';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16450,9 +16450,9 @@ function stP9(){
       d3(t,dt){const N=stA('renC'),I=stA('ishi'),b=ball(t);
         stP(N,-3,0,.9,{pose:t<1.1?'ballFoot':'stand',pt:t,look:stLk(b[0],.3,b[2]),ex:t<1.2?'determined':'shock'});
         const wu=clamp(t/2.4,0,1),gk=clamp(wu/.35,0,1),ak=clamp((wu-.35)/.65,0,1),ix=wu<.35?9.4-.4*gk:9+(3.9-9)*ak,iz=wu<.35?-12.8+3.2*gk:-9.6+(-3.9+9.6)*ak+Math.sin(ak*PI)*1.6,yaw=Math.atan2(b[0]-ix,b[2]-iz);
-        if(t<2.4)stP(I,ix,iz,yaw,{pose:'walk',ex:'neutral'});else stP(I,3.9,-3.9,Math.atan2(-3-3.9,0+3.9),{pose:t<3.4?'ballFoot':'armsCrossed',pt:t,look:stLk(-3,1.4,0),ex:'focus'});
+        if(t<2.4){const q=clamp((t-.35)/1.8,0,1),e=q*q*(3-2*q),px=9.4+(3.9-9.4)*e,pz=-12.8+(-3.9+12.8)*e+Math.sin(e*PI)*1.2;stP(I,px,pz,Math.atan2(b[0]-px,b[2]-pz),{pose:q<=0?'armsCrossed':'walk',look:q<=0?stLk(b[0],1.2,b[2]):null,ex:'determined'});}else stP(I,3.9,-3.9,Math.atan2(-3-3.9,0+3.9),{pose:t<3.4?'ballFoot':'armsCrossed',pt:t,look:stLk(-3,1.4,0),ex:'focus'});
         const bb=t>2.5?[3.55,.12,-3.75]:b;stBall(bb[0],bb[1],bb[2]);
-        if(t<2.2){const u=clamp(t/2.2,0,1);stC(stE(-1.0,2.0,u),stE(1.9,1.6,u),stE(7.4,6.4,u),stE(3.5,4,u),1.0,stE(-6.5,-6.5,u),stE(46,40,u));ST.focus.set(3,0,-5);}
+        if(t<.35){const u=clamp(t/2.2,0,1);stC(stE(-1.0,2.0,u),stE(1.9,1.6,u),stE(7.4,6.4,u),stE(3.5,4,u),1.0,stE(-6.5,-6.5,u),stE(46,40,u));ST.focus.set(3,0,-5);}else if(t<2.2){const I2=stA('ishi'),yw=I2.stYaw||0,hx=Math.sin(yw),hz=Math.cos(yw),ppx=hz,ppz=-hx;stC(I2.stX+ppx*4.6+hx*.5,1.05,I2.stZ+ppz*4.6+hz*.5,I2.stX+hx*.5,.95,I2.stZ+hz*.5,38);ST.focus.set(I2.stX,0,I2.stZ);}
         else{const u=clamp((t-2.2)/2.4,0,1);stC(stE(7.4,6.2,u),stE(1.2,.9,u),stE(-.2,-1.4,u),3.5,stE(.5,.6,u),-3.8,stE(32,28,u));ST.focus.set(3.5,0,-3.8);}},
       ov(t){if(t<2)stStamp('OUTSIDE THE NETS · KUROSAWA PARK GROUND · DAWN',t);stTint('#3a2a10',.1);}}};
   A.splice(xi+1,0,Y);
@@ -16702,6 +16702,91 @@ function stDayStreet(){
       u0(t,dt,s3);if(on){S.fog.density=.006;S.lamp&&(S.lamp.visible=false);}};
     return S;};
   w.__w218=1;SETS.street=w;}
+// ---- camera director: cuts every ~1.25 s between six angles, each one focused on a single athlete (or the whole group, framed to the real window aspect) ----
+function stDirCam(t,keys,o){
+  o=o||{};const PI=Math.PI,acts=keys.map(k=>{try{return stA(k);}catch(e){return null;}}).filter(a=>a&&a.stX!=null);if(!acts.length)return;
+  const CUT=o.cut||1.25,n=Math.floor(Math.max(0,t)/CUT),u=Math.max(0,t)/CUT-n,type=n%6;
+  let cx=0,cz=0;for(const a of acts){cx+=a.stX;cz+=a.stZ;}cx/=acts.length;cz/=acts.length;let r=2;for(const a of acts)r=Math.max(r,Math.hypot(a.stX-cx,a.stZ-cz));
+  const me=acts.find(a=>a.stKey==='renT'),pick=(i)=>(me&&(i%3===0))?me:acts[(n*2+i)%acts.length],P=pick(n+type),yaw=P.stYaw||0,fx=Math.sin(yaw),fz=Math.cos(yaw),px=-fz,pz=fx,
+    hv=stFov(o.fov||40)*PI/360,hh=Math.atan(Math.tan(hv)*(ST.asp||1.3)),half=Math.min(hv,hh),D=(r+2.4)/Math.tan(half)*1.08,sg=(P.stZ>cz||pz>0)?1:-1;
+  if(type===0){let mx=0,mz=0;for(const a of acts){mx+=Math.sin(a.stYaw||0);mz+=Math.cos(a.stYaw||0);}const ml=Math.hypot(mx,mz)/acts.length;if(ml>.6){mx/=acts.length*ml;mz/=acts.length*ml;}else{mx=0;mz=-1;}
+    const D2=(r+2.4)/Math.tan(half)*1.05;stC(cx-mx*D2,1.7+D2*.24,cz-mz*D2,cx+mx*2,.9,cz+mz*2,o.fov||40);}                                               // 1 wide, everybody in frame
+  else if(type===1)stC(P.stX+px*3.4*sg+fx*(.6+u*1.2),1.15,P.stZ+pz*3.4*sg+fz*(.6+u*1.2),P.stX+fx*1.4,1.0,P.stZ+fz*1.4,36);   // 2 side tracking
+  else if(type===2)stC(P.stX+fx*(6-u*1.2)+px*.5,.5,P.stZ+fz*(6-u*1.2)+pz*.5,P.stX,.95,P.stZ,50);       // 3 low, head on
+  else if(type===3)stC(cx,6+r*.9,cz+r*.8+3,cx,0,cz,46);                                                // 4 drone from above
+  else if(type===4)stC(P.stX-fx*(2.6-u*.4)+px*.5,1.65,P.stZ-fz*(2.6-u*.4)+pz*.5,P.stX+fx*6,1.0,P.stZ+fz*6,42);   // 5 behind the shoulder
+  else{const Q=pick(n+type+1),qy=Q.stYaw||0,qx=Math.sin(qy),qz=Math.cos(qy);stC(Q.stX+qx*(2.8-u*.5)-qz*1.1*sg,1.5,Q.stZ+qz*(2.8-u*.5)+qx*1.1*sg,Q.stX,1.45,Q.stZ,32);}   // 6 face close from the front quarter
+  ST.focus.set(cx,0,cz);
+}
+function stP14(){
+  const A=SC.selection;if(!A||A.__w222)return;A.__w222=1;
+  const wrap=(i,keys,o)=>{const sh=A[i];if(!sh||!sh.s3||!sh.s3.d3)return;const od=sh.s3.d3;
+    sh.s3.d3=function(t,dt,li,lt){od.apply(this,arguments);if(li===0){try{stDirCam(t,keys,o);}catch(e){console.warn('dir cam',e);}}};};
+  wrap(2,['exC','exR','renT','exB','goro']);
+  wrap(3,['exB','exC','exR','kenji','renT']);
+  wrap(4,['exR','renT','exC','exB','taro'],{cut:1.1});
+  wrap(5,['exB','exC','renT','exR','kenji']);
+  wrap(6,['exR','exC','exB','taro','shun','renT'],{cut:1.4});
+}
+function stStreaks(t,al){if(al<=.01)return;ctx.save();ctx.lineCap='round';
+  for(let i=0;i<16;i++){const ph=(t*(.5+.13*(i%5))+i*.37)%1,y=H*(.08+.84*((i*.618)%1)),len=W*(.35+.25*((i*.37)%1)),x=-len+(W+len*2)*ph,a=al*Math.sin(ph*Math.PI)*.5;
+    ctx.strokeStyle='rgba(245,250,240,'+a.toFixed(3)+')';ctx.lineWidth=(2+4*((i*.29)%1))*sc();ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+len*.5,y-H*.04*Math.sin(t*2+i),x+len,y+H*.02);ctx.stroke();}
+  ctx.restore();}
+function stP15(){
+  const A=SC.parkEgo;if(!A||A.__w223)return;A.__w223=1;
+  const sh=A.find(x=>x&&x.sfx==='swoosh'&&x.dur===10.4);if(!sh||!sh.s3)return;
+  const PI=Math.PI,Z0=8.4,zOf=t=>t<3.2?Z0:t<8.4?Z0-3.7*clamp((t-3.2)/5.2,0,1):4.7-1.3*clamp((t-8.4)/1.0,0,1);
+  sh.dur=9.6;
+  sh.s3.d3=function(t,dt){ST.egoActor=true;const N=stA('renC');
+    const wind=ease(clamp(t/1.3,0,1))*(1-.6*ease(clamp((t-4.2)/1.8,0,1))),tor=ease(clamp((t-1.3)/1.9,0,1))*(1-ease(clamp((t-5.2)/1.6,0,1)));
+    stP(N,0,.3,0,{pose:t<.8?'stand':'shield',look:stLk(0,1.5,Z0),ex:'shock'});
+    stLeaves({t,wind,tor,cx:0,cz:Z0});ST.wind=Math.max(wind,.3+tor*.7);
+    const zE=zOf(t);
+    if(t>3.2){const E=stA('renEgo');stP(E,0,zE,PI,{pose:'walk',look:stLk(0,1.6,.3),ex:'determined'});stEyes(E,1);
+      stSys(0,zE,{t:t-3.2,panels:[],aura:clamp((t-3.2)*.8,0,1),ring:0,beam:0,light:0});}
+    if(t<3.2){const u=clamp(t/3.2,0,1);stC(stE(1.0,.3,u),stE(1.0,1.3,u),stE(-2.4,-1.4,u),0,stE(1.2,2.0,u),Z0-.2,stE(38,32,u));ST.focus.set(0,0,5);}
+    else if(t<5.4){const u=clamp((t-3.2)/2.2,0,1);stC(2.3,stE(.3,.42,u),zE+.5,0,.32+.1*u,zE-.2,34);ST.focus.set(0,0,zE);}               // low side: boots striding out of the leaves
+    else if(t<7.4){const u=clamp((t-5.4)/2,0,1);stC(stE(2.7,2.4,u),stE(.9,1.0,u),zE+.6,0,.85,zE-.1,30);ST.focus.set(0,0,zE);}             // side at hip height, head out of frame
+    else if(t<8.4){const u=clamp((t-7.4)/1,0,1);stC(stE(2.4,3.8,u),stE(1.0,1.5,u),zE+stE(.6,2.0,u),0,stE(1.0,1.2,u),zE-.3,stE(30,36,u));ST.focus.set(0,0,zE);}   // wide profile from behind
+    else{const u=clamp((t-8.4)/1.2,0,1),a=stE(-.484,1.25,u),r=stE(4.29,2.3,u);stC(r*Math.cos(a),1.5,zE-r*Math.sin(a),0,stE(1.2,1.62,u),zE,stE(36,34,u),-.02*(1-u));ST.focus.set(0,0,zE);}   // swing round to the front, where Nagi stands
+    stShake(.006*wind*(1-tor*.5));};
+  sh.s3.ov=function(t){const w=ease(clamp(t/1.3,0,1));stTint('#0d1c0f',.14*w);stVig(.45,'rgba(0,10,4,1)');if(t>2.9&&t<3.3)stTint('#e6ffd9',(.4-(t-2.9))*.7);
+    stStreaks(t,clamp((t-3.3)/.6,0,1)*(1-clamp((t-7.6)/.8,0,1)));};
+}
+// ---- lip movement: the face shader's jaw drop (uniform nJaw) opens and closes in a syllable-like rhythm while the current line's voice clip (or text length) lasts ----
+function lipSpeaks(a){
+  if(!CS||clock>=(CS.talkEnd||0)||!CS.talkWho)return false;const who=CS.talkWho,key=a.stKey,dk=CAST[key]&&CAST[key][0];
+  if(who==='SYSTEM'){const E=ST.actors.get('renEgo');return key==='renEgo'||(dk==='ren'&&!(E&&E.stUsed));}
+  if(who==='Nagi')return dk==='ren'&&key!=='renEgo';
+  if(typeof STD==='object'&&STD[who])return STD[who]===dk&&key!=='renEgo';
+  const nm=((a.design&&a.design.name)||'').toLowerCase(),w=String(who).toLowerCase().replace(/^coach /,'');return !!nm&&(nm.includes(w)||w.includes(nm.split(' ').pop()));}
+function lipApply(a){
+  const U=a.nMat&&a.nMat.userData&&a.nMat.userData.nU;if(!U||!U.nJaw)return;const dt=Math.min(ST.dt||.016,.1);if(a.lipV==null){a.lipV=0;a.lipS=Math.random()*6;}
+  let tg=0;if(lipSpeaks(a)){const c=clock,syl=Math.abs(Math.sin(c*9.6+a.lipS)),sw=.55+.45*Math.sin(c*3.3+a.lipS*1.7),gate=Math.sin(c*1.45+a.lipS)>-.8?1:.12;tg=clamp(syl*sw*gate*1.15,0,1);}
+  a.lipV+=(tg-a.lipV)*Math.min(1,dt*22);U.nJaw.value=window.__jawForce!=null?window.__jawForce:a.lipV;}
+function stP16(){
+  const A=SC.parkEgo;if(!A||A.__w224)return;A.__w224=1;
+  const sh=A.find(x=>x&&x.lines&&x.lines[0]&&/From that night on, Nagi trained/.test(x.lines[0].text));if(!sh||!sh.s3)return;
+  const PI=Math.PI;
+  SPOSE.squat={...SPOSE.benchRelax,hy:-.5,lLx:-1.25,lRx:-1.25,kL:1.9,kR:1.9,sx:.28,nx:-.1,aLx:-1.5,aLz:.1,eL:.1,aRx:-1.5,aRz:.1,eR:.1,lLz:.12,lRz:.12};
+  const SEG=1.8,NAMES=['DRIBBLING','SPRINTS','SQUATS','JUGGLING','SHOOTING'];
+  sh.s3.d3=function(t,dt,li,lt){
+    this.tod=(lt*.9)%1;const N=stA('renC'),k=Math.floor(lt/SEG)%5,s=lt-Math.floor(lt/SEG)*SEG,u=clamp(s/SEG,0,1);ST.focus.set(0,0,0);
+    if(k===0){const z=-4.8+9.6*u,x=-9+.75*Math.sin((z+4)/2.5*PI),dx=.75*Math.cos((z+4)/2.5*PI)*PI/2.5,yaw=Math.atan2(dx,1),bz=z+.55*Math.cos(yaw),bx=x+.55*Math.sin(yaw);
+      stP(N,x,z,yaw,{ex:'determined'});stBall(bx,.13+.05*Math.abs(Math.sin(lt*10)),bz,6*ST.dt/.15);stC(-5.6,1.15,z+.7,x,.8,z+1.3,40);ST.focus.set(x,0,z);}
+    else if(k===1){const x=-8+17*(u*u*(3-2*u)*.6+u*.4);stP(N,x,-8,PI/2,{ex:'determined'});stC(x-1.5,1.2,-4.8,x+2,.95,-8,40);ST.focus.set(x,0,-8);}
+    else if(k===2){const ph=Math.floor(s/.45)%2;stP(N,4,-2,.9,{pose:ph?'stand':'squat',ex:'focus'});
+      stC(4+Math.sin(.9+.5)*3.4,1.0,-2+Math.cos(.9+.5)*3.4,4,.85,-2,38);ST.focus.set(4,0,-2);}
+    else if(k===3){const b=Math.abs(Math.sin(s*5.2));stP(N,2,3,.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(2+.12*Math.sin(s*5.2),.25+.7*b,3+.35,6*ST.dt/.15);
+      stC(2+Math.sin(1.3)*3.4,.8,3+Math.cos(1.3)*3.4,2,.7,3.2,42);ST.focus.set(2,0,3);}
+    else{const kp=.9,x0=3.5,fl=clamp((s-kp)/.7,0,1);stP(N,x0-.7,0,PI/2,{pose:(s>kp-.2&&s<kp+.35)?'kick':'ballFoot',pt:s,ex:'determined'});
+      const bx=s<kp?x0:x0+(9.2-x0)*fl,by=s<kp?.13:.13+Math.sin(fl*PI)*1.1+fl*.3,bz=s<kp?0:(5-0)*fl;stBall(bx,by,bz,s<kp?0:10*ST.dt/.15);
+      stC(x0-3.4,1.5,-3.6,stE(x0,x0+3,u),.8,stE(0,2,u),40);ST.focus.set(x0+2,0,1);}
+  };
+  const oo=sh.s3.ov;
+  sh.s3.ov=function(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);
+    smallText(NAMES[Math.floor(lt/SEG)%5],W*.5,H*.2,Math.round(15*sc()),'#bfe3ff','center',FS,700);stTint(n%2?'#ffe6bd':'#ffd2a4',.05);};
+}
 function stP13(){
   const A=SC.trialIntro;if(!A||A.__w220)return;A.__w220=1;const sh=A[1];if(!sh||!sh.s3||!sh.lines||sh.lines.length<4)return;
   const L=sh.lines;
@@ -16722,7 +16807,7 @@ function stP13(){
 function stP12(){for(const k of Object.keys(SC)){const a=SC[k];if(!Array.isArray(a)||a.__w219)continue;a.__w219=1;
   a.forEach((s,i)=>{if(s&&s.s3&&s.s3.set==='training'){s.s3.set='exam';if(s.s3.tod==null)s.s3.tod=.3;(window.__trainSw=window.__trainSw||[]).push(k+':'+i);}});}}
 window.__ST=ST;stDayStreet();
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();squadAttach();
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();stP14();stP15();stP16();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
