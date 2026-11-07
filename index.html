@@ -5409,7 +5409,7 @@ function startShotCine(p,aimY){
   fxEvent('shotCine',{c:M.cine});
 }
 function cineRate(c){
-  if(c.hs>0)return .02;if(c.type==='duo')return c.t>2.98&&c.t<3.5?.38:c.t>1.62&&c.t<1.76?.5:1;if(c.type==='defense')return c.how==='TACKLE'&&c.vic?(c.t<.36?.5:c.t<.48?.1:c.t<.8?.32:c.t<1.95?.62:1):(c.t<.25?.6:c.t<.7?.28:c.t<1?.6:1);
+  if(c.hs>0)return .02;if(c.type==='duo')return c.t>2.98&&c.t<3.5?.38:c.t>1.62&&c.t<1.76?.5:1;if(c.type==='defense')return c.how==='TACKLE'&&c.vic?(c.t<.36?.7:c.t<.48?.35:c.t<.8?.6:c.t<1.95?.9:1):(c.t<.25?.8:c.t<.7?.5:c.t<1?.8:1);
   if(c.type==='shot'){const t=c.t;return t<.9?5:t<SH.KICK?2.6:t<1.34?.6:t<2.1?.7:t>2.3&&t<2.66?.42:1;}
   return 1;
 }
@@ -5430,7 +5430,7 @@ function startDuoCine(){
 function startDefenseCine(u,how){
   let mate=null,bs=-1e9;for(const q of M.home.players){if(q===u||q.isGK)continue;const s=(q.x-u.x)*.6+Math.min(openness(q),130)*1.2-(laneBlocked(u,q)?120:0);if(s>bs){bs=s;mate=q;}}
   M.ball.owner=u;
-  let vic=null,bd=1e9;for(const o of M.away.players){const d=dist(u,o);if(!o.isGK&&d<bd){bd=d;vic=o;}}M.cine={type:'defense',t:0,dur:how==='TACKLE'&&vic?3.9:3.1,tP:how==='TACKLE'&&vic?1.95:1.1,snd:{},u,mate,how,vic,vp:vic?{x:vic.x,y:vic.y}:null,up:{x:u.x,y:u.y},from:null,kicked:false};u.slideT=clock;
+  let vic=null,bd=1e9;for(const o of M.away.players){const d=dist(u,o);if(!o.isGK&&d<bd){bd=d;vic=o;}}M.cine={type:'defense',t:0,dur:how==='TACKLE'&&vic?3.05:2.2,tP:how==='TACKLE'&&vic?1.95:1.1,snd:{},u,mate,how,vic,vp:vic?{x:vic.x,y:vic.y}:null,up:{x:u.x,y:u.y},from:null,kicked:false};u.slideT=clock;
   for(const o of M.away.players){o.tackleCd=1.2;}
   M.defenses++;sfx('sys');syncUI();
   fxEvent('defense',{u,how});
@@ -5503,7 +5503,7 @@ function updateCine(dt){
         if(c.snd.cool)u.celebT=c.t-.78;
         moveCam(dt,u.x,u.y,baseZoom()*2);}
       else{const hx=u.x+u.fx*13,hy=u.y+u.fy*13;b.x=hx;b.y=hy;b.h=0;moveCam(dt,u.x,u.y,baseZoom()*2);}}
-    else{if(!c.kicked){if(tk){u.pose=null;u.celebrate=null;u.celebT=null;}c.kicked=true;c.from={x:b.x,y:b.y};u.kickT=clock;sfx('kick');}const v=ease((c.t-tP)/1.1);b.x=lerp(c.from.x,q.x,v);b.y=lerp(c.from.y,q.y,v);b.h=Math.sin(Math.PI*v)*14;moveCam(dt,(b.x+q.x)/2,(b.y+q.y)/2,baseZoom()*1.55);}
+    else{if(!c.kicked){if(tk){u.pose=null;u.celebrate=null;u.celebT=null;}c.kicked=true;c.from={x:b.x,y:b.y};u.kickT=clock;sfx('kick');}const v=ease(Math.min(1,(c.t-tP)/.8));b.x=lerp(c.from.x,q.x,v);b.y=lerp(c.from.y,q.y,v);b.h=Math.sin(Math.PI*v)*14;moveCam(dt,(b.x+q.x)/2,(b.y+q.y)/2,baseZoom()*1.55);}
   }
   fxCineHook('tick',c);
   if(c.t>=c.dur)endCine();
@@ -6516,9 +6516,12 @@ function turnPlant(u,dt){const m=Math.hypot(u.inX||0,u.inY||0),sp=Math.hypot(u.v
     if(!tankMode()&&u.turnTo){u.fx=u.turnTo.x;u.fy=u.turnTo.y;}return;}
   if(u.stopCd>0)u.stopCd-=dt;
   if(sp>u.speed*1.05&&m<.12&&!(u.dashT>0)&&u.fall<=0&&!(u.stopCd>0)){u.stopCd=.6;u.vx*=.3;u.vy*=.3;u.brakeKA=.42;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;}
+  if(sp>50){const ux=u.vx/sp,uy=u.vy/sp;if(!u.hR)u.hR={x:ux,y:uy};const kk=Math.min(1,dt*2.5);u.hR.x+=(ux-u.hR.x)*kk;u.hR.y+=(uy-u.hR.y)*kk;const hl=Math.hypot(u.hR.x,u.hR.y)||1;u.hR.x/=hl;u.hR.y/=hl;}else u.hR=null;
   if(sp>50&&m>.35&&!(u.dashT>0)&&u.fall<=0){
-    const d=(u.vx*u.inX+u.vy*u.inY)/(sp*m);if(d<.5){u.turnHold=sp>u.speed*1.1?.2:.1;u.vx*=.02;u.vy*=.02;u.turnT=.3+u.turnHold;u.brakeKA=.45;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;u.turnTo={x:u.inX/m,y:u.inY/m};u.turnN=(u.turnN||0)+1;}}}
-function fakeCancel(u){const A=M.aim,C=M.cine;const ia=axis(),mv=Math.hypot(ia.x,ia.y)>.35||hit('skill');if(!mv)return;
+    const d=(u.vx*u.inX+u.vy*u.inY)/(sp*m),d2=u.hR?(u.hR.x*u.inX+u.hR.y*u.inY)/m:d;if(d<.57||d2<.57){u.hR=null;u.turnHold=sp>u.speed*1.1?.2:.1;u.vx*=.02;u.vy*=.02;u.turnT=.3+u.turnHold;u.brakeKA=.45;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;u.turnTo={x:u.inX/m,y:u.inY/m};u.turnN=(u.turnN||0)+1;}}}
+function fakeCancel(u){const A=M.aim,C=M.cine;const ia=axis(),im=Math.hypot(ia.x,ia.y),mv=im>.35||hit('skill');if(!mv)return;
+  {const ob=(A&&A.p===u&&A.kind==='shot')?A:(C&&C.type==='shot'&&C.shooter===u&&!C.kicked)?C:null;if(ob){if(u.fcObj!==ob){u.fcObj=ob;u.fcT=clock;u.fcD=im>.35?{x:ia.x/im,y:ia.y/im}:null;}
+    if(clock-u.fcT<.15)return;if(!hit('skill')&&u.fcD&&im>.01&&(ia.x*u.fcD.x+ia.y*u.fcD.y)/im>.2)return;}}
   if(A&&A.p===u&&A.kind==='shot'){M.aim=null;try{aimLayer(false);}catch(e){}try{G3.camFollowReset&&G3.camFollowReset();}catch(e){}M.toast={t:0,text:'FAKE SHOT',skill:1};return;}
   if(C&&C.type==='shot'&&C.shooter===u&&!C.kicked&&C.t<.8&&!C.opp){M.cine=null;giveBall(u);try{syncUI();}catch(e){}M.toast={t:0,text:'FAKE SHOT',skill:1};}}
 function dashPost(dt){const u=M&&M.user;if(!u||M.bike||M.jug||u.fall>0||!(dt>0))return;try{fakeCancel(u);}catch(e){}
@@ -7034,8 +7037,8 @@ function refSendOff(p){
 }
 // ---- 4. restarts ----
 function refTaker(T,x,y){
-  if(T===M.home&&M.user&&!M.user.off)return M.user;
-  return refField(T).filter(q=>!q.isGK).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];
+  if(T===M.home&&M.user&&!M.user.off&&M.ch!==6)return M.user;
+  return refField(T).filter(q=>!q.isGK&&!(M.ch===6&&q===M.user)).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y))[0];
 }
 function refResetAll(){for(const q of M.players){if(q.off)continue;q.vx=q.vy=0;q.cool=.3;q.tackleCd=1.5;q.diveT=0;q.slide=null;q.lungeT=0;q.fall=0;q.airH=0;}}
 function refAward(f){
@@ -9844,6 +9847,25 @@ fxKick=(f=>function(o){if(fxLive())return;return f.apply(this,arguments);})(fxKi
 fxTrail=(f=>function(on){if(fxLive())on=false;return f.call(this,on);})(fxTrail);
 fxAuraSet=(f=>function(p,col,s){if(fxLive())s=0;return f.call(this,p,col,s);})(fxAuraSet);
 fxWind=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxWind);
+// ---- w190: the ball leaves when the striking foot gets to it (user kicks, passes and shots) ----
+{const _pt=passTo;passTo=function(p,q,po){const r=_pt.apply(this,arguments);try{kpHold(p);}catch(e){window.__kpe=String(e&&e.stack||e).slice(0,300);}window.__kpc=(window.__kpc||0)+1;return r;};}
+{const _sh=shoot;shoot=function(p){const had=!!M.cine;const r=_sh.apply(this,arguments);try{if(!had&&!M.cine)kpHold(p);}catch(e){}return r;};}
+function kpHold(p){const b=M.ball;window.__kpr=JSON.stringify([!!p,p&&p.isUser,!!M.kp,!!b.owner,!!M.cine,!!M.sp,!!M.bike,!!M.jug,mode,Math.round(Math.hypot(b.vx,b.vy))]);if(!p||!p.isUser||M.kp||b.owner||M.cine||M.sp||M.bike||M.jug||mode!=='match')return;
+  if(Math.hypot(b.vx,b.vy)<100)return;
+  M.kp={p,t0:clock,vx:b.vx,vy:b.vy,air:b.air,curl:b.curl,lt:b.lastTeam,ps:b.passer,tg:b.target,tr:b.tried,gk:b.gkTried,prev:9,pp:9};
+  b.owner=p;b.vx=b.vy=0;b.air=null;b.curl=0;}
+function kpRelease(k){const b=M.ball;M.kp=null;if(b.owner===k.p){b.owner=null;b.vx=k.vx;b.vy=k.vy;b.air=k.air;b.curl=k.curl;b.lastTeam=k.lt;b.passer=k.ps;b.target=k.tg;b.tried=k.tr;b.gkTried=k.gk;}}
+function kpTick(){const k=M&&M.kp;if(!k)return;const p=k.p,b=M.ball,el=clock-k.t0;
+  if(b.owner!==p||p.off){M.kp=null;return;}
+  if(M.cine||M.sp||M.bike||el>.6){kpRelease(k);return;}
+  let d=9;try{const a=fxActor(p),B=a&&a.bones;if(B)for(const n of ['RightFoot','LeftFoot']){const f=B[n];if(f)d=Math.min(d,f.getWorldPosition(new THREE.Vector3()).distanceTo(G3.ball.position));}}catch(e){}
+  const rise=k.prev<.5&&k.prev<=k.pp&&d>k.prev+.004;k.pp=k.prev;k.prev=d;
+  if(el>=.05&&(rise||d<.3||el>=.26))kpRelease(k);}
+updateMatch=(f=>function(dt){try{kpTick();}catch(e){window.__kpe='T:'+String(e&&e.stack||e).slice(0,300);M.kp=null;}return f.apply(this,arguments);})(updateMatch);
+// ---- w190: keepers land and lie for a beat after a live-play dive instead of snapping upright; the ground check covers that beat ----
+gkDive=(f=>function(g,dt){const had=g.diveT>0&&g.diveDir;const r=f.apply(this,arguments);if(had&&!(g.diveT>0)){g.dvHold=.85;}if(g.dvHold>0){g.dvHold-=dt;g.vx*=.8;g.vy*=.8;if(g.dvHold>0)return true;g.dvHold=0;}return r;})(gkDive);
+{const _mp=mxPlan;mxPlan=function(c,o,dt){try{if(o&&o.isGK&&o.dvHold>0&&!M.cine&&o.diveDir&&typeof abInMatch==='function'&&abInMatch(o)){const yw=c.root.rotation.y;return {n:(-o.diveDir*Math.sin(yw)>0)!==!!MX.flip?'gkDive':'gkDiveM',t:.5+1.05*.75+(.85-o.dvHold)*.9,w:abSst(0,.25,o.dvHold),loop:false};}}catch(e){}return _mp.apply(this,arguments);};}
+gkFloorPass=(f=>function(){f.apply(this,arguments);try{if(M&&M.players)for(const p of M.players){if(p.isGK&&!p.off&&p.dvHold>0){const a=fxActor(p);if(a&&a.bones&&a.holder&&a.root)gkFloorOne(a);}}}catch(e){}})(gkFloorPass);
 function bkhEnd(c){if(M.cine!==c)return;M.cine=null;G3.dbgCam=null;const u=c.u,b=M.ball;
   u.kick=undefined;u.kickWarp=null;u.pose=null;u.celebrate=null;
   for(const d of c.D){d.o.tkKind=null;d.o.tackleCd=2;}
@@ -14194,7 +14216,7 @@ function d5After(a){const c=M.cine;if(!c||c.v!==5||!c.u||!a||!a.bones||!a.root)r
     if(w>.001){a.root.updateMatrixWorld(true);const hp=H.getWorldPosition(D5V0),B=M.ball,f=d5Aim(hp,t),up=new THREE.Vector3(0,1,0);up.addScaledVector(f,-up.dot(f)).normalize();
       const Yv=up.negate(),Zv=new THREE.Vector3().crossVectors(f,Yv);D5M0.makeBasis(f,Yv,Zv);D5Q0.setFromRotationMatrix(D5M0);{const H0=H.getWorldQuaternion(new THREE.Quaternion()),an=H0.angleTo(D5Q0),lim=lerp(9,.8,ease(clamp((t-(c.tH||D5_STRIKE))/.15,0,1)));if(an>lim)D5Q0.copy(H0).slerp(D5Q0,lim/an);}const N=H.parent;if(N&&N.parent&&/Neck/i.test(N.name||'')){const Hq=H.getWorldQuaternion(new THREE.Quaternion()),dl=D5Q0.clone().multiply(Hq.invert()),half=new THREE.Quaternion().slerp(dl,.5),Nw=N.getWorldQuaternion(new THREE.Quaternion()),Pq=N.parent.getWorldQuaternion(new THREE.Quaternion()).invert(),Nl=Pq.multiply(half.multiply(Nw));N.quaternion.slerp(Nl,w);N.updateMatrixWorld(true);}
       H.parent.getWorldQuaternion(D5Q1).invert();D5Q1.multiply(D5Q0);H.quaternion.slerp(D5Q1,w);H.updateMatrixWorld(true);window.__d5ph=(window.__d5ph||0)+1;}}}}catch(e){window.__d5pe='H:'+e;}}
-function d5Rec(c){const t=c.t,R=window.__d5R||(window.__d5R={});
+function d5Rec(c){return;const t=c.t,R=window.__d5R||(window.__d5R={});
   let off=false;try{off=localStorage.getItem('twin.dapRec')==='0';}catch(e){}
   if(off||typeof MediaRecorder==='undefined')return;
   if(!R.on&&!R.done&&t>=D5_STRIKE-3.2&&t<D5_STRIKE+.5){
@@ -14297,7 +14319,7 @@ function ultUpdate(c,dt){
   if(mate){mate.vx=mate.vy=0;mate.x=c.Mt.x;mate.y=c.Mt.y;const gx=c.gkFrom.x-mate.x,gy=y0-mate.y,gl=Math.hypot(gx,gy)||1;mate.fx=gx/gl;mate.fy=gy/gl;mate.tackleCd=9;
     if(t>=D5_SHOT-.3&&!S.mk){S.mk=1;mate.kick='power';mate.kickAt=null;mate.kickT=clock;}if(S.mk&&!S.mk2&&t>=D5_SHOT+1.0){S.mk2=1;mate.kick=undefined;mate.kickAt=null;mate.kickT=null;mate.pose=null;mate.raw=null;}mate.lookAt=Bw();}
   // ---- defenders: mark him, charge as the ball drops, dive in to clear it while he kills it, end up on the turf ----
-  c.D.forEach((d,i)=>{const o=d.o,s=d.s;o.vx=o.vy=0;o.tackleCd=9;const P0=d5V(c,i?-2.0:-1.2,0,3.0*s),P1=P0,PR=d5V(c,i?-2.0:-1.2,0,1.4*s),PI=d5V(c,i?-2.0:-1.2,0,1.0*s),LN=d5V(c,i?-2.0:-1.2,0,1.4*s),PG=d5V(c,i?-2.0:-1.2,0,.3*s),da=fxActor(o),SL=D5_SL0;if(da&&t<25.85)da.mxForce=null;
+  c.D.forEach((d,i)=>{const o=d.o,s=d.s;o.vx=o.vy=0;o.tackleCd=9;const P0=d5V(c,i?-2.0:-1.2,0,3.0*s),P1=P0,PR=d5V(c,i?-2.0:-1.2,0,1.4*s),PI=d5V(c,i?-2.0:-1.2,0,1.0*s),LN=d5V(c,i?-2.0:-1.2,0,1.4*s),PG=d5V(c,i?-2.2:-1.4,0,2.5*s),da=fxActor(o),SL=D5_SL0;if(da&&t<25.85)da.mxForce=null;
     if(t<D5T.net){o.x=P0.x;o.y=P0.y;o.fRun=null;o.fRunW=0;o.pose=null;dapFace(o,u.x,u.y);o.lookAt=Bw();}
     else if(t<D5_RCV){o.x=P0.x;o.y=P0.y;o.fRun=null;o.fRunW=0;o.pose=null;dapFace(o,c.O.x,c.O.y);o.lookAt=Bw();}
     else if(t<19.2){o.x=P1.x;o.y=P1.y;o.fRun=null;o.fRunW=0;o.pose=null;dapFace(o,c.O.x,c.O.y);o.lookAt=Bw();}
@@ -14310,7 +14332,7 @@ function ultUpdate(c,dt){
       {const dx=PI.x-PR.x,dy=PI.y-PR.y,l=Math.hypot(dx,dy)||1;o.fx=dx/l;o.fy=dy/l;}o.fRun=null;o.fRunW=0;o.pose=null;o.lookAt=null;if(da)da.mxForce={n:'tackle',t:Math.min(1.7,q*1.1),w:abSst(0,.08,q),loop:false};}
     else{o.x=PG.x;o.y=PG.y;{const dx=PI.x-PR.x,dy=PI.y-PR.y,l=Math.hypot(dx,dy)||1;o.fx=dx/l;o.fy=dy/l;}o.fRun=null;o.fRunW=0;o.pose=null;o.lookAt=null;
       if(da)da.mxForce=t<25.85?{n:'tackle',t:.95,w:1,loop:false}:null;}});
-  if(t>=D5T.air&&t<D5_NET+5.8&&!(t>=D5_BC&&t<D5_BCEND)){const o=c.D[0].o,P=d5V(c,-1.45,0,1.15),kb=ease(clamp((t-25.1)/.8,0,1));o.x=lerp(o.x,P.x,kb);o.y=lerp(o.y,P.y,kb);o.fx=F.x;o.fy=F.y;}
+  if(t>=D5T.air&&t<D5_NET+5.8&&!(t>=D5_BC&&t<D5_BCEND)){const o=c.D[0].o,P=d5V(c,-1.45,0,2.5),kb=ease(clamp((t-25.1)/.8,0,1));o.x=lerp(o.x,P.x,kb);o.y=lerp(o.y,P.y,kb);o.fx=F.x;o.fy=F.y;}
   // the volley frame: the first defender sits beaten in the right foreground, looking back at it
   if(t>=D5T.strike-.02&&t<D5T.ballR&&(t<D5T.strike+.3||!c.c9))d5C9(c);   // (defenders stay where they slid; they are no longer moved for a camera)
   // ---- keeper: parries the teammate's shot, gets up, then a full-stretch dive at the corner that misses ----
@@ -15701,7 +15723,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='173';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='174';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
