@@ -1,4 +1,4 @@
-<title>Twin Stars</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style></head><body><title>Twin Stars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Saira+Condensed:wght@600;800&family=Saira:wght@400;600&display=swap">
@@ -8350,7 +8350,7 @@ function nMat(d,kit,st,o={}){
     sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
 flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;float nFx=0.;uniform vec4 nGE;uniform vec4 nGM;uniform vec4 nGN;uniform vec3 nSkB;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nFaceT;uniform float nFaceL;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
-uniform float nEgoSk,nEgoU,nEgoT;uniform vec3 nEgoC;vec3 nEgoE=vec3(0.);
+uniform float nEgoSk,nEgoU,nEgoT;uniform vec3 nEgoC;vec3 nEgoE=vec3(0.);vec3 nEgoB=vec3(0.);float nEgoW=0.;
 float nEH(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float nEN(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(nEH(i),nEH(i+vec2(1.,0.)),f.x),mix(nEH(i+vec2(0.,1.)),nEH(i+vec2(1.,1.)),f.x),f.y);}
 float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smoothstep(.45,.52,x)*.22;float soft=saturate((x+.25)/1.25);soft=soft*soft*(3.-2.*soft);float b0=mix(toon,soft,nReal);return mix(b0,soft*.8+.2,nSkF*.9);}`)
@@ -8393,9 +8393,9 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
   if(nSkF>.5)c*=(nOrig>.5?.95:.78);
   if(nEgoSk>.5&&nOrig>.5&&(r==0.||r==2.||r==3.||r==13.||r==4.||r==14.)){
     vec3 q=(vOP-nEgoC)/nEgoU;
-    float bx=-.003+.005*sin(q.y*150.)+.004*sin(q.y*61.+1.7)+.003*sin(q.y*23.);
+    float wz=nEN(vec2(q.y*38.,1.7))-.5,wy=nEN(vec2(q.y*140.,5.))-.5,wk=max(0.,nEN(vec2(q.y*21.,9.))-.55);float bx=-.002+.03*wz+.01*wy-.03*wk+.004*sin(q.y*61.+1.7);
     float side=smoothstep(bx+.004,bx-.004,q.x);
-    float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(-.06,-.01,q.z)*smoothstep(-.17,-.14,q.y)*smoothstep(.09,.05,q.y);
+    float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(-.06,-.01,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
     float M=side*inH;
     if(r==4.||r==14.){if(M>.02)discard;}
     else{
@@ -8403,33 +8403,39 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
       float tw=.88+.12*sin(nEgoT*9.+q.y*60.);
       float edgeD=(bx-q.x);
       float eg=exp(-pow(edgeD/.007,2.))*inH;
+      {float skN=(r==3.)?max(smoothstep(.08,.14,c.r-c.b),smoothstep(.0,-.03,q.y)):1.;float sd=q.x-bx;float nearE=smoothstep(.055,.0,sd)*smoothstep(-.003,.004,sd)*inH*skN;
+        float k1=nEN(q.xy*vec2(70.,110.)+vec2(0.,3.)),k2=nEN(q.xy*vec2(150.,60.)),k3=nEN(q.xy*vec2(40.,40.)+7.);
+        float cr1=smoothstep(.07,.0,abs(k1-.5)),cr2=smoothstep(.05,.0,abs(k2-.5));
+        c*=1.-.55*nearE*smoothstep(.25,.75,k3);
+        c=mix(c,vec3(.05,.01,.07),nearE*max(cr1*.95,cr2*.75));
+        nEgoE+=nearE*(cr1+cr2*.7)*mix(P,G,.5+.5*sin(q.y*70.+nEgoT*4.))*.9*tw;}
       if(M>.001){
-        vec2 es0=vec2((q.x+.042)/.03,(q.y+.05)/.034);float skinT=(r==3.)?smoothstep(.08,.14,c.r-c.b):1.;float Mw=M*max(skinT,1.-smoothstep(.95,1.2,length(es0)));
+        vec2 es0=vec2((q.x+.042)/.03,(q.y+.05)/.034);float skinT=(r==3.)?smoothstep(.08,.14,c.r-c.b):1.;float Mw=M*max(max(skinT,(r==3.)?smoothstep(.0,-.03,q.y):0.),1.-smoothstep(.95,1.2,length(es0)));
         float bn=nEN(q.xy*95.)*.5+nEN(q.xy*280.)*.3+.2;
-        vec3 bone=mix(vec3(.5,.48,.54),vec3(.99,.97,.9),bn);
+        vec3 bone=mix(vec3(.24,.22,.3),vec3(.86,.84,.88),bn);
         bone*=vec3(.86,.82,1.04);
-        bone*=.5+.5*smoothstep(0.,.014,edgeD);
-        float ck=nEN(vec2(q.x*75.+q.y*34.,q.y*170.));
-        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.02,.0,abs(ck-.5))*.85);
-        float ck2=nEN(vec2(q.x*40.-q.y*60.,q.y*120.+3.));
-        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.014,.0,abs(ck2-.5))*.7);
+        bone*=.3+.7*smoothstep(0.,.02,edgeD);
+        float ck=nEN(vec2(q.x*62.+q.y*41.,q.y*58.-q.x*37.));
+        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.035,.0,abs(ck-.5))*.9);
+        float ck2=nEN(vec2(q.x*130.-q.y*70.,q.y*110.+q.x*90.+3.));
+        bone=mix(bone,vec3(.03,.02,.05),smoothstep(.03,.0,abs(ck2-.5))*.75);
         vec2 es=vec2((q.x+.042)/.03,(q.y+.05)/.034);float ed=length(es);
         float sock=1.-smoothstep(.82,1.,ed);
-        bone=mix(bone,vec3(.008,.004,.02),sock);
+        bone=mix(bone,vec3(.008,.004,.02),sock);bone*=.55+.45*smoothstep(chinY,chinY+.014,q.y);
         float core=smoothstep(.46,.0,ed);
-        bone=mix(bone,bone*.45,smoothstep(1.7,1.0,ed)*(1.-sock)*.6);nEgoE+=M*(G*core*1.9*tw+P*sock*(1.-core)*1.3+P*smoothstep(1.45,.95,ed)*(1.-sock)*.28+bone*.14);
-        vec2 nn=vec2((q.x+.012)/.011,(q.y+.098)/.016);bone=mix(bone,vec3(.01,.005,.02),1.-smoothstep(.7,1.,length(nn)));
+        bone=mix(bone,bone*.45,smoothstep(1.7,1.0,ed)*(1.-sock)*.6);nEgoE+=Mw*(G*core*1.9*tw+P*sock*(1.-core)*1.3+P*smoothstep(1.45,.95,ed)*(1.-sock)*.28+bone*.14);
+        vec2 nn=vec2((q.x+.012)/.011,(q.y+.074)/.016);bone=mix(bone,vec3(.01,.005,.02),1.-smoothstep(.7,1.,length(nn)));
         float tx=-q.x-.004;
-        float ty=smoothstep(-.142,-.137,q.y)*smoothstep(-.104,-.109,q.y);
+        float ty=smoothstep(-.14,-.134,q.y)*smoothstep(-.086,-.092,q.y);
         if(tx>0.&&tx<.062){
-          float yy=q.y+.122;float cell=tx/.0105+(yy<0.?.5:0.),tt=1.-smoothstep(.3,.4,abs(fract(cell)-.5));
+          float yy=q.y+.112;float cell=tx/.0105+(yy<0.?.5:0.),tt=(1.-smoothstep(.3,.4,abs(fract(cell)-.5)))*step(.14,nEH(vec2(floor(cell),yy<0.?1.:2.)));
 float lip=smoothstep(.0035,.0015,abs(yy));
-          vec3 tooth=vec3(1.,.99,.92)*(.88+.12*nEN(q.xy*420.));
-          vec3 tc=mix(vec3(.03,.02,.04),tooth,tt);tc=mix(tc,vec3(.02,.01,.03),lip);
+          vec3 tooth=vec3(.8,.76,.66)*(.88+.12*nEN(q.xy*420.));
+          vec3 tc=mix(vec3(.09,.05,.1),tooth,tt);tc=mix(tc,vec3(.02,.01,.03),lip);
           float tm=ty*smoothstep(.062,.05,tx);bone=mix(bone,tc,tm);
-          nEgoE+=M*tm*tt*.12;
+          nEgoE+=Mw*tm*tt*.05;
         }
-        c=mix(c,bone,Mw);nSkF=0.;
+        c=mix(c,bone,Mw);nEgoB=bone*.7;nEgoW=Mw;nSkF=0.;
       }
       nEgoE+=eg*mix(P,G,.5+.5*sin(q.y*85.+nEgoT*3.))*(1.1+.5*sin(nEgoT*7.+q.y*40.));
     }
@@ -8447,6 +8453,7 @@ float lip=smoothstep(.0035,.0015,abs(yy));
   if(floor(vReg+.5)==14.)reflectedLight.indirectDiffuse+=diffuseColor.rgb*2.;
   if(floor(vReg+.5)==4.&&nFx<.5)reflectedLight.indirectDiffuse+=diffuseColor.rgb*1.1;
   reflectedLight.directDiffuse+=diffuseColor.rgb*nFlash+nEgoE;`);
+    sh.fragmentShader=sh.fragmentShader.replace('#include <dithering_fragment>','#include <dithering_fragment>\n gl_FragColor.rgb=mix(gl_FragColor.rgb,nEgoB,nEgoW);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <lights_physical_pars_fragment>',THREE.ShaderChunk.lights_physical_pars_fragment.replace('float dotNL = saturate( dot( geometry.normal, directLight.direction ) );','float dotNL = nBand( dot( geometry.normal, directLight.direction ) );'));};
   m.customProgramCacheKey=()=>'nToon';N.mats.set(key,m);return m;}
 // ink outline: inverted hull along the normal, width grows a little with distance so it stays visible
@@ -12445,7 +12452,7 @@ function stA(k){let a=ST.actors.get(k);if(!a){const c=CAST[k],d=DESIGNS[c[0]];a=
 function stQueue(shots){ST.q.length=0;for(const s of shots)if(s.s3){const k='@'+s.s3.set;if(SETS[s.s3.set]&&!ST.sets[s.s3.set]&&!ST.q.includes(k))ST.q.push(k);if(s.s3.cast)for(const k of s.s3.cast)if(!ST.actors.has(k)&&!ST.q.includes(k))ST.q.push(k);}}
 function stPre(){if(!ST.q.length||!stOK())return;try{stInit();const k=ST.q.shift();if(k[0]==='@'){const n=k.slice(1);if(!ST.sets[n]){ST.sets[n]=SETS[n]();ST.sets[n].g.visible=false;}}else if(CAST[k]&&!ST.actors.has(k)){const a=stA(k);a.root.visible=false;a.stUsed=false;}}catch(e){console.warn('story preload',e);ST.q.length=0;}}   // builds one queued set/actor per frame while a 2D card shows
 // o: pose, pt (pose time), look {x,y,z}, hd {nx,ny}, ex (expression), sitT, cel/celT (B celebrations), frz (freeze frame)
-function stP(a,x,z,yaw,o,h){o=o||{};const q=a.stO||(a.stO={});q.x=x/S3+PW/2;q.y=z/S3+PH/2;q.fx=Math.sin(yaw);q.fy=Math.cos(yaw);q.pose=o.pose||'stand';q.poseT=o.pt||0;q.lookAt=o.look||null;q.hd=o.hd||null;q.sitT=o.sitT||0;q.celebrate=o.cel;q.celebT=o.celT;
+function stP(a,x,z,yaw,o,h){o=o||{};const q=a.stO||(a.stO={});q.x=x/S3+PW/2;q.y=z/S3+PH/2;q.fx=Math.sin(yaw);q.fy=Math.cos(yaw);q.pose=o.pose==='walk'?null:(o.pose||'stand');q.poseT=o.pt||0;q.lookAt=o.look||null;q.hd=o.hd||null;q.sitT=o.sitT||0;q.celebrate=o.cel;q.celebT=o.celT;
   if(ST.cut){if(a.ab)a.ab.tele=true;a.stSnap=true;}a.stX=x;a.stZ=z;a.stYaw=yaw;a.stH=h||0;
   placeActor(a,q,o.frz?0:ST.dt,h||0);if(o.ex)stEx(a,o.ex);return a;}
 function stEx(a,n){if(a.stExN===n&&clock-a.stExT<1.2)return;a.stExN=n;a.stExT=clock;if(typeof setExpr==='function')setExpr(a,n,2);}
@@ -15821,7 +15828,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='184';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='185';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16141,7 +16148,110 @@ function stEgoSync(a){const c=CAST[a.stKey];if(!c||(c[0]!=='ren'&&c[0]!=='renEgo
   const m=on?stEgoMask(a):a.stMask;if(!m)return;m.visible=on;if(!on)return;const D=m.userData,k=1+.18*Math.sin(now*11);
   D.gl.scale.setScalar(D.R*2*k);D.gl.material.opacity=.65+.2*Math.sin(now*17);D.co.scale.setScalar(D.R*.7*(1+.25*Math.sin(now*23)));D.gl2.scale.setScalar(D.R*1.1*(1+.2*Math.sin(now*9+1)));
   const P=D.pts.geometry.attributes.position.array;D.seed.forEach((s,i)=>{const t=((now*.35*s.sp+s.ph)%1);P[i*3]=s.x+Math.sin(now*3+i)*.006*D.u-t*.02*D.u;P[i*3+1]=s.y+t*.16*D.u;P[i*3+2]=s.z+.02*D.u*t;});D.pts.geometry.attributes.position.needsUpdate=true;}
-stAttach();stP2();stP3();stP4();squadAttach();
+function stP5(){
+  const PI=Math.PI;
+  const bars=()=>{const h=Math.round(H*.105);ctx.fillStyle='#000';ctx.fillRect(0,0,W,h);ctx.fillRect(0,H-h,W,h);};
+  const cap=(txt,t,a,b,o)=>{o=o||{};if(t<a||t>b)return;const k=ease(clamp((t-a)*5,0,1))*ease(clamp((b-t)*5,0,1)),s=sc();ctx.save();ctx.globalAlpha=k;ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=18;
+    bigText(txt,W/2+(1-k)*30*(o.dir||1),H*(o.y||.8),Math.min((o.s||52)*s,W/(txt.length*.52)),o.c||'#eef3f8',{skew:0});ctx.restore();};
+  const sub=(txt,t,a,b,y,c)=>{if(t<a||t>b)return;const k=ease(clamp((t-a)*5,0,1))*ease(clamp((b-t)*5,0,1));ctx.save();ctx.globalAlpha=k;smallText(txt,W/2,H*(y||.88),Math.round(15*sc()+3),c||'#9fb4d0','center',FS,700);ctx.restore();};
+  const dip=(t,dur,fi,fo)=>{if(fi&&t<fi){ctx.fillStyle='rgba(0,0,0,'+(1-t/fi)+')';ctx.fillRect(0,0,W,H);}if(fo&&t>dur-fo){ctx.fillStyle='rgba(0,0,0,'+clamp((t-(dur-fo))/fo,0,1)+')';ctx.fillRect(0,0,W,H);}};
+  const flash=(t,at,len,col)=>{if(t>=at&&t<at+len)stTint(col||'#ffffff',(1-(t-at)/len)*.85);};
+  // wraps a ready-made story shot: same 3D staging at its own time offsets, plus our overlay
+  const clip=(src,dur,o)=>{o=o||{};const k=o.k||1,t0=o.t0||0,li=o.li||0,lt0=o.lt0!=null?o.lt0:t0,s3=src.s3;
+    return {dur,draw:t=>{ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);},
+      s3:{...s3,crowd:o.crowd!=null?o.crowd:s3.crowd,
+        d3:(t,dt)=>s3.d3(t*k+t0,dt,li,t*k+lt0),
+        ov:(t)=>{if(!o.noSrc&&s3.ov){try{s3.ov(t*k+t0,li,t*k+lt0);}catch(e){}}if(o.ov)o.ov(t,dur);bars();dip(t,dur,o.fi,o.fo);}}};};
+  const P=SC.parkEgo,X=SC.selection,B=SC.benchMatch;
+  SC.trailer=[
+    clip(SC.prologue[1],3.4,{fi:.5,noSrc:1,ov:t=>{cap('TWO STRIKERS.',t,.5,1.8);cap('ONE DREAM.',t,1.9,3.3,{c:'#59e1ff'});}}),
+    clip(SC.duoOutro[0],2.4,{li:1,lt0:1.0,ov:(t)=>{sub('THE TWIN STARS',t,.2,2.2,.86,'#ffc04a');}}),
+    clip(SC.rain[2],2.9,{ov:t=>flash(t,2.12,.3)}),
+    clip(SC.rain[4],2.0,{t0:1.0,ov:t=>cap('THEN HE VANISHED.',t,.2,1.9,{c:'#ff8a80'})}),
+    clip(P[1],3.2,{li:1,lt0:1.5,noSrc:1,ov:t=>{cap('AND NAGI GAVE UP.',t,.3,3.1);}}),
+    clip(P[2],4.1,{li:0,lt0:.4,noSrc:1,ov:t=>{stTint('#0a0614',.25);}}),
+    clip(P[3],2.6,{noSrc:0,ov:t=>flash(t,.5,.25,'#e6d5ff')}),
+    clip(P[4],2.6,{li:4,lt0:.8,noSrc:1,ov:t=>cap('I AM YOU.',t,.3,2.4,{c:'#d9c2ff'})}),
+    clip(P[6],2.2,{lt0:.3,ov:t=>{}}),
+    clip(P[7],3.4,{lt0:0,ov:t=>{}}),
+    clip(P[8],2.4,{k:3,noSrc:0,ov:t=>cap('EVERY. SINGLE. DAY.',t,.2,2.2)}),
+    clip(X[2],2.2,{t0:1.2,noSrc:1,ov:t=>cap('THE SELECTION.',t,.2,2.1,{c:'#59e1ff'})}),
+    clip(X[3],2.0,{li:0,lt0:2.2,noSrc:1,ov:t=>{}}),
+    clip(B[2],2.0,{li:0,t0:1.8,lt0:1.8,noSrc:0,ov:t=>{}}),
+    clip(B[3],2.6,{li:2,lt0:3.2,noSrc:1,ov:t=>cap('THE COACH COULD SEE IT.',t,.3,2.5,{c:'#d9c2ff'})}),
+    clip(B[4],3.1,{li:1,lt0:0,noSrc:1,ov:t=>{}}),
+    clip(B[5],4.2,{lt0:.4,noSrc:0,ov:t=>{}}),
+    clip(B[6],2.2,{t0:.3,noSrc:1,ov:t=>cap('NOBODY SAW IT COMING.',t,.2,2.1)}),
+    clip(B[8],2.6,{li:0,lt0:2.0,noSrc:1,ov:t=>{}}),
+    clip(B[9],2.4,{t0:.7,noSrc:0,ov:t=>flash(t,.8,.25,'#ffffff')}),
+    {dur:5.2,draw:t=>{ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);const s=sc();glow(W/2,H*.46,H*.7,'rgba(89,225,255,'+(.12+.1*Math.sin(t*3))+')');glow(W/2,H*.46,H*.4,'rgba(255,192,74,.12)');
+      const a=ease(clamp(t/1.2,0,1));ctx.save();ctx.globalAlpha=a;ctx.shadowColor='#59e1ff';ctx.shadowBlur=40;bigText('TWIN STARS',W/2,H*.46,Math.min(96*s,W/6.2),'#eef3f8',{skew:0});ctx.restore();
+      const b=ease(clamp((t-1.2)/1),0,1);ctx.save();ctx.globalAlpha=b;smallText('NAGI  ×  ISAGI',W/2,H*.46+Math.min(70*s,H*.12),Math.round(18*s+3),'#ffc04a','center',FS,700);ctx.restore();
+      const c=ease(clamp((t-2.4)/1),0,1);ctx.save();ctx.globalAlpha=c;smallText('WIN. OR WIN.',W/2,H*.46+Math.min(110*s,H*.19),Math.round(15*s+3),'#9fb4d0','center',FS,700);ctx.restore();
+      if(t>3.6){const d=ease(clamp((t-3.6)/.8,0,1));ctx.save();ctx.globalAlpha=d*(.7+.3*Math.sin(t*5));smallText('PLAY NOW',W/2,H*.82,Math.round(20*s+3),'#59e1ff','center',FS,700);ctx.restore();}
+      bars();if(t>4.5){ctx.fillStyle='rgba(0,0,0,'+clamp((t-4.5)/.7,0,1)+')';ctx.fillRect(0,0,W,H);}}}
+  ];
+}
+function stP6(){
+  const PI=Math.PI,NG='Nagi',NR='Narration';
+  const cap6=(txt,t,a,b,y,c)=>{if(t<a||t>b)return;const k=ease(clamp((t-a)*4,0,1))*ease(clamp((b-t)*4,0,1)),s=sc();ctx.save();ctx.globalAlpha=k;ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=16;bigText(txt,W/2,H*(y||.82),Math.min(40*s,W/(txt.length*.52)),c||'#eef3f8',{skew:0});ctx.restore();};
+  const sh=[
+    {dur:1,draw:t=>{sceneStreet(t);const s=sc();figure(W*.5,H*.88,1.5*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});},
+      lines:[{who:NR,text:'The next morning, Nagi walked into Aoba United one last time. He handed in his jersey and left the club.'},{who:NG,text:'...Thank you for everything. I am leaving.'}],
+      s3:{set:'street',cast:['renC'],toon:0,rain:0,
+        d3(t,dt,li,lt){const N=stA('renC');stP(N,0,0,PI*.9,{pose:li>=1?'hero':'stand',hd:li>=1?{nx:.2}:null,ex:li>=1?'determined':'sad'});
+          if(li<=0){const u=clamp(lt/7,0,1);stC(stE(3.2,2.4,u),1.5,stE(4.6,3.6,u),0,1.2,0,34);}else{const u=clamp(lt/4,0,1),h=stHv(N,-.02);stCv(RP(0,0,PI*.9,stE(2.4,1.8,u),.35,1.4),h,30,.02);}ST.focus.set(0,0,0);},
+        ov(t,li){if(li<=0)stStamp('AOBA UNITED · TRAINING GROUND · MORNING',t);stTint('#0a1020',.1);}}},
+    {dur:4.4,draw:t=>{sceneStreet(t);const s=sc();figure(W*(.15+t*.1),H*.88,1.5*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',pose:'walk',t,face:1});cap6('NAGI LEFT AOBA UNITED.',t,.5,4.2,.82,'#ff8a80');},
+      s3:{set:'street',cast:['renC'],toon:0,rain:0,
+        d3(t,dt){const N=stA('renC'),x=-3.2+t*1.35;stP(N,x,0,PI/2,{pose:'walk',ex:'neutral'});
+          const u=clamp(t/4.4,0,1);stC(x+stE(2.4,4.8,u),1.45,stE(3.4,5.4,u),x+.8,1.2,0,stE(34,28,u));ST.focus.set(x,0,0);},
+        ov(t){cap6('NAGI LEFT AOBA UNITED.',t,.5,4.2,.82,'#ff8a80');stTint('#0a1020',.12);stVig(.45,'rgba(0,0,0,1)');}}},
+    {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.34,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',face:1});figure(W*.8,H*.8,1.0*s,{...ISHI,face:-1});},
+      lines:[{who:NR,text:'Day after day he practised alone. And every morning, someone watched him from the far side of the ground: Coach Ishida.'}],
+      s3:{set:'pitch',cast:['renC','ishi'],toon:0,rain:0,
+        d3(t,dt,li,lt){const N=stA('renC'),I=stA('ishi'),a=lt*1.3;stP(N,-3,0,.8+Math.sin(a)*.5,{pose:'ballFoot',pt:lt,ex:'determined'});stBall(-3+Math.sin(.8+Math.sin(a)*.5)*.45,.15+.12*Math.abs(Math.sin(lt*6)),Math.cos(.8+Math.sin(a)*.5)*.45);
+          stP(I,9,-7,-2.3,{pose:'armsCrossed',look:stLk(-3,1.6,0),ex:'focus'});
+          const u=clamp(lt/8,0,1);stC(stE(11.2,10.2,u),1.75,stE(-8.6,-7.8,u),-3,1.1,0,stE(30,26,u));ST.focus.set(-3,0,0);},
+        ov(t,li,lt){if(lt<2)stStamp('KUROSAWA PARK GROUND · DAWN',t);stTint('#3a2a10',.1);}}}
+  ];
+  const A=SC.parkEgo;if(!A||A.__w206)return;A.__w206=1;
+  const mi=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/From that night on/.test(x.lines[0].text));
+  if(mi<0)return;
+  A.splice(mi,0,sh[0],sh[1]);
+  const ii=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/I have been watching/.test(x.lines[0].text));
+  if(ii>=0)A.splice(ii,0,sh[2]);
+}
+// ---- w207: flowing smoke aura (replaces the w204 orb sparks) ----
+function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!RIG.headCenterLocal)return null;
+  const u=(RIG.height||1.8)/1.8,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
+  const gp=new THREE.Vector3(-.042*u,-.05*u,.1*u);
+  const gl=stGlow('#6a1fd0',.15*u,.45);gl.position.copy(gp);g.add(gl);const co=stGlow('#1dff52',.05*u,.7);co.position.copy(gp);g.add(co);
+  const gl2=stGlow('#39ff66',.11*u,.25);gl2.position.set(-.05*u,-.1*u,.08*u);g.add(gl2);
+  const N=110,pos=new Float32Array(N*3),col=new Float32Array(N*3),aS=new Float32Array(N),aA=new Float32Array(N),seed=[];
+  for(let i=0;i<N;i++)seed.push({x:-(.004+Math.random()*.075)*u,y:(-.14+Math.random()*.2)*u,z:(.03+Math.random()*.07)*u,ph:Math.random(),sp:.45+Math.random()*.7,sz:.6+Math.random()*.9,tw:Math.random()*6.28});
+  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));pg.setAttribute('color',new THREE.BufferAttribute(col,3));pg.setAttribute('aS',new THREE.BufferAttribute(aS,1));pg.setAttribute('aA',new THREE.BufferAttribute(aA,1));
+  const tex=canvasTex(64,64,(x,w,h)=>{const id=x.createImageData(w,h),ph=[Math.random()*9,Math.random()*9,Math.random()*9];for(let py=0;py<h;py++)for(let px=0;px<w;px++){const dx=(px+.5)/w*2-1,dy=(py+.5)/h*2-1,r=Math.sqrt(dx*dx+dy*dy);
+      const n=.5+.25*Math.sin(dx*5+ph[0])*Math.cos(dy*4+ph[1])+.25*Math.sin((dx+dy)*7+ph[2]);let a=Math.max(0,1-r);a=a*a*(3-2*a)*(.55+.55*n);const o=(py*w+px)*4;id.data[o]=id.data[o+1]=id.data[o+2]=255;id.data[o+3]=Math.min(255,Math.round(a*255));}x.putImageData(id,0,0);});
+  const mat=new THREE.PointsMaterial({map:tex,size:.05*u,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.9,depthWrite:false,blending:THREE.AdditiveBlending,fog:false});
+  mat.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('void main() {','attribute float aS;attribute float aA;varying float vAA;\nvoid main() {').replace('gl_PointSize = size;','gl_PointSize = size*aS;vAA=aA;');
+    sh.fragmentShader=sh.fragmentShader.replace('void main() {','varying float vAA;\nvoid main() {').replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.a*=vAA;');};
+  const pts=new THREE.Points(pg,mat);pts.frustumCulled=false;g.add(pts);
+  g.userData={gl,co,gl2,pts,seed,R:.1*u,u};a.bones.Head.add(g);a.stMask=g;return g;}
+window.__egoMk=a=>stEgoMask(a);
+function stEgoSync(a){const c=CAST[a.stKey];if(!c||(c[0]!=='ren'&&c[0]!=='renEgo'))return;const on=c[0]==='renEgo'||!!ST.egoNagi||(!!ST.egoOn&&!ST.egoActor);
+  const U=a.nMat&&a.nMat.userData&&a.nMat.userData.nU,now=performance.now()/1000;if(U&&U.nEgoSk){U.nEgoSk.value=on?1:0;U.nEgoT.value=now;}
+  const m=on?stEgoMask(a):a.stMask;if(!m)return;m.visible=on;if(!on)return;const D=m.userData,k=1+.18*Math.sin(now*11),u=D.u;
+  D.gl.scale.setScalar(D.R*1.3*k);D.gl.material.opacity=.26+.1*Math.sin(now*17);D.co.scale.setScalar(D.R*.7*(1+.25*Math.sin(now*23)));D.gl2.scale.setScalar(D.R*1.1*(1+.2*Math.sin(now*9+1)));
+  const G=D.pts.geometry,P=G.attributes.position.array,C=G.attributes.color.array,S=G.attributes.aS.array,A=G.attributes.aA.array;
+  D.seed.forEach((s,i)=>{const t=((now*.55*s.sp+s.ph)%1),w=Math.sin(Math.PI*t);
+    const tb=now*2.3+s.tw;P[i*3]=s.x+(Math.sin(tb+t*7)*.014+Math.sin(now*5.1+i*1.3)*.006)*u*(.4+t*1.4)-t*.035*u;
+    P[i*3+1]=s.y+t*(.2+.12*s.sp)*u+Math.sin(tb*1.3)*.004*u;
+    P[i*3+2]=s.z+t*.03*u+Math.cos(tb+t*5)*.01*u*t;
+    S[i]=(.6+t*2.6)*s.sz;A[i]=Math.pow(w,1.3)*.5*(.75+.25*Math.sin(now*13+i));
+    const m2=clamp(t*1.3+(i%3)*.12,0,1);C[i*3]=.04+.5*m2;C[i*3+1]=1-.88*m2;C[i*3+2]=.22+.7*m2;});
+  G.attributes.position.needsUpdate=G.attributes.color.needsUpdate=G.attributes.aS.needsUpdate=G.attributes.aA.needsUpdate=true;}
+stAttach();stP2();stP3();stP4();stP5();stP6();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
