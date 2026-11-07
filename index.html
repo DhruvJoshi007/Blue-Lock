@@ -4845,7 +4845,7 @@ SC.rain=[
       ctx.restore();},
     lines:[{who:'Narration',text:'Yoichi Isagi vanished that night. An ambulance nobody called took him from the road, and never reached a hospital.'},{who:'Narration',text:'That same week, Aoba United signed a new forward, Daichi Vance, to take his place.'}]},
   {dur:1,draw:t=>{sceneStreet(t+9);const s=sc();glow(W*.5,H*.82,120*s,'rgba(255,200,120,.35)');ctx.fillStyle='#e9e4d6';ctx.fillRect(W*.5-10*s,H*.78,20*s,30*s);figure(W*.38,H*.88,1.4*s,{...RENO,jersey:'#232a38',sock:'#1a1e28',shorts:'#1a1e28',pose:'kneel'});rain(t+9,.45);},
-    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted you gone.'}]},
+    lines:[{who:'Nagi',text:'Isagi... you were supposed to be at training.'},{who:'Nagi',text:'Vance signs the same week you disappear. Somebody wanted you gone.'},{who:'SYSTEM',text:'Then stop sitting in the rain. Get stronger. Find him. And this time, protect him.'}]},
 ];
 SC.bench=[
   {dur:1.8,draw:t=>chapterCard(3,'Benched',t,'Aoba United without Isagi')},
@@ -15857,7 +15857,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='193';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='194';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
