@@ -4886,7 +4886,7 @@ SC.awaken=[
 SC.trialIntro=[
   {dur:1.8,draw:t=>chapterCard(5,'The Trial',t,'Kurogane SC training ground')},
   {dur:1,draw:t=>{sceneTraining(t);const s=sc();figure(W*.38,H*.88,1.45*s,{...RENO,jersey:'#e8ecf1',sock:'#e8ecf1',shorts:'#2a2f38',face:1});figure(W*.6,H*.88,1.45*s,{...ISHI,face:-1});},
-    lines:[{who:'Coach Ishida',text:'Seishiro Nagi. Released by Aoba United. Why should Kurogane take a striker nobody wants?'},{who:'Nagi',text:'Give me one chance. Any position.'},{who:'Coach Ishida',text:'Everyone says "any position". Show me, don\'t—'},{who:'Trialist',text:'LOOK OUT! I can\'t stop!'}]},
+    lines:[{who:'Coach Ishida',text:'Seishiro Nagi. You left Aoba United. Why should Kurogane take a striker nobody wants?'},{who:'Nagi',text:'Give me one chance. Any position.'},{who:'Coach Ishida',text:'Everyone says "any position". Show me, don\'t—'},{who:'Trialist',text:'LOOK OUT! I can\'t stop!'}]},
   {dur:1.2,sfx:'swoosh',draw:t=>{sceneTraining(t);const s=sc();speedLines(W*.5,H*.55,t,'rgba(20,30,40,.45)',60,.2);figure(W*(.1+t*.15),H*.88,1.6*s,{jersey:'#ff8a3d',shorts:'#2a2f38',sock:'#ff8a3d',hair:'#3b2a1e',pose:'run',t,face:1});ballAt(W*(.22+t*.15)+Math.sin(t*14)*8,H*.86,11*s);},
     lines:[{who:'Objective',text:'A trialist has lost control of the ball and is charging at you. Press E / tap when the ring is gold to take the ball, then dodge left or right before he hits you.'}]},
 ];
@@ -15853,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='198';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='199';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16597,7 +16597,7 @@ function stExam(){
       const b=new THREE.Mesh(gb,bm),l=new THREE.Mesh(gl,lms[Math.floor(rr()*4)]);T.add(b,l);g.add(T);}
   }catch(e){window.__examTreeE=String(e&&e.stack||e).slice(0,200);}})();
   S.show=n=>{for(const k in S.dr)S.dr[k].visible=(k===n);};
-  S.upd=(t,dt,s3)=>{key.position.sub(key.target.position);S.rig(s3.tod??.3);const f=ST.focus;key.target.position.set(f.x,0,f.z);key.position.add(key.target.position);key.target.updateMatrixWorld();S.fog.density=.0045;};
+  S.upd=(t,dt,s3)=>{if(!s3.drill){S.show('');stBallsOff();}key.position.sub(key.target.position);S.rig(s3.tod??.3);const f=ST.focus;key.target.position.set(f.x,0,f.z);key.position.add(key.target.position);key.target.updateMatrixWorld();S.fog.density=.0045;};
   return S;}
 SETS.exam=stExam;
 function stP11(){
@@ -16607,7 +16607,7 @@ function stP11(){
   const R1=mkRank(['CHIGIRI','BAROU','NAGI','BACHIRA','GORO BANDA'],'NAGI'),R2=mkRank(['BACHIRA','CHIGIRI','BAROU','KENJI','NAGI'],'NAGI'),
         R3=mkRank(['BAROU','NAGI','CHIGIRI','BACHIRA','TARO'],'NAGI'),R4=mkRank(['BACHIRA','CHIGIRI','NAGI','BAROU','KENJI'],'NAGI'),
         R5=mkRank(['BAROU','CHIGIRI','GORO BANDA','BACHIRA','TARO','SHUN','NAGI'],'NAGI');
-  const EX=o=>({set:'exam',tod:o.tod!=null?o.tod:.3,cast:o.cast,toon:1,d3:o.d3,ov:o.ov});
+  const EX=o=>({set:'exam',tod:o.tod!=null?o.tod:.3,cast:o.cast,toon:1,drill:1,d3:o.d3,ov:o.ov});
   const show=n=>{const e=ST.sets.exam;if(e&&e.show)e.show(n);stBallsOff();};
   const NM={renT:'NAGI',exB:'BACHIRA',exC:'CHIGIRI',exR:'BAROU',goro:'GORO',kenji:'KENJI',shun:'SHUN',taro:'TARO'};
   const tag=(k,o)=>{try{stNameTag(stA(k),NM[k],Object.assign({me:k==='renT'},o||{}));}catch(e){}};
@@ -16702,8 +16702,10 @@ function stDayStreet(){
       u0(t,dt,s3);if(on){S.fog.density=.006;S.lamp&&(S.lamp.visible=false);}};
     return S;};
   w.__w218=1;SETS.street=w;}
+function stP12(){for(const k of Object.keys(SC)){const a=SC[k];if(!Array.isArray(a)||a.__w219)continue;a.__w219=1;
+  a.forEach((s,i)=>{if(s&&s.s3&&s.s3.set==='training'){s.s3.set='exam';if(s.s3.tod==null)s.s3.tod=.3;(window.__trainSw=window.__trainSw||[]).push(k+':'+i);}});}}
 window.__ST=ST;stDayStreet();
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();squadAttach();
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
