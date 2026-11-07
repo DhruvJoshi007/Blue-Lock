@@ -15853,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='202';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='203';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16787,6 +16787,70 @@ function stP16(){
   sh.s3.ov=function(t,li,lt){const n=1+Math.floor(clamp(lt/7,0,1)*29);smallText('DAY '+n,W*.5,H*.14,Math.round(30*sc()),'#eef3f8','center',FS,700);
     smallText(NAMES[Math.floor(lt/SEG)%5],W*.5,H*.2,Math.round(15*sc()),'#bfe3ff','center',FS,700);stTint(n%2?'#ffe6bd':'#ffd2a4',.05);};
 }
+// ---------- scripted match engine ----------
+function stMPMk(pl,segs,o){o=o||{};const S={t:0,i:0,st:0,fl:null,own:segs[0].c,P:{},segs,kick:{},o,done:false};
+  for(const p of pl)S.P[p.k]={k:p.k,tm:p.tm,x:p.x,z:p.z,vx:0,vz:0,yaw:p.yaw!=null?p.yaw:(p.tm?-Math.PI/2:Math.PI/2),vm:p.vm||7.4,tx:null,tz:null};
+  S.ball={x:S.P[S.own].x+.5,y:.13,z:S.P[S.own].z};stMPSeg(S);return S;}
+function stMPSeg(S){const sg=S.segs[S.i];if(!sg)return;S.sg0=S.st=0;for(const k in sg.runs||{}){const p=S.P[k];if(p){p.tx=sg.runs[k][0];p.tz=sg.runs[k][1];}}
+  const c=S.P[sg.c];if(c&&sg.go){c.tx=sg.go[0];c.tz=sg.go[1];}}
+function stMPStep(S,dt){
+  const sg=S.segs[Math.min(S.i,S.segs.length-1)],P=S.P,att=[],def=[];for(const k in P)(P[k].tm?def:att).push(P[k]);
+  const carrier=S.own?P[S.own]:null,rem=Math.max(.18,(S.fl?S.fl.T-S.fl.t:sg.d-S.st));
+  for(const p of att){let dx=0,dz=0,sp=0;if(p.tx!=null){dx=p.tx-p.x;dz=p.tz-p.z;const L=Math.hypot(dx,dz);if(L>.25){const v=Math.min(p.vm,L/rem);dx=dx/L*v;dz=dz/L*v;}else{dx=dz=0;}}
+    p.vx+=(dx-p.vx)*Math.min(1,dt*7);p.vz+=(dz-p.vz)*Math.min(1,dt*7);}
+  const bx=S.ball.x,bz=S.ball.z,dirG=S.o.dir||1;let k2=0;
+  for(const p of def){const i=def.indexOf(p);let tx,tz,vm=p.vm*.74;
+    if(i===0&&carrier){tx=carrier.x+dirG*.9;tz=carrier.z;}
+    else{const others=att.filter(a=>a!==carrier),m=others[(i-1)%Math.max(1,others.length)]||carrier||att[0];tx=(m?m.x:bx)+dirG*1.6;tz=(m?m.z:bz)+.4*Math.sin(S.t*2+i);vm=p.vm*.62;}
+    let dx=tx-p.x,dz=tz-p.z;const L=Math.hypot(dx,dz);if(L>.3){const v=Math.min(vm,L*2.2);dx=dx/L*v;dz=dz/L*v;}else{dx=dz=0;}
+    if(carrier){const cd=Math.hypot(p.x-carrier.x,p.z-carrier.z);if(cd<1.25){dx*=cd/1.25;dz*=cd/1.25;}}
+    p.vx+=(dx-p.vx)*Math.min(1,dt*5);p.vz+=(dz-p.vz)*Math.min(1,dt*5);}
+  for(const k in P){const p=P[k];p.x+=p.vx*dt;p.z+=p.vz*dt;const sp=Math.hypot(p.vx,p.vz);
+    if(sp>.7)p.yaw=lerpAng(p.yaw,Math.atan2(p.vx,p.vz),Math.min(1,dt*9));else if(carrier)p.yaw=lerpAng(p.yaw,Math.atan2(S.ball.x-p.x,S.ball.z-p.z),Math.min(1,dt*4));
+    if(S.kick[k]!=null)S.kick[k]+=dt;}
+  // ball
+  if(S.fl){const f=S.fl;f.t+=dt;const u=clamp(f.t/f.T,0,1);S.ball.x=lerp(f.x0,f.x1,u);S.ball.z=lerp(f.z0,f.z1,u);S.ball.y=.13+Math.sin(u*Math.PI)*f.h;
+    if(u>=1){S.own=f.to;S.fl=null;S.i++;S.st=0;stMPSeg(S);}}
+  else if(carrier){const hx=Math.sin(carrier.yaw),hz=Math.cos(carrier.yaw),bob=Math.abs(Math.sin(S.t*8));S.ball.x=carrier.x+hx*(.5+.12*bob);S.ball.z=carrier.z+hz*(.5+.12*bob);S.ball.y=.13+.04*bob;
+    S.st+=dt;if(sg.pass&&S.st>=sg.d){const r=P[sg.pass.to],T=sg.pass.T,nx=S.segs[S.i+1];if(nx)for(const k in nx.runs||{}){const q=P[k];if(q){q.tx=nx.runs[k][0];q.tz=nx.runs[k][1];}}
+      S.fl={x0:S.ball.x,z0:S.ball.z,x1:r.x+r.vx*T*.9+Math.sin(r.yaw)*.4,z1:r.z+r.vz*T*.9+Math.cos(r.yaw)*.4,T,t:0,to:sg.pass.to,h:Math.min(.5,.1+Math.hypot(r.x-carrier.x,r.z-carrier.z)*.03)};S.own=null;S.kick[carrier.k]=0;}
+    else if(!sg.pass&&S.st>=sg.d+3)S.done=true;}
+  S.t+=dt;}
+function stMPAdvance(S,t){if(t<S.t-.02){S.reset=true;return false;}let n=0;while(S.t<t-1e-6&&n<180){stMPStep(S,Math.min(1/30,t-S.t));n++;}return true;}
+function stMPApply(S,ex){for(const k in S.P){const p=S.P[k],a=stA(k),kk=S.kick[k],kicking=kk!=null&&kk<.34;
+    stP(a,p.x,p.z,p.yaw,{pose:kicking?'kick':null,pt:kk||0,ex:(ex&&ex[k])||(p.tm?'focus':'determined')});}
+  stBall(S.ball.x,S.ball.y,S.ball.z,S.fl?9*ST.dt/.15:4*ST.dt/.15);}
+function stMPCam(S,t,o){o=o||{};const C=S.own?S.P[S.own]:S.P[S.fl.to],B=S.ball,tt=Math.max(0,t),cuts=o.cuts||[0,1.1,2.3,3.4,4.5],n=cuts.reduce((a,c,i)=>tt>=c?i:a,0),u=clamp((tt-cuts[n])/Math.max(.4,((cuts[n+1]??cuts[n]+1.3)-cuts[n])),0,1),ty=o.types||[0,4,1,3,2,4];
+  const ky=ty[n%ty.length],hx=Math.sin(C.yaw),hz=Math.cos(C.yaw),px=hz,pz=-hx;
+  if(ky===0)stC(B.x-4,8.2,B.z+19,B.x+6,.6,B.z,44);                                             // wide, side on
+  else if(ky===1)stC(C.x+hx*7.5-px*2.8,1.0,C.z+hz*7.5-pz*2.8,B.x,.7,B.z,40);                    // low, the carrier runs at the lens
+  else if(ky===2)stC(C.x-hx*(3.2-u*.6)+px*.8,1.9,C.z-hz*(3.2-u*.6)+pz*.8,C.x+hx*9,1.0,C.z+hz*9,42);   // behind the shoulder
+  else if(ky===3)stC(B.x-3,17,B.z+9,B.x+3,0,B.z,46);                                            // drone
+  else stC(C.x+px*(4.4-u*.5)+hx*.6,1.35,C.z+pz*(4.4-u*.5)+hz*.6,C.x+hx*.5,1.1,C.z+hz*.5,36);       // side close on the carrier
+  ST.focus.set(B.x,0,B.z);}
+function stP17(){
+  const A=SC.benchMatch;if(!A||A.__w226)return;A.__w226=1;
+  const di=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/have not fully understood/.test(x.lines[0].text));if(di<0)return;
+  const WIN={set:'night',toon:1};
+  const mkBuild=()=>stMPMk([
+      {k:'kenji',tm:0,x:-2,z:-9},{k:'bachK',tm:0,x:4,z:4},{k:'renK9',tm:0,x:10,z:-6},{k:'shun',tm:0,x:3,z:11},
+      {k:'sB',tm:1,x:9,z:-9},{k:'sC',tm:1,x:13,z:2},{k:'sD',tm:1,x:17,z:-4}],
+    [{d:1.5,c:'kenji',go:[6,-6],runs:{bachK:[12,3],renK9:[15,-4],shun:[9,9]},pass:{to:'bachK',T:.7}},
+     {d:1.2,c:'bachK',go:[18,1.5],runs:{kenji:[14,-7],renK9:[22,-3],shun:[16,8]},pass:{to:'renK9',T:.55}},
+     {d:1.4,c:'renK9',go:[31.5,0],runs:{bachK:[26,5],kenji:[24,-8],shun:[28,9]}}],{dir:1});
+  const sh={dur:5.7,draw:t=>{sceneStadium(t,{bright:.6,cols:['#59e1ff','#2b303a','#ffffff','#b9a6ff']});},
+    s3:{...WIN,cast:['renK9','bachK','kenji','shun','sB','sC','sD'],crowd:.5,
+      d3(t,dt){if(!this.mp||!stMPAdvance(this.mp,t))this.mp=mkBuild();if(this.mp.reset||this.mp.t<t-.05){stMPAdvance(this.mp,t);}stMPApply(this.mp,{renK9:'determined',sB:'angry',sC:'angry',sD:'angry'});stMPCam(this.mp,t,{cuts:[0,1.1,2.3,3.4,4.5],types:[0,4,1,3,2]});},
+      ov(t){if(t<.5)stStamp('KUROGANE SC 0 – 1 SEIRAN FC',t);}}};
+  A.splice(di,0,sh);
+  // the first-half shot: a live possession game in the background (Seiran pass the ball, Kurogane press)
+  const f=A.find(x=>x&&x.lines&&x.lines[0]&&/Kurogane SC faced Seiran FC/.test(x.lines[0].text));
+  if(f&&f.s3&&f.s3.d3){const od=f.s3.d3,mkR=()=>{const sg=[];const ps=[['sB',-10,18],['sC',0,22]];
+      for(let i=0;i<14;i++){const a=i%2?'sC':'sB',b=i%2?'sB':'sC',ax=-9+Math.sin(i*1.3)*4,az=19+Math.cos(i*1.7)*3;sg.push({d:1.15,c:a,go:[ax,az],runs:{[b]:[-9+Math.sin(i*1.3+1.6)*5,20+Math.cos(i*1.1)*3.5]},pass:{to:b,T:.55}});}
+      sg.push({d:3,c:'sB',go:[-8,19]});
+      return stMPMk([{k:'sB',tm:0,x:-10,z:18,yaw:Math.PI/2},{k:'sC',tm:0,x:-2,z:22},{k:'bachK',tm:1,x:-5,z:17},{k:'kenji',tm:1,x:1,z:23}],sg,{dir:-1});};
+    f.s3.d3=function(t,dt,li,lt){od.apply(this,arguments);if(!this.mp||!stMPAdvance(this.mp,t))this.mp=mkR();if(this.mp.reset||this.mp.t<t-.05)stMPAdvance(this.mp,t);stMPApply(this.mp,{sB:'smirk',sC:'smirk',bachK:'focus',kenji:'focus'});};}
+}
 function stP13(){
   const A=SC.trialIntro;if(!A||A.__w220)return;A.__w220=1;const sh=A[1];if(!sh||!sh.s3||!sh.lines||sh.lines.length<4)return;
   const L=sh.lines;
@@ -16807,7 +16871,7 @@ function stP13(){
 function stP12(){for(const k of Object.keys(SC)){const a=SC[k];if(!Array.isArray(a)||a.__w219)continue;a.__w219=1;
   a.forEach((s,i)=>{if(s&&s.s3&&s.s3.set==='training'){s.s3.set='exam';if(s.s3.tod==null)s.s3.tod=.3;(window.__trainSw=window.__trainSw||[]).push(k+':'+i);}});}}
 window.__ST=ST;stDayStreet();
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();stP14();stP15();stP16();squadAttach();
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();stP14();stP15();stP16();stP17();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
