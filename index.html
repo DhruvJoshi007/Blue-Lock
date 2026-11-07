@@ -6501,12 +6501,12 @@ function dashAx(u,ax,dt){
   return ax;}
 // reach marker: a small cyan diamond with four chevrons floats over the ball whenever it is loose and within his reach
 function ballDia(dt){const u=M&&M.user,b=M&&M.ball;let s=DT.dia;if(s&&!s.parent){s=DT.dia=null;}
-  if(!s){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.translate(64,64);x.strokeStyle='#bff6ff';x.lineWidth=10;x.lineJoin='round';x.lineCap='round';x.shadowColor='#4fe3ff';x.shadowBlur=30;
-    x.beginPath();x.moveTo(0,-40);x.lineTo(40,0);x.lineTo(0,40);x.lineTo(-40,0);x.closePath();x.stroke();
-    for(let a=0;a<4;a++){x.save();x.rotate(a*Math.PI/2);x.beginPath();x.moveTo(-10,-56);x.lineTo(0,-68);x.lineTo(10,-56);x.stroke();x.restore();}
-    s=DT.dia=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending,opacity:1}));s.renderOrder=9;s.visible=false;G3.scene.add(s);}
+  if(!s){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.translate(64,64);x.strokeStyle='#e8fbff';x.lineWidth=5;x.lineJoin='round';x.lineCap='round';x.shadowColor='#5fd4ff';x.shadowBlur=22;x.fillStyle='rgba(110,205,255,.22)';
+    x.beginPath();x.moveTo(0,-40);x.lineTo(40,0);x.lineTo(0,40);x.lineTo(-40,0);x.closePath();x.fill();x.stroke();
+    for(let a=0;a<4;a++){x.save();x.rotate(a*Math.PI/2);x.fillStyle='#e8fbff';x.beginPath();x.moveTo(-9,-60);x.lineTo(9,-60);x.lineTo(0,-47);x.closePath();x.fill();x.restore();}
+    s=DT.dia=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.95}));s.renderOrder=9;s.visible=false;G3.scene.add(s);}
   const near=!!u&&!b.owner&&!M.cine&&!M.bike&&!M.jug&&mode==='match'&&Math.hypot(b.x-u.x,b.y-u.y)<100;
-  s.visible=near;if(near){const P=v3(b.x,b.y,.1+(b.h||0)*S3),k=1.25+.12*Math.sin(clock*9);s.material.rotation=Math.sin(clock*2.2)*.15;s.position.set(P.x,P.y+.3,P.z);s.scale.set(k,k,1);}}
+  s.visible=near;if(near){const P=v3(b.x,b.y,.1+(b.h||0)*S3),k=.95+.07*Math.sin(clock*7);s.material.rotation=0;s.position.set(P.x,P.y+.3,P.z);s.scale.set(k,k,1);}}
 function dashAnim(u){u.dashKA=.6;u.kick='dashb';u.kickAt=null;u.kickT=clock;u.kickWarp=null;}
 function dashBurst(u,F){if(!u||u.dashT>0||u.fall>0)return;u.dashDur=1;u.dashMulU=1.5;u.dashT=1;u.dashCd=Math.max(u.dashCd||0,.8);u.dashX=F.x;u.dashY=F.y;u.dashN=(u.dashN||0)+1;DT.go=1;try{sfx('swoosh');}catch(e){}dashAnim(u);}
 // plant and turn: a sharp change of direction kills the speed on the spot (no arcing like a bike), the body snaps round, then he accelerates hard out of it
@@ -6514,6 +6514,8 @@ function turnPlant(u,dt){const m=Math.hypot(u.inX||0,u.inY||0),sp=Math.hypot(u.v
   if(u.turnT>0){u.turnT-=dt;
     if(u.turnT>.3){u.vx=u.vy=0;}else if(m>.2){const tg=u.speed*(sprinting()?1.22:1.04),k=Math.min(1,dt*16);u.vx+=(u.inX/m*tg-u.vx)*k;u.vy+=(u.inY/m*tg-u.vy)*k;u.turnTo={x:u.inX/m,y:u.inY/m};}
     if(!tankMode()&&u.turnTo){u.fx=u.turnTo.x;u.fy=u.turnTo.y;}return;}
+  if(u.stopCd>0)u.stopCd-=dt;
+  if(sp>u.speed*1.05&&m<.12&&!(u.dashT>0)&&u.fall<=0&&!(u.stopCd>0)){u.stopCd=.6;u.vx*=.3;u.vy*=.3;u.brakeKA=.42;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;}
   if(sp>50&&m>.35&&!(u.dashT>0)&&u.fall<=0){
     const d=(u.vx*u.inX+u.vy*u.inY)/(sp*m);if(d<.5){u.turnHold=sp>u.speed*1.1?.2:.1;u.vx*=.02;u.vy*=.02;u.turnT=.3+u.turnHold;u.brakeKA=.45;u.kick='brake';u.kickAt=null;u.kickT=clock;u.kickWarp=null;u.turnTo={x:u.inX/m,y:u.inY/m};u.turnN=(u.turnN||0)+1;}}}
 function fakeCancel(u){const A=M.aim,C=M.cine;const ia=axis(),mv=Math.hypot(ia.x,ia.y)>.35||hit('skill');if(!mv)return;
@@ -6536,7 +6538,7 @@ function dashMesh(){if(DT.mesh)return DT.mesh;const N=DT.n,g=new THREE.BufferGeo
     fragmentShader:'varying vec4 vC;void main(){gl_FragColor=vec4(vC.rgb*vC.a,vC.a);}'});
   const o=new THREE.Mesh(g,m);o.frustumCulled=false;o.renderOrder=6;G3.scene.add(o);DT.mesh=o;return o;}
 function dashFx(dt){const u=M&&M.user;if(!u||!G3.scene||!G3.cam||!(dt>0))return;try{ballDia(dt);}catch(e){}
-  const on=u.dashT>0&&!M.cine,o=dashMesh();
+  const on=false,o=dashMesh();
   if(on){FXC.wind=.35;
     DT.acc+=dt*60;const P=v3(u.x,u.y),dx=u.dashX||u.fx||1,dz=u.dashY||u.fy||0,l=Math.hypot(dx,dz)||1,ux=dx/l,uz=dz/l,sx=-uz,sz=ux;
     while(DT.acc>=1){DT.acc-=1;const side=(Math.random()*2-1)*.95,h=.08+Math.random()*1.75,back=-.15-Math.random()*.7,life=.26+Math.random()*.2,len=1.3+Math.random()*1.9;
@@ -8537,6 +8539,7 @@ const A_GRADES={
 G3.GRADES=A_GRADES;for(const k in A_GRADES){if(k==='noir')continue;const g=A_GRADES[k];g.ex*=1.16;g.vig*=.72;g.lift=g.lift.map(v=>v+.012);g.sat*=1.05;g.ex*=1.06;g.thr*=.7;g.bl*=1.3;g.sat*=1.1;g.ex*=.92;g.sat*=1.04;g.con*=1.12;g.lift=g.lift.map(v=>v-.034);g.sh=g.sh.map(v=>v*1.2);g.vig*=1.1;g.thr*=1.28;g.bl*=.85;}
 {let last=performance.now(),acc=0,n=0,tier=0;const fg=t=>{try{const dt=t-last;last=t;if(tier<2&&dt<400&&!document.hidden){acc+=dt;n++;if(n>=150){const avg=acc/n;acc=0;n=0;if(avg>30&&G3&&G3.scene){tier++;const ms=tier===1?2048:1024;G3.scene.traverse(o=>{if(o.isLight&&o.shadow&&o.shadow.mapSize.x>ms){o.shadow.mapSize.set(ms,ms);if(o.shadow.map){o.shadow.map.dispose();o.shadow.map=null;}}});window.__frameGuard=tier+':'+avg.toFixed(1);}}}}catch(e){}requestAnimationFrame(fg);};requestAnimationFrame(fg);}
 G3.world={crowd(v){const S=G3.stages&&G3.stages[G3.stage];if(S&&S.crowdG)S.crowdG.visible=!!v;}};
+for(const k in A_GRADES){if(k==='noir')continue;const g=A_GRADES[k];g.ex*=.86;g.bl*=.8;g.thr*=1.12;g.vig*=1.08;}
 function A_gradeTarget(SC3){let g=SC3&&SC3.userData&&SC3.userData.grade;if(!g)g=G3.grade;if(!g&&SC3===G3.scene)g=mode==='menu'?'menu':G3.stage;if(typeof g==='string')g=A_GRADES[g]||A_GRADES.night;return g||A_GRADES.night;}
 function A_gradeStep(dt,SC3){const T=A_gradeTarget(SC3);let C=G3._gr;if(!C){C=G3._gr=JSON.parse(JSON.stringify(T));return C;}const k=1-Math.exp(-Math.min(dt,.1)*4);
   for(const key in T){const v=T[key];if(Array.isArray(v)){for(let i=0;i<3;i++)C[key][i]+=(v[i]-C[key][i])*k;}else C[key]+=(v-C[key])*k;}return C;}
@@ -9828,6 +9831,19 @@ function k2Inset(){const g=K2.g,r=G3.renderer,B=k2Box();if(B.k<=0)return;const c
     s.visible=!!(o&&!c&&!M.pick&&mode==='match');
     if(s.visible){const h=(designFor(o).build.h||1)*2.55+.45+Math.sin(clock*6)*.08;s.position.set((o.x-PW/2)*S3,h+(o.isUser?.5:0),(o.y-PH/2)*S3);s.scale.set(.8,.8,1);s.material.color.set(o.team===M.home?(o.isUser?'#ffd34a':'#9fdcff'):'#ff7a70');}
   }catch(e){}};}
+// ---- w189: live-play effects off (cutscenes keep theirs; effects come back one by one where the user asks) ----
+function fxLive(){return mode==='match'&&!!M&&!M.cine&&!M.flash;}
+{const w=n=>{const f=window[n];if(typeof f!=='function')return;};}
+fxPuff=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxPuff);
+fxGrass=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxGrass);
+fxDirt=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxDirt);
+fxSparks=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxSparks);
+fxGlow=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxGlow);
+fxOno=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxOno);
+fxKick=(f=>function(o){if(fxLive())return;return f.apply(this,arguments);})(fxKick);
+fxTrail=(f=>function(on){if(fxLive())on=false;return f.call(this,on);})(fxTrail);
+fxAuraSet=(f=>function(p,col,s){if(fxLive())s=0;return f.call(this,p,col,s);})(fxAuraSet);
+fxWind=(f=>function(){if(fxLive())return;return f.apply(this,arguments);})(fxWind);
 function bkhEnd(c){if(M.cine!==c)return;M.cine=null;G3.dbgCam=null;const u=c.u,b=M.ball;
   u.kick=undefined;u.kickWarp=null;u.pose=null;u.celebrate=null;
   for(const d of c.D){d.o.tkKind=null;d.o.tackleCd=2;}
@@ -15685,7 +15701,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='172';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='173';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
