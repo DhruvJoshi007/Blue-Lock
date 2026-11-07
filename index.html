@@ -15853,7 +15853,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='200';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='201';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16715,7 +16715,7 @@ function stP13(){
   sh.s3.d3=function(t,dt,li,lt){
     if(li!==4)return od.call(this,t,dt,MAP[li]??li,lt);
     od.call(this,t,dt,1,lt);
-    const R=stA('renT');stP(R,-1.1,0,PI/2,{pose:'hero',look:stLk(1.1,1.62,0),ex:'determined'});stEyes(R,clamp(lt*1.5,0,1));
+    const R=stA('renT'),PI=Math.PI;stP(R,-1.1,0,PI/2,{pose:'hero',look:stLk(1.1,1.62,0),ex:'determined'});stEyes(R,clamp(lt*1.5,0,1));
     const u=clamp(lt/4,0,1),h=stHv(R,0);stCv(RP(-1.1,0,PI/2,stE(1.7,1.2,u),.3,1.45),h,stE(32,26,u),.03);};
   sh.s3.ov=function(t,li,lt){if(oo)oo.call(this,t,MAP[li]??li,lt);if(li===4){if(lt<.5)stTint('#ffffff',.8*(1-lt/.5));stGlitch(lt<.8?1-lt/.8:0);}};
 }
