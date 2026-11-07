@@ -14776,8 +14776,8 @@ function mxPlan(c,o,dt){let b0;const S=c.mxS||(c.mxS={});
     const DU=C.dur||SH.END,fade=t0=>abSst(t0-.1,t0+.15,t)*(1-abSst(DU-.5,DU-.1,t));
     if(lat<26&&C.out==='saved'){const hi=(C.peak||15)>24,t0=SH.ARR-(hi?.62:.55);return {n:hi?'gkCatch1':'gkCatch0',t:Math.max(0,t-t0),w:fade(t0),loop:false};}
     if(lat<26&&C.out==='goal'){const t0=SH.ARR-.83;return {n:'gkMiss',t:Math.max(0,t-t0),w:fade(t0),loop:false};}
-    const t0=SH.DIVE-.55;
-    return {n:(-dl*Math.sin(yw)>0)!==!!MX.flip?'gkDive':'gkDiveM',t:.5+(t-t0)*.75,w:abSst(t0,t0+.25,t)*(1-abSst(DU-.45,DU,t)),loop:false};}
+    const t0=SH.DIVE-.55;if(!C.dvExt&&C.out==='saved'){C.dvExt=1;C.dur=Math.max(C.dur||0,SH.ARR+1.5);}
+    return {n:(-dl*Math.sin(yw)>0)!==!!MX.flip?'gkDive':'gkDiveM',t:.5+(Math.min(t,3.3)-t0)*.75+Math.max(0,t-3.3)*.22,w:abSst(t0,t0+.25,t)*(1-abSst(DU-.45,DU,t)),loop:false};}
   // Nagi's U-20 Dap Shot (user's FBX): drives the whole jump, hang and volley; the scene's slow-motion clock (tau) picks the frame, so the volley lands on the strike
   if(C&&C.type==='ult'&&C.v===5&&c===fxActor(C.u)&&!C.ld&&C.tau>1.55){const tau=C.tau,f=110+Math.max(0,tau-1.72)*193.75;return {n:'dapNagiM',t:Math.max(f,tau<1.72?100+(tau-1.55)/.17*10:f)/30,w:abSst(1.55,1.75,tau)*(1-abSst(2.0,2.2,tau)),loop:false,noY:1,skip:['Head','Neck']};}
   if(C)return null;
@@ -15758,7 +15758,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='181';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='182';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
