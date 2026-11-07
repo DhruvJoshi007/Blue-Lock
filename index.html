@@ -4648,12 +4648,12 @@ function syncUI(){
 
 // ================= CUTSCENE ENGINE =================
 function playCutscene(shots,onEnd){mode='cutscene';show(null);CS={shots,i:0,t:0,li:0,chars:0,onEnd,ev:0,lt0:0,dt:.016};if(typeof stQueue==='function')stQueue(shots);startShot();syncUI();}
-function startShot(){const sh=CS.shots[CS.i];CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
+function startShot(){const sh=CS.shots[CS.i];try{if(typeof ST!=='undefined')ST.egoOn=false;}catch(e){}CS.t=0;CS.li=0;CS.chars=0;CS.ev=0;CS.lt0=0;if(sh.sfx)sfx(sh.sfx);showLine();}
 function curLine(){const sh=CS.shots[CS.i];return sh.lines&&CS.li<sh.lines.length?sh.lines[CS.li]:null;}
 function showLine(){
   const L=curLine();
   if(!L){ui.dlg.hidden=true;return;}
-  ui.dlg.hidden=false;CS.lt0=CS.t;try{voxLine(L);}catch(e){}
+  ui.dlg.hidden=false;CS.lt0=CS.t;try{if(typeof ST!=='undefined')ST.egoOn=L.who==='SYSTEM';}catch(e){}try{voxLine(L);}catch(e){}
   const cls={SYSTEM:'sys',Isagi:'gold','Coach Hara':'red',Objective:'obj',Controls:'obj',Quest:'obj',Narration:'nar'}[L.who]||'';
   ui.dlg.className=cls;void ui.dlg.offsetWidth;ui.dlg.classList.add('pop');
   ui.dlg.style.setProperty('--c',(typeof STC==='object'&&STC[L.who])||'#4fb3ff');
@@ -12077,6 +12077,7 @@ const stLk=(x,y,z)=>({x,y,z});
 function RP(x,z,yaw,f,s,y){return [x+Math.sin(yaw)*f+Math.cos(yaw)*s,y,z+Math.cos(yaw)*f-Math.sin(yaw)*s];}
 function stMix(p,q,u){u=ease(u);return [lerp(p[0],q[0],u),lerp(p[1],q[1],u),lerp(p[2],q[2],u)];}
 function stOK(){return !!(G3.on&&G3.renderer&&RIG.ready&&!RIG.failed&&!ST.broken);}
+window.__ST=ST;
 function stInit(){if(ST.scene)return;ST.scene=new THREE.Scene();ST.cam=new THREE.PerspectiveCamera(40,1.78,.05,800);ST.cam2=new THREE.PerspectiveCamera(40,1.78,.05,800);
   ST.grp=new THREE.Group();ST.scene.add(ST.grp);ST.v=new THREE.Vector3();ST.pcv=ST.pcv||{};ST.v2=new THREE.Vector3();ST.focus=new THREE.Vector3();G3.storyScene=ST.scene;G3.storyCam=ST.cam;
   if(G3.ball){ST.ball=G3.ball.clone(true);ST.ball.visible=false;ST.grp.add(ST.ball);}stSysBuild();}
@@ -12351,6 +12352,21 @@ function stEyesApply(a){const amt=a.stEyeA||0;if(!a.bones)return;if(amt<=.01&&!a
   for(const s of a.stEye){s.visible=amt>.01&&front;if(!s.visible)continue;s.parent.getWorldScale(ST.v2);const k=1/Math.max(1e-5,ST.v2.x),fl=1+.12*Math.sin(clock*23);s.scale.set(.15*amt*k*fl,.0375*amt*k*fl,1);s.material.opacity=Math.min(1,.55+.45*amt);}
   for(const m of a.stEyeM){m.emissive.setRGB(.3,.9,1);m.emissiveIntensity=amt*1.15;}}
 // ---- w192: police search the river road (cap, flashlights sweeping the road, patrol car with flashing lights) ----
+// ---- w200: Nagi's ego: half skull mask over the character's right side of the face, violet glow in the socket ----
+function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!RIG.skull||!RIG.headCenterLocal)return null;
+  const u=(RIG.height||1.8)/1.8,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
+  const XR=.088*u,YR=.116*u,ZR=.092*u,YC=-.058*u,ZC=.004*u;   // ellipsoid fitted to the face: eyes at y -.05, nose tip z .092, chin y -.155 (calibrated with marker renders)
+  const bone=M3('#e6e8eb',{r:.6}),dark=MB('#04050a');
+  const sh=new THREE.Mesh(new THREE.SphereGeometry(1,32,22,0,Math.PI*.53,.62,1.95),bone);sh.scale.set(XR,YR,ZR);sh.position.set(0,YC,ZC);g.add(sh);
+  const surf=(x,y)=>{const t=1-(x*x)/(XR*XR)-((y-YC)*(y-YC))/(YR*YR);return ZC+ZR*Math.sqrt(Math.max(.04,t));};
+  const ex=-.042*u,ey=-.05*u;const sk=new THREE.Mesh(new THREE.SphereGeometry(.024*u,16,12),dark);sk.scale.set(1,1.15,.35);sk.position.set(ex,ey,surf(ex,ey)+.002*u);g.add(sk);
+  const ns=new THREE.Mesh(new THREE.SphereGeometry(.012*u,10,8),dark);ns.scale.set(.7,1.2,.4);ns.position.set(-.01*u,-.092*u,surf(-.01*u,-.092*u)+.004*u);g.add(ns);
+  for(let i=0;i<6;i++){const x=-(.006+i*.0078)*u,y=-(.118+.004*i)*u,z=surf(x,y)+.003*u;const t=new THREE.Mesh(box(.0068*u,(.016-.001*i)*u,.005*u),MB('#f4f4ee'));t.position.set(x,y,z);t.rotation.y=-.2*i;g.add(t);}
+  for(let i=0;i<4;i++){const cx=-(.012+i*.014)*u,cy=(-.088-.004*i)*u;const cr=new THREE.Mesh(box(.002*u,.014*u,.002*u),dark);cr.position.set(cx,cy,surf(cx,cy)+.002*u);cr.rotation.z=.5-.3*i;g.add(cr);}
+  const gp=sk.position.clone();gp.z+=.006*u;const gl=stGlow('#a96bff',.13*u,.8);gl.position.copy(gp);g.add(gl);const co=stGlow('#ffffff',.04*u,1);co.position.copy(gp);g.add(co);
+  g.userData={gl,co,R:.065*u};a.bones.Head.add(g);a.stMask=g;return g;}
+window.__egoMk=a=>stEgoMask(a);
+function stEgoSync(a){const c=CAST[a.stKey];if(!c||c[0]!=='ren')return;if(ST.egoOn){const m=stEgoMask(a);if(m){m.visible=true;const k=1+.16*Math.sin(performance.now()*.011);m.userData.gl.scale.setScalar(m.userData.R*2*k);m.userData.gl.material.opacity=.7+.2*Math.sin(performance.now()*.017);}}else if(a.stMask)a.stMask.visible=false;}
 function stPolCap(a){if(!a||a.stCap||!a.bones||!a.bones.Head||!RIG.skull||!RIG.headCenterLocal)return;a.stCap=1;
   const R=RIG.skull.r,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
   const navy=M3('#1b2a4d',{r:.7}),blk=M3('#0b0e16',{r:.4});
@@ -12378,7 +12394,7 @@ function stPolice(t,li){try{const SS=ST.sets.street;if(!SS)return;if(!SS.pol)stP
 function stPhone(a,on){if(!a.bones||!a.bones.RightHand)return;if(!a.stPh){const p=new THREE.Group(),k=RIG.height/1.8/(RIG.handBoneScale||1);p.add(mesh(box(.072,.145,.012),M3('#0c0d10',{r:.3,m:.5})));
     const s=new THREE.Mesh(box(.064,.13,.002),MB('#7fd8ff'));s.position.z=.007;p.add(s);p.scale.setScalar(k);p.position.set(0,RIG.handOff*1.1,0);p.rotation.set(.2,0,0);a.bones.RightHand.add(p);a.stPh=p;}a.stPh.visible=on;}
 // ---------- actors ----------
-function stA(k){let a=ST.actors.get(k);if(!a){const c=CAST[k],d=DESIGNS[c[0]];a=buildRigCharacter(d,c[1]);a.design=d;a.stKey=k;ST.actors.set(k,a);ST.grp.add(a.root);}a.stUsed=true;a.root.visible=true;return a;}
+function stA(k){let a=ST.actors.get(k);if(!a){const c=CAST[k],d=DESIGNS[c[0]];a=buildRigCharacter(d,c[1]);a.design=d;a.stKey=k;ST.actors.set(k,a);ST.grp.add(a.root);}a.stUsed=true;a.root.visible=true;try{stEgoSync(a);}catch(e){window.__egoE=String(e&&e.stack||e).slice(0,300);}return a;}
 function stQueue(shots){ST.q.length=0;for(const s of shots)if(s.s3){const k='@'+s.s3.set;if(SETS[s.s3.set]&&!ST.sets[s.s3.set]&&!ST.q.includes(k))ST.q.push(k);if(s.s3.cast)for(const k of s.s3.cast)if(!ST.actors.has(k)&&!ST.q.includes(k))ST.q.push(k);}}
 function stPre(){if(!ST.q.length||!stOK())return;try{stInit();const k=ST.q.shift();if(k[0]==='@'){const n=k.slice(1);if(!ST.sets[n]){ST.sets[n]=SETS[n]();ST.sets[n].g.visible=false;}}else if(CAST[k]&&!ST.actors.has(k)){const a=stA(k);a.root.visible=false;a.stUsed=false;}}catch(e){console.warn('story preload',e);ST.q.length=0;}}   // builds one queued set/actor per frame while a 2D card shows
 // o: pose, pt (pose time), look {x,y,z}, hd {nx,ny}, ex (expression), sitT, cel/celT (B celebrations), frz (freeze frame)
@@ -12424,7 +12440,7 @@ function stDraw(sh,t,dt){
   catch(e){console.warn('story 3D off',e);ST.broken=true;ST.cut=true;try{if(ST.grp&&ST.grp.parent!==ST.scene)ST.scene.add(ST.grp);G3.renderer.setScissorTest(false);}catch(e2){}return false;}}
 function stStop(){ST.shot=null;ST.li=-9;ST.cut=true;ST.panels=null;if(ST.grp&&ST.scene&&ST.grp.parent!==ST.scene)ST.scene.add(ST.grp);}
 // ---------- speaker portrait chip: a close-up of the speaking rigged actor, rendered once per line into a corner and copied to the #dlg chip ----------
-const STD={Nagi:'ren',Isagi:'kaito','Coach Hara':'hara','Coach Ishida':'ishida',Trialist:'goro'};
+const STD={SYSTEM:'ren',Nagi:'ren',Isagi:'kaito','Coach Hara':'hara','Coach Ishida':'ishida',Trialist:'goro'};
 function stPort(sc3){const L=CS&&curLine();if(!L)return;const key=CS.i+'|'+CS.li+'|'+CS.shots.length;if(ST.pk===key)return;ST.pk=key;const dk=STD[L.who];if(!dk)return;
   let a=null;for(const b of ST.actors.values())if(b.stUsed&&b.root.visible&&CAST[b.stKey]&&CAST[b.stKey][0]===dk){a=b;break;}if(!a||!a.bones||!a.bones.Head)return;
   const r=G3.renderer,v=stHead(a,-.03),y=a.yaw??a.stYaw??0,fx=Math.sin(y),fz=Math.cos(y),c=ST.pc||(ST.pc=new THREE.PerspectiveCamera(24,1,.05,300));
@@ -14051,7 +14067,7 @@ function cnHTShots(){const PI=Math.PI,T=M.home,O=M.away,u=M.user,kai=M.kaito&&!M
   const eD=kai?6.2:5.0,egoL=[['Bored, Nagi?',.55,1.4],['Then stop holding back.',1.95,1.35],[lead<0?'Forty-five minutes. Turn it around.':'Forty-five minutes. Devour them.',3.3,1.0]];
   const nL=kai?['Nagi','...Mendokusai. Fine.',4.35,1.0]:['Nagi','...Mendokusai. Fine. Let\'s go.',4.25,.75];
   sh.push({dur:eD,cnMus:'tense',events:[[.5,()=>{sfx('sys');try{voxSay('Bored, Nagi?','SYSTEM');}catch(e){}}],[1.95,()=>sfx('glitch')],[3.3,()=>sfx('glitch')]].concat(kai?[[5.25,()=>sfx('kick')]]:[]),draw:t=>{panelBG('#020611');cnEgo(t-.55,4,'EGO',sc());},
-    s3:{...base,set,crowd:.3,vig:.85,d3(t,dt){const N=stA(nk),up=t>4.2,bump=kai&&t>5.05;
+    s3:{...base,set,crowd:.3,vig:.85,d3(t,dt){ST.egoOn=t>.5&&t<4.4;const N=stA(nk),up=t>4.2,bump=kai&&t>5.05;
       stP(N,0,-72.1,bump?.75:up?.2:0,{pose:bump?'bump':up?'stand':'lookDown',ex:up?'determined':'neutral',look:bump?stLk(.62,1.6,-72.2):null});stEyes(N,clamp((t-.7)/.5,0,1)*(t<4.4?1:.6));
       if(kk&&t>4.25){const I=walk(kk,1.25,-73.7,.66,-72.25,t,4.25,5.0,{yaw:-PI/2-.5,pose:bump?'bump':undefined,ex:'smile',look:stLk(0,1.62,-72.1)});}
       if(!kai||t<4.4){const h=stHv(N,0),e=ease(clamp(t/4.3,0,1));stC(lerp(.95,.5,e),lerp(1.5,h[1]+.02,e),lerp(-69.9,-70.95,e),h[0],h[1]-.02,h[2],lerp(32,26,e),.03*Math.sin(t*.8));}
@@ -15758,7 +15774,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='182';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='183';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
