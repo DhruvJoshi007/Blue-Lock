@@ -8347,7 +8347,7 @@ function nMat(d,kit,st,o={}){
     nAwake:{value:0},nEgoSk:{value:0},nEgoT:{value:0},nEgoU:{value:(typeof RIG!=='undefined'&&RIG&&RIG.height?RIG.height/1.8:1.056)},nEgoC:{value:(N.hp?new THREE.Vector3(0,N.hp.y+.07,N.hp.z+.01):new THREE.Vector3(0,1.6,0))},nSuit:{value:kit.pattern==='suit'?1:0},nGlow:{value:NLIN(f.glow||f.eyeColor||'#59e1ff')},nRim:{value:new THREE.Color(.55,.6,.75)},nFlash:{value:0},nReal:N.real,nOrig:{value:d.model&&N.cm[d.model]?1:0},...(()=>{const gi=d.model?null:nGenInfo(st),V4=a=>new THREE.Vector4(a[0],a[1],a[2],a[3]);return {nGE:{value:gi?V4(gi.eye):new THREE.Vector4()},nGM:{value:gi?V4(gi.mou):new THREE.Vector4()},nGN:{value:gi?V4(gi.nose):new THREE.Vector4(0,0,0,1)},nGB:{value:gi?V4(gi.brw):new THREE.Vector4(0,0,1,0)},nSkB:{value:new THREE.Vector3(N.skinBase.r,N.skinBase.g,N.skinBase.b)}};})()};
   const m=new THREE.MeshStandardMaterial({map:(d.model&&N.cm[d.model]?N.cm[d.model].tex:N.atlas),roughness:.82,metalness:0,skinning:true,side:THREE.DoubleSide});m.userData.nU=U;m.extensions={derivatives:true};
   m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
-    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
+    sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute float nReg;flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;uniform float nOrig;uniform vec4 nGN;uniform vec4 nGB;uniform vec4 nGM;uniform float nEgoSk,nEgoU;uniform vec3 nEgoC;').replace('#include <begin_vertex>','#include <begin_vertex>\nvReg=nReg;vNz=normal.z;vOP=position;vON=objectNormal;vFwd=normalize(normalMatrix*(skinMatrix*vec4(0.,-.12,1.,0.)).xyz);\nif(nEgoSk>.5&&nOrig>.5&&((nReg>-.5&&nReg<.5)||(nReg>1.5&&nReg<3.5)||(nReg>12.5&&nReg<13.5))){vec3 eq=(position-nEgoC)/nEgoU;vec2 es=vec2((eq.x+.042)/.036,(eq.y+.05)/.04);float esk=1.-smoothstep(.7,1.1,length(es));transformed-=normalize(objectNormal)*.007*nEgoU*esk*step(eq.x,-.004)*step(-.06,eq.z);float exm=smoothstep(-.001,-.008,eq.x)*smoothstep(.17,.13,length(vec2(eq.x*1.15,eq.y+.06)))*smoothstep(-.147,-.14,eq.y)*smoothstep(.09,.05,eq.y)*smoothstep(.0,.04,eq.z);transformed+=normalize(objectNormal)*.0022*nEgoU*exm;}\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.){transformed.y=nGB.y+(transformed.y-nGN.z)*nGN.w;transformed.x=sign(transformed.x)*(nGB.x+(abs(transformed.x)-nGB.x)*nGB.z);}').replace('#include <project_vertex>','#include <project_vertex>\nif(nOrig<.5&&nGM.w>.5&&floor(nReg+.5)==7.)gl_Position=projectionMatrix*vec4(mvPosition.xyz+normalize(-mvPosition.xyz)*.05,1.);');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
 flat varying float vReg;varying float vNz;varying vec3 vOP;varying vec3 vON;varying vec3 vFwd;float nFx=0.;uniform vec4 nGE;uniform vec4 nGM;uniform vec4 nGN;uniform vec3 nSkB;uniform float nSuit;uniform vec3 nSkT;uniform vec3 nFaceT;uniform float nFaceL;uniform vec3 nJer,nSho,nAcc,nSkin,nHair,nEye,nBoot,nGlove,nInner,nGlow,nRim;uniform float nHairRef,nGl,nUniRef,nAwake,nFlash,nReal,nOrig;uniform sampler2D nNumT;uniform vec4 nNumR;
 uniform float nEgoSk,nEgoU,nEgoT;uniform vec3 nEgoC;vec3 nEgoE=vec3(0.);vec3 nEgoB=vec3(0.);float nEgoW=0.;
@@ -8395,7 +8395,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
     vec3 q=(vOP-nEgoC)/nEgoU;
     float wz=nEN(vec2(q.y*38.,1.7))-.5,wy=nEN(vec2(q.y*140.,5.))-.5,wk=max(0.,nEN(vec2(q.y*21.,9.))-.55);float bx=-.002+.03*wz+.01*wy-.03*wk+.004*sin(q.y*61.+1.7);
     float side=smoothstep(bx+.004,bx-.004,q.x);
-    float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(-.06,-.01,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
+    float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(.0,.04,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
     float M=side*inH;
     if(r==4.||r==14.){if(M>.02)discard;}
     else{
@@ -8406,7 +8406,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
       {float skN=(r==3.)?max(smoothstep(.08,.14,c.r-c.b),smoothstep(.0,-.03,q.y)):1.;float sd=q.x-bx;float nearE=smoothstep(.055,.0,sd)*smoothstep(-.003,.004,sd)*inH*skN;
         float k1=nEN(q.xy*vec2(70.,110.)+vec2(0.,3.)),k2=nEN(q.xy*vec2(150.,60.)),k3=nEN(q.xy*vec2(40.,40.)+7.);
         float cr1=smoothstep(.07,.0,abs(k1-.5)),cr2=smoothstep(.05,.0,abs(k2-.5));
-        c*=1.-.55*nearE*smoothstep(.25,.75,k3);
+        c*=1.-.55*nearE*smoothstep(.25,.75,k3);c*=1.-.55*smoothstep(.012,.0,sd)*smoothstep(-.002,.002,sd)*inH*skN;
         c=mix(c,vec3(.05,.01,.07),nearE*max(cr1*.95,cr2*.75));
         nEgoE+=nearE*(cr1+cr2*.7)*mix(P,G,.5+.5*sin(q.y*70.+nEgoT*4.))*.9*tw;}
       if(M>.001){
@@ -8414,7 +8414,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
         float bn=nEN(q.xy*95.)*.5+nEN(q.xy*280.)*.3+.2;
         vec3 bone=mix(vec3(.24,.22,.3),vec3(.86,.84,.88),bn);
         bone*=vec3(.86,.82,1.04);bone*=.82+.36*(nEN(q.xy*520.)*.55+nEN(q.xy*1400.)*.3+nEN(q.xy*3200.)*.15);
-        bone*=.3+.7*smoothstep(0.,.02,edgeD);
+        bone*=.3+.7*smoothstep(0.,.02,edgeD);bone+=vec3(.5,.48,.55)*smoothstep(.007,.002,edgeD)*smoothstep(-.001,.002,edgeD)*.6;
         float ck=nEN(vec2(q.x*62.+q.y*41.,q.y*58.-q.x*37.));
         bone=mix(bone,vec3(.03,.02,.05),smoothstep(.035,.0,abs(ck-.5))*.9);
         float ck2=nEN(vec2(q.x*130.-q.y*70.,q.y*110.+q.x*90.+3.));
@@ -15828,7 +15828,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='186';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='187';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
