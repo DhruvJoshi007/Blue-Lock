@@ -8406,7 +8406,7 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
     vec3 q=(vOP-nEgoC)/nEgoU;q.y=q.y<-.05?-.05+(q.y+.05)*1.13:q.y;
     float wz=nEN(vec2(q.y*38.,1.7))-.5,wy=nEN(vec2(q.y*140.,5.))-.5,wk=max(0.,nEN(vec2(q.y*21.,9.))-.55);float bx=-.002+.03*wz+.01*wy-.03*wk+.004*sin(q.y*61.+1.7);
     float side=smoothstep(bx+.004,bx-.004,q.x);
-    float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.17,.14,length(vec2(q.x*1.15,q.y+.06)))*smoothstep(.0,.04,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
+    float chinY=-.147+.006*(nEN(vec2(q.x*60.,2.3))-.5);float inH=smoothstep(.185,.155,length(vec2(q.x*.98,q.y+.06)))*smoothstep(.0,.04,q.z)*smoothstep(chinY-.004,chinY+.003,q.y)*smoothstep(.09,.05,q.y);
     float M=side*inH;
     if(r==4.||r==14.){if(M>.02)discard;}
     else{
@@ -8434,7 +8434,9 @@ float nSkF=0.;float nBand(float x){float toon=smoothstep(-.03,.03,x)*.78+smooths
         float sock=1.-smoothstep(.82,1.,ed);
         bone=mix(bone,vec3(.008,.004,.02),sock);bone*=.55+.45*smoothstep(chinY,chinY+.014,q.y);
         float core=smoothstep(.46,.0,ed);
-        bone=mix(bone,bone*.45,smoothstep(1.7,1.0,ed)*(1.-sock)*.6);nEgoE+=Mw*(G*core*1.9*tw+P*sock*(1.-core)*1.3+P*smoothstep(1.45,.95,ed)*(1.-sock)*.28+bone*.14);
+        bone=mix(bone,bone*.45,smoothstep(1.7,1.0,ed)*(1.-sock)*.6);{float ir=smoothstep(.40,.34,ed),scl=smoothstep(.70,.60,ed),pu=smoothstep(.16,.11,ed),lim=smoothstep(.22,.38,ed)*ir;vec2 hl=es-vec2(-.15,.17);float hi=smoothstep(.13,.05,length(hl));
+        vec3 irisC=mix(vec3(.03,.5,.1),G*1.1,lim);vec3 eyeC=vec3(.8,.95,.82)*.5*scl*(1.-ir)+irisC*ir*(1.-pu)*tw*1.2+vec3(1.)*hi*.9*scl;pu=smoothstep(.22,.17,ed);eyeC*=1.-pu*.97;
+        nEgoE+=Mw*(eyeC*1.15+P*sock*(1.-scl)*1.1+G*smoothstep(1.3,.5,ed)*(1.-ir)*.22+P*smoothstep(1.45,.95,ed)*(1.-sock)*.28+bone*.14);}
         vec2 nn=vec2((q.x+.012)/.011,(q.y+.074)/.016);bone=mix(bone,vec3(.01,.005,.02),1.-smoothstep(.7,1.,length(nn)));
         float tx=-q.x-.004;
         float ty=smoothstep(-.14,-.134,q.y)*smoothstep(-.086,-.092,q.y);
@@ -15862,7 +15864,7 @@ function hipFloorPass(){gkFloorPass();try{G3.actors.forEach(c=>{if(!c||!c.hipRis
 {const _aa=abApplyRig;abApplyRig=function(c){try{const C=M&&M.cine;if(C&&C.type==='ult'&&C.v===5&&C.u&&c===fxActor(C.u)){const t=C.t;if((t>=24.3&&t<D5_BC)||(t>=D5_BCEND&&t<41.5)){const st=c.ab;if(st)st.fistK=Math.max(st.fistK||0,.85*clamp((t-24.3)/.2,0,1));}}}catch(e){}return _aa.apply(this,arguments);};}
 window.__hfp=hipFloorPass;window.__rigd={RIG,abG,abFingers};
 // build stamp (shown in the pause menu so the running version can be read off the screen)
-window.__BUILD_ID='205';window.__mxd={MXC,MX,mxApply,mxDur};
+window.__BUILD_ID='206';window.__mxd={MXC,MX,mxApply,mxDur};
 try{const e=document.getElementById('build-stamp');if(e)e.textContent='Build '+window.__BUILD_ID+' · w125';}catch(e){}
 // ---- fail-safe: nobody stays on the ground in live play ----
 // after any cutscene ends every player is reset to a clean idle/run state; a player who keeps a fall or a scripted raw pose for too long in open play,
@@ -16041,7 +16043,7 @@ SETS.lake=stLake;
 // the ego walks on the water: lift it to the surface and put ripples under it
 {const _sp=stP;stP=function(a,x,z,yaw,o,h){if(a&&a.stKey==='renEgo'&&ST.set==='lake'){if(h==null)h=-.7;ST.ripple={x,z,y:h};}return _sp.call(this,a,x,z,yaw,o,h);};}
 // the sitting pose from the user's drawing: hunched far forward, elbows on the knees, hands clasped between them, head down, knees wide, shins vertical
-SPOSE.benchSit={...SPS,hy:-.44,lLx:-1.5,lRx:-1.5,kL:1.5,kR:1.5,lLz:.445,lRz:.445,fL:0,fR:0,sx:.9,nx:.7,aLx:-.95,aLz:-.22,eL:1.45,aRx:-.95,aRz:-.22,eR:1.45,cL:.8,cR:.8};
+SPOSE.benchSit={...SPS,hy:-.44,lLx:-1.5,lRx:-1.5,kL:1.5,kR:1.5,lLz:.445,lRz:.445,fL:0,fR:0,sx:.22,nx:.04,aLx:-.7,aLz:-.2,eL:1.35,aRx:-.8,aRz:-.2,eR:1.35,cL:.8,cR:.8};
 
 function stRank(title,rows,t){const s=sc(),k=ease(clamp(t*2.2,0,1));if(k<=0)return;const p=W>=H,w=Math.min(W-32,(p?320:340)*s),rh=Math.round(22*s+6),hh=Math.round(30*s+8),h=hh+rows.length*rh+8,x=p?W-w-Math.max(16,W*.03):W/2-w/2,y=p?H*.1:H*.07;
   ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(6,10,18,.9)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
@@ -16052,6 +16054,11 @@ function stRank(title,rows,t){const s=sc(),k=ease(clamp(t*2.2,0,1));if(k<=0)retu
 function stLineup(t){const s=sc(),k=ease(clamp(t*2,0,1));if(k<=0)return;const p=W>=H,w=Math.min(W-32,(p?300:320)*s),h=w*1.1,x=p?W-w-Math.max(16,W*.03):W/2-w/2,y=p?H*.1:H*.07;
   ctx.save();ctx.globalAlpha=k;ctx.fillStyle='rgba(8,36,22,.92)';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#59e1ff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.strokeRect(x+10,y+26,w-20,h-36);ctx.beginPath();ctx.moveTo(x+10,y+26+(h-36)/2);ctx.lineTo(x+w-10,y+26+(h-36)/2);ctx.stroke();
   smallText('KUROGANE SC · STARTING LINE-UP',x+w/2,y+14,Math.round(11*s+3),'#59e1ff','center',FS,700);
+  const zn=[[.22,.62,.2,.34,'#ffd34a','LEFT CHANNEL'],[.5,.4,.23,.24,'#9fd4ff','THE BOX'],[.78,.62,.2,.34,'#ff8fa8','RIGHT WING']];
+  zn.forEach((z,i)=>{const a=clamp((t-.15-i*.25)*3,0,1);if(a<=0)return;const cx=x+10+(w-20)*z[0],cy=y+26+(h-36)*z[1],rx=(w-20)*z[2],ry=(h-36)*z[3];
+    ctx.globalAlpha=k*a*.2;ctx.fillStyle=z[4];ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,7);ctx.fill();
+    ctx.globalAlpha=k*a*.75;ctx.strokeStyle=z[4];ctx.lineWidth=1.5;ctx.setLineDash([5*s,4*s]);ctx.stroke();ctx.setLineDash([]);
+    ctx.globalAlpha=k*a;smallText(z[5],cx,cy-ry+11*s,Math.round(9*s+2),z[4],'center',FS,700);});
   const dots=[['BACHIRA · LW',.22,.62,'#ffd34a'],['BAROU · ST',.5,.3,'#9fd4ff'],['CHIGIRI · RW',.78,.62,'#ff8fa8']];
   dots.forEach((d,i)=>{const a=clamp((t-.3-i*.25)*3,0,1);ctx.globalAlpha=k*a;const dx=x+10+(w-20)*d[1],dy=y+26+(h-36)*d[2];ctx.fillStyle=d[3];ctx.beginPath();ctx.arc(dx,dy,9*s,0,7);ctx.fill();smallText(d[0],dx,dy+20*s,Math.round(10*s+3),'#eef3f8','center',FS,700);});
   const a=clamp((t-1.3)*3,0,1);ctx.globalAlpha=k*a;smallText('BENCH · NAGI (REPLACEMENT STRIKER)',x+w/2,y+h-12,Math.round(10*s+3),'#ffc04a','center',FS,700);ctx.restore();}
@@ -16369,8 +16376,8 @@ function stP6(){
 function stEgoMask(a){if(a.stMask)return a.stMask;if(!a.bones||!a.bones.Head||!RIG.headCenterLocal)return null;
   const u=(RIG.height||1.8)/1.8,g=new THREE.Group();g.position.copy(RIG.headCenterLocal);if(RIG.restModel&&RIG.restModel.Head)g.quaternion.copy(RIG.restModel.Head).invert();g.scale.setScalar(1/(RIG.headBoneScale||1));
   const gp=new THREE.Vector3(-.042*u,-.05*u,.1*u);
-  const gl=stGlow('#6a1fd0',.15*u,.45);gl.position.copy(gp);g.add(gl);const co=stGlow('#1dff52',.05*u,.7);co.position.copy(gp);g.add(co);
-  const gl2=stGlow('#39ff66',.11*u,.25);gl2.position.set(-.05*u,-.1*u,.08*u);g.add(gl2);
+  const gl=stGlow('#6a1fd0',.12*u,.32);gl.position.copy(gp);g.add(gl);const co=stGlow('#1dff52',.028*u,.4);co.position.copy(gp);g.add(co);
+  const gl2=stGlow('#39ff66',.08*u,.1);gl2.position.set(-.046*u,-.07*u,.085*u);g.add(gl2);
   const N=110,pos=new Float32Array(N*3),col=new Float32Array(N*3),aS=new Float32Array(N),aA=new Float32Array(N),seed=[];
   for(let i=0;i<N;i++)seed.push({x:-(.004+Math.random()*.075)*u,y:(-.14+Math.random()*.2)*u,z:(.03+Math.random()*.07)*u,ph:Math.random(),sp:.45+Math.random()*.7,sz:.6+Math.random()*.9,tw:Math.random()*6.28});
   const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));pg.setAttribute('color',new THREE.BufferAttribute(col,3));pg.setAttribute('aS',new THREE.BufferAttribute(aS,1));pg.setAttribute('aA',new THREE.BufferAttribute(aA,1));
@@ -16769,7 +16776,7 @@ function stP15(){
 // ---- lip movement: the face shader's jaw drop (uniform nJaw) opens and closes in a syllable-like rhythm while the current line's voice clip (or text length) lasts ----
 function lipSpeaks(a){
   if(!CS||clock>=(CS.talkEnd||0)||!CS.talkWho)return false;const who=CS.talkWho,key=a.stKey,dk=CAST[key]&&CAST[key][0];
-  if(who==='SYSTEM')return key==='renEgo';
+  if(who==='SYSTEM')return key==='renEgo'||(!!ST.egoNagi&&dk==='ren'&&key!=='renEgo');
   if(who==='Nagi')return dk==='ren'&&key!=='renEgo';
   if(typeof STD==='object'&&STD[who])return STD[who]===dk&&key!=='renEgo';
   const nm=((a.design&&a.design.name)||'').toLowerCase(),w=String(who).toLowerCase().replace(/^coach /,'');return !!nm&&(nm.includes(w)||w.includes(nm.split(' ').pop()));}
@@ -16809,7 +16816,7 @@ function stMPSeg(S){const sg=S.segs[S.i];if(!sg)return;S.sg0=S.st=0;for(const k 
 function stMPStep(S,dt){
   const sg=S.segs[Math.min(S.i,S.segs.length-1)],P=S.P,att=[],def=[];for(const k in P)(P[k].tm?def:att).push(P[k]);
   const carrier=S.own?P[S.own]:null,rem=Math.max(.18,(S.fl?S.fl.T-S.fl.t:sg.d-S.st));
-  const home=(p,vm)=>{const tx=p.hx+p.sh*S.ball.x,tz=p.hz*.85+S.ball.z*.45;let dx=tx-p.x,dz=tz-p.z;const L=Math.hypot(dx,dz);if(L>.5){const v=Math.min(vm,L*1.3);dx=dx/L*v;dz=dz/L*v;}else{dx=dz=0;}return [dx,dz];};
+  const home=(p,vm)=>{const tx=p.hx+p.sh*S.ball.x,tz=p.hz*.85+S.ball.z*.45;let dx=tx-p.x,dz=tz-p.z;const L=Math.hypot(dx,dz);if(L>1.6){const v=Math.min(vm,L*1.3);dx=dx/L*v;dz=dz/L*v;}else{dx=dz=0;}return [dx,dz];};
   for(const p of att){let dx=0,dz=0;if(p.tx!=null){dx=p.tx-p.x;dz=p.tz-p.z;const L=Math.hypot(dx,dz);if(L>.25){const v=Math.min(p.vm,L/rem);dx=dx/L*v;dz=dz/L*v;}else{dx=dz=0;}}
     else if(p.hx!=null){[dx,dz]=home(p,p.vm*.55);}
     p.vx+=(dx-p.vx)*Math.min(1,dt*7);p.vz+=(dz-p.vz)*Math.min(1,dt*7);}
@@ -16822,7 +16829,7 @@ function stMPStep(S,dt){
     else{dx=dz=0;}
     if(carrier){const cd=Math.hypot(p.x-carrier.x,p.z-carrier.z);if(cd<1.25){dx*=cd/1.25;dz*=cd/1.25;}}
     p.vx+=(dx-p.vx)*Math.min(1,dt*5);p.vz+=(dz-p.vz)*Math.min(1,dt*5);}
-  for(const k in P){const p=P[k];p.x+=p.vx*dt;p.z+=p.vz*dt;const sp=Math.hypot(p.vx,p.vz);
+  for(const k in P){const p=P[k];const sp=Math.hypot(p.vx,p.vz),mv=sp<1.1?0:1;p.x+=p.vx*dt*mv;p.z+=p.vz*dt*mv;
     if(sp>.7)p.yaw=lerpAng(p.yaw,Math.atan2(p.vx,p.vz),Math.min(1,dt*9));else if(carrier)p.yaw=lerpAng(p.yaw,Math.atan2(S.ball.x-p.x,S.ball.z-p.z),Math.min(1,dt*4));
     if(S.kick[k]!=null)S.kick[k]+=dt;}
   // ball
@@ -16943,6 +16950,170 @@ function stP20(){
   sh.s3.d3=function(t,dt){return od.call(this,mp(t),dt);};
   sh.s3.ov=function(t){return oo.apply(this,[mp(t)].concat([].slice.call(arguments,1)));};
 }
+// ---- w233: Nagi's entrance, one ego, coach turn + white aura, playable first match (forced Dap, hidden time limits) ----
+function stWAura(x,z,amt,t){let g=ST.wAura;
+  if(!g){g=ST.wAura=new THREE.Group();ST.grp.add(g);g.c1=stGlow('#ffffff',3.4,.4);g.c2=stGlow('#e8f4ff',1.8,.5);g.add(g.c1,g.c2);
+    const N=44,pos=new Float32Array(N*3),pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    g.pts=new THREE.Points(pg,new THREE.PointsMaterial({map:stGlowTex(),color:0xffffff,size:.09,transparent:true,opacity:.9,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true,fog:false}));g.pts.frustumCulled=false;g.add(g.pts);
+    g.seed=[];for(let i=0;i<N;i++)g.seed.push({a:Math.random()*6.283,r:.25+Math.random()*.45,ph:Math.random(),sp:.5+Math.random()*.9});}
+  g.visible=amt>.01;if(!g.visible)return;g.position.set(x,0,z);
+  const k=1+.08*Math.sin(t*9);g.c1.position.set(0,1.0,0);g.c1.scale.setScalar(5.4*amt*k);g.c1.material.opacity=.5*amt;
+  g.c2.position.set(0,1.15,0);g.c2.scale.setScalar(2.9*amt);g.c2.material.opacity=.6*amt*(.8+.2*Math.sin(t*13));
+  const P=g.pts.geometry.attributes.position.array;
+  g.seed.forEach((s,i)=>{const u=(t*.45*s.sp+s.ph)%1,r=s.r*(1-u*.4);P[i*3]=Math.cos(s.a+t*.8)*r;P[i*3+1]=.1+u*2.2;P[i*3+2]=Math.sin(s.a+t*.8)*r;});
+  g.pts.geometry.attributes.position.needsUpdate=true;g.pts.material.opacity=.85*amt;}
+function stP21(){
+  const A=SC.benchMatch;if(!A||A.__w233)return;
+  const PI=Math.PI,WIN={set:'night',toon:1},BX=-8,BZ=46.4,EG='SYSTEM',CM='Commentator',CI='Coach Ishida',HP=a=>stHv(a,0);
+  const ix=re=>A.findIndex(x=>x&&x.lines&&x.lines[0]&&re.test(x.lines[0].text));
+  const iL=ix(/^Let us show them/),iC=ix(/not the Nagi from the selection/),iF=ix(/have not fully understood/),iT=ix(/Then Coach Ishida felt it/);
+  if(iL<0||iC<0||iF<0||iT<0)return;A.__w233=1;
+  const bn=()=>{if(!ST.dugout){ST.dugout=stDugoutMk();ST.grp.add(ST.dugout);}ST.dugout.visible=true;ST.dugout.position.set(BX,0,BZ);ST.dugout.rotation.y=PI;stSubs(BX,BZ,PI);return ST.dugout;};
+  const wrap=a=>a-PI*2*Math.round(a/(PI*2)),nowS=()=>performance.now()/1000;
+  const spr=(S,k,tg,h,w,z)=>{const d=k==='a'?wrap(tg-S.a):tg-S.e,kv=k==='a'?'av':'ev',kk=k==='a'?'a':'e';S[kv]+=(w*w*d-2*z*w*S[kv])*h;S[kk]+=S[kv]*h;};
+  const sd2=A[iL].draw,L0=A[iL].lines[0],L1=A[iL].lines[1];
+  VC.ext.ze12='voice/ego/G12.mp3';VC_LINES['SYSTEM|This is it, He is unstoppable now.']='ze12';
+  const shC=A[iC],shF=A[iF],shT=A[iT];
+  // ---- the coach feels it: he turns (spring) and sees white light around Nagi, who sits upright; Nagi turns to him on 'You are up'
+  {const TS=shT.s3,od=TS.d3;let cy=PI,cv=0;
+    TS.d3=function(t,dt,li,lt){bn();const N=stA('renK9'),I=stA('ishi'),h=Math.min(dt||.016,.05);ST.egoActor=true;ST.egoNagi=li>=1&&li<=3;
+      const CX=BX+2.6,CZ=BZ-1.8,toN=Math.atan2(BX-CX,BZ-.05-CZ);if(li===0&&lt<h*1.5){cy=PI;cv=0;}
+      const tg=li===0&&lt<1.4?PI:toN;{const d=wrap(tg-cy);cv+=(49*d-2*.75*7*cv)*h;cy+=cv*h;}
+      const nod=li===4&&lt<1.2?.28*Math.sin(clamp(lt/.9,0,1)*PI):0;
+      const lkN=li<=2?stLk(BX,1.5,BZ-22):(li===3&&lt<.6?stLk(BX,1.5,BZ-22):stLk(CX,1.55,CZ));
+      stP(N,BX,BZ-.05,PI,{pose:'benchSit',hd:{nx:-.2+nod},ex:li>=1&&li<=3?'determined':'focus',look:lkN});if(li>=1&&li<=3)stEyes(N,1);
+      stP(I,CX,CZ,cy,{pose:li===3?'accuse':'armsCrossed',ex:li===0||li===1?'shock':'focus',look:li===0&&lt<1.2?stLk(BX+9,1.6,BZ-14):stLk(BX,1.4,BZ)});
+      stWAura(BX,BZ-.05,li===0?clamp((lt-.7)/2.6,0,1)*.9:li===2?.5:1,nowS());window.__coach={cy,li,lt};
+      if(li<=0){const u=clamp(lt/5,0,1);stC(stE(BX+4.6,BX+3.4,u),1.45,stE(BZ-7.2,BZ-6.0,u),BX+1.0,1.3,BZ-.9,36);stShake(.002);}
+      else if(li===1){const hd=HP(I);stCv(RP(CX,CZ,cy,1.6,.3,1.5),[hd[0],hd[1],hd[2]],28,.04);}
+      else if(li===2){const u=clamp(lt/8,0,1),hd=HP(N);stCv(RP(BX,BZ-.05,PI,stE(2.3,1.0,u),.3,1.25),[hd[0],hd[1]-.02,hd[2]],stE(32,26,u),.02);stSys(BX,BZ,{t:lt,panels:[],aura:.7,ring:.5,beam:.2,light:.4});}
+      else if(li===3){if(lt<1.1){const hd=HP(I);stCv(RP(CX,CZ,cy,1.5,.3,1.5),hd,28,.04);}else{const hd=HP(N);stCv(RP(BX,BZ-.05,PI,1.9,-.9,1.12),[hd[0],hd[1]-.01,hd[2]],30,.02);}}
+      else{const u=clamp(lt/4,0,1),hd=HP(N);stCv(RP(BX,BZ-.05,PI,stE(2.4,2.0,u),.4,1.15),hd,30,.03);}
+      ST.focus.set(BX,0,BZ);};}
+  // ---- entrance: leg zoom as he crosses the white line, tilt up to the face, ego speaks
+  const tv=new THREE.Vector3();
+  const E1={dur:4.8,draw:sd2,s3:{...WIN,cast:['renK9'],crowd:.5,
+    d3(t,dt){bn();const N=stA('renK9'),w=clamp(t/2.9,0,1),z=46.2-1.8*ease(w);
+      stP(N,BX,z,PI,{pose:'walk',ex:'determined',look:stLk(BX,1.5,z-14)});
+      let fz=1e9,fp=null;try{N.root.updateMatrixWorld(true);for(const n of ['LeftFoot','RightFoot']){const b=N.bones&&N.bones[n];if(!b)continue;b.getWorldPosition(tv);if(tv.z<fz){fz=tv.z;fp={x:tv.x,y:tv.y,z:tv.z};}}}catch(e){}
+      if(!fp)fp={x:BX,y:.1,z:z-.1};window.__foot={t,fz:fp.z,fy:fp.y,z};
+      const u=clamp(t/2.9,0,1),e=ease(clamp((t-2.9)/1.9,0,1)),h=HP(N);
+      const sx=BX+stE(2.7,1.6,u),sy=stE(.45,.24,u),sz=fp.z-stE(2.6,1.4,u),lx=BX,ly=stE(.5,.12,u),lz=fp.z;
+      const f=RP(BX,44.4,PI,1.1,-.5,1.62);
+      stC(sx+(f[0]-sx)*e,sy+(f[1]-sy)*e,sz+(f[2]-sz)*e,lx+(h[0]-lx)*e,ly+(h[1]-.01-ly)*e,lz+(h[2]-lz)*e,stE(34,12,u)+(24-12)*e);
+      ST.focus.set(BX,0,z);}}};
+  const E2={dur:1,draw:sd2,lines:[L0],s3:{...WIN,cast:['renK9'],crowd:.5,
+    d3(t,dt,li,lt){bn();const N=stA('renK9');ST.egoActor=true;ST.egoNagi=true;ST.egoOn=true;
+      stP(N,BX,44.4,PI,{pose:'stand',ex:'determined',look:stLk(BX+.2,1.6,30)});
+      const u=clamp(lt/5,0,1),h=HP(N);stCv(RP(BX,44.4,PI,stE(1.1,.82,u),-.5,1.62),[h[0],h[1]-.01,h[2]],stE(24,20,u),.02);ST.focus.set(BX,0,44.4);},
+    ov(t,li,lt){if(lt<.6)stGlitch(1-lt/.6);}}};
+  // ---- walking into the middle of the stadium; the head turns on a damped spring: crowd, players, ground, then far away ("I will protect Isagi")
+  let G=null;const casts=['renK9','kenji','bachK','shun','sB','sC','sD'];
+  const pl=(look)=>{const q=(k,x,z,yw)=>stP(stA(k),x,z,yw,{pose:'stand',ex:'focus',look});q('kenji',-8,-2.5,PI/2);q('bachK',-5.5,5,PI/2);q('shun',-12,1,PI/2);q('sB',7,-2.5,-PI/2);q('sC',6,4.5,-PI/2);q('sD',9.5,1,-PI/2);};
+  const X0=-3.4,Z0=19,LL=Math.hypot(X0,Z0),DX=-X0/LL,DZ=-Z0/LL,YW=Math.atan2(DX,DZ),SP=2.15;
+  const E3={dur:9.6,draw:sd2,s3:{...WIN,cast:casts,crowd:.8,
+    d3(t,dt){const N=stA('renK9'),h=Math.min(dt||.016,.05);if(!G||t<G.t-.05)G={t:0,a:YW,av:0,e:0,ev:0};G.t=t;
+      const dd=Math.min(LL,SP*(t<.7?t*t/1.4:t-.35)),nx=X0+DX*dd,nz=Z0+DZ*dd,hx=nx,hz=nz;
+      let tx,ty,tz;
+      if(t<1.5){tx=nx+DX*20;ty=1.4;tz=nz+DZ*20;}else if(t<3.4){tx=-55;ty=10;tz=-6;}else if(t<5.5){tx=6;ty=1.6;tz=-1;}else if(t<6.3){tx=nx+DX*2.4;ty=.1;tz=nz+DZ*2.4;}else{tx=nx+DX*30;ty=18;tz=nz+DZ*30;}
+      const ta=Math.atan2(tx-hx,tz-hz),te=Math.atan2(ty-1.55,Math.hypot(tx-hx,tz-hz));
+      spr(G,'a',ta,h,11,.62);spr(G,'e',te,h,11,.62);
+      const ce=Math.cos(G.e),look=stLk(hx+Math.sin(G.a)*ce*25,1.55+Math.sin(G.e)*25,hz+Math.cos(G.a)*ce*25);
+      stP(N,nx,nz,YW,{pose:'walk',ex:'determined',look});stEyes(N,clamp((t-6.2)/1.4,0,1));pl(stLk(nx,1.6,nz));
+      window.__hs={t,a:G.a,e:G.e,yaw:YW,nx,nz};
+      const hp=HP(N),u=clamp((t-6.4)/2,0,1);stCv(RP(nx,nz,YW,stE(4.2,2.3,u),stE(-1.1,-.7,u),1.45),[hp[0],hp[1]-.02,hp[2]],stE(32,22,u));ST.focus.set(nx,0,nz);}}};
+  const E4={dur:1,draw:sd2,lines:[L1],s3:{...WIN,cast:casts,crowd:.8,
+    d3(t,dt,li,lt){const N=stA('renK9');stP(N,0,0,YW,{pose:'stand',ex:'determined',look:stLk(7,1.6,-1)});stEyes(N,1);pl(stLk(0,1.6,0));
+      const u=clamp(lt/6,0,1),a=stE(-.5,.9,u);stC(Math.sin(a)*8,1.7,Math.cos(a)*8,0,1.3,0,34);ST.focus.set(0,0,0);}}};
+  // ---- ego is inside Nagi in the match scenes: the coach scene shows the mask on Nagi himself
+  {const o=shC.s3,od=o.d3;o.cast=['ishi','renK9'];
+    o.d3=function(t,dt,li,lt){const I=stA('ishi');stP(I,BX+2.0,BZ-1.2,PI+.7,{pose:'armsCrossed',ex:li===0?'shock':'smile',look:stLk(14,1.4,6)});
+      const N=stA('renK9');ST.egoActor=true;ST.egoNagi=li===1;stP(N,14,0,PI/2+.5,{pose:'stand',ex:'determined',look:stLk(14,1.4,6)});
+      if(li===1){const u=clamp(lt/5,0,1),h=HP(N);stCv(RP(14,0,PI/2+.5,stE(2.0,1.2,u),.5,1.55),[h[0],h[1]-.01,h[2]],stE(30,22,u),.02);ST.focus.set(14,0,0);}
+      else{const u=clamp(lt/6,0,1),h=HP(I);stCv(RP(BX+2.0,BZ-1.2,PI+.7,stE(1.8,1.3,u),.4,1.5),h,stE(30,26,u),.03);ST.focus.set(BX,0,BZ);}};}
+  // ---- first Dap reaction (coach, team, rivals) with the ego line
+  const R1={dur:1,draw:sd2,lines:[{who:EG,text:'This is it, He is unstoppable now.'}],s3:{...WIN,cast:['renK9','ishi','sB','sC','sD','kenji','bachK','shun'],crowd:.85,
+    d3(t,dt,li,lt){bn();const N=stA('renK9'),I=stA('ishi');ST.egoActor=true;ST.egoNagi=lt<1.5;
+      stP(N,49.5,0,PI/2,{pose:'hero',ex:'determined',look:stLk(70,1.5,0)});
+      stP(stA('sB'),53.5,-1.4,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sC'),56,2.0,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sD'),58.5,-.4,-PI/2,{pose:'handsHead',ex:'shock'});
+      stP(stA('kenji'),42.5,3,PI/2,{pose:'fistUp',ex:'grin',look:stLk(49.5,1.6,0)});stP(stA('bachK'),44,-4,PI/2,{pose:'fistUp',ex:'grin',look:stLk(49.5,1.6,0)});stP(stA('shun'),41.5,-1,PI/2,{pose:'handsHead',ex:'shock'});
+      stP(I,BX+2.0,BZ-1.2,PI+.7,{pose:lt>1.8?'fistUp':'handsHead',ex:lt>1.8?'smile':'shock',look:stLk(14,1.4,6)});
+      if(lt<1.5){const u=clamp(lt/1.5,0,1),h=HP(N);stCv(RP(49.5,0,PI/2,stE(1.5,1.0,u),.5,1.6),[h[0],h[1]-.01,h[2]],stE(26,20,u),.02);ST.focus.set(49.5,0,0);}
+      else if(lt<2.7){const u=clamp((lt-1.5)/1.2,0,1),h=HP(I);stCv(RP(BX+2.0,BZ-1.2,PI+.7,stE(1.8,1.2,u),.4,1.5),h,stE(30,24,u),.03);ST.focus.set(BX,0,BZ);}
+      else{const u=clamp((lt-2.7)/1.5,0,1);stC(stE(38,36,u),1.5,stE(8,6.5,u),stE(52,51,u),1.4,.4,40);ST.focus.set(50,0,0);}},
+    ov(t,li,lt){if(lt<.5)stTint('#ffffff',.5*(1-lt/.5));if(lt<.7)stGlitch(1-lt/.7);}}};
+  const CODA={dur:3.6,draw:sd2,s3:{...WIN,cast:['renK9','sB','sC','sD','kenji','bachK'],crowd:.9,
+    d3(t){const N=stA('renK9');stP(N,48.5,0,PI/2,{pose:'hero',ex:'determined'});stEyes(N,1);
+      stP(stA('sB'),53.5,-1.4,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sC'),56,2.0,-PI/2,{pose:'handsHead',ex:'shock'});stP(stA('sD'),58.5,-.4,-PI/2,{pose:'handsHead',ex:'shock'});
+      stP(stA('kenji'),43,3,PI/2,{pose:'fistUp',ex:'grin'});stP(stA('bachK'),44.5,-4,PI/2,{pose:'fistUp',ex:'grin'});
+      const u=clamp(t/3.6,0,1);stC(stE(43.5,41.9,u),1.3,stE(5.4,4.8,u),49.5,1.35,.5,stE(40,32,u));ST.focus.set(49.5,0,0);},
+    ov(t){stStamp('KUROGANE SC 2 – 1 SEIRAN FC · THE LEAD',t);stScoreOv(t,'2','1');}}};
+  SC.benchMid=[R1,shC,shF];SC.benchEnd=[CODA];
+  A.splice(iL,A.length-iL,E1,E2,E3,E4);A.noSkip=true;
+  // ---- cutscene that cannot be skipped (until the story match is over)
+  {const _ec=endCutscene;endCutscene=function(){if(CS&&CS.shots&&CS.shots.noSkip&&CS.i<CS.shots.length)return;return _ec.apply(this,arguments);};}
+  {const _su=syncUI;syncUI=function(){const r=_su.apply(this,arguments);try{if(mode==='cutscene'&&CS&&CS.shots&&CS.shots.noSkip)ui.skip.hidden=true;}catch(e){}return r;};}
+  {const _ss=startShot;startShot=function(){try{if(ST&&ST.wAura)ST.wAura.visible=false;}catch(e){}return _ss.apply(this,arguments);};}
+  // ---- the playable match: Nagi is the striker, Seiran lead 0-1, Shoot is always the Dap Shot, hidden time limits push it, two goals end the match
+  {const _td=teamDefs;teamDefs=function(ch){const d=_td.apply(this,arguments);
+    if(ch===5)try{const R=d[0].roster,n=R.find(r=>r.user),t=R.find(r=>r.label==='TARO');if(n&&t){[n.bx,t.bx]=[t.bx,n.bx];[n.by,t.by]=[t.by,n.by];n.num=9;t.num=4;}}catch(e){console.warn('teamDefs5',e);}
+    return d;};}
+  {const _sm=startMatch;startMatch=function(ch){const r=_sm.apply(this,arguments);try{if(ch===5&&M&&M.ch===5){M.score=[0,1];M.f5={n:0,t:0,lim:40,fire:0,end:0};try{if(typeof stQueue==='function')stQueue(SC.benchMid.concat(SC.benchEnd));}catch(e){}}}catch(e){console.warn('start5',e);}return r;};}
+  const near=p=>{try{return Math.abs(ultGoalX()-p.x)<1100;}catch(e){return true;}};
+  {const _ab=aimBegin;aimBegin=function(u,ay,kind){if(M&&M.ch===5&&M.f5&&u&&u.isUser&&kind==='shot')kind='ult';return _ab.call(this,u,ay,kind);};}
+  {const _sh=shoot;shoot=function(p,ay){if(M&&M.ch===5&&M.f5&&p&&p.isUser&&!M.cine&&near(p)&&M.ball.owner===p){M.shotAim=null;startUltCine();return;}return _sh.apply(this,arguments);};}
+  const f5Tick=dt=>{const F=M&&M.ch===5&&M.f5;if(!F||mode!=='match'||M.ended||F.end||M.cine||M.aim||M.freeze>0||M.pick)return;
+    if(F.fire){if(clock-F.fc>2.5&&!M.cine){F.fire=0;F.t=F.lim-6;}return;}
+    F.t+=Math.min(dt,.05);if(F.t<F.lim)return;const u=M.user;if(!u)return;F.fire=1;F.fc=clock;F.fn=F.n;M.sp=null;M.adv=null;M.ind=null;
+    if(M.ball.owner!==u)giveBall(u);const gx=ultGoalX(),dir=M.home.dir||1;u.x=gx-dir*340;u.y=PH/2+(u.y>PH/2?70:-70);u.vx=u.vy=0;M.ball.x=u.x;M.ball.y=u.y;M.shotAim=null;startUltCine();};
+  {const _um=updateMatch;updateMatch=function(dt){const r=_um.apply(this,arguments);try{f5Tick(dt);}catch(e){if(!window.__f5e){window.__f5e=1;console.warn('f5',e);}}return r;};}
+  {const _gs=goalScored;goalScored=function(T){const F=M&&M.ch===5&&M.f5,who=M&&M.cine&&M.cine.shooter;const r=_gs.apply(this,arguments);
+    try{if(F&&T===M.home&&(!who||who.isUser)){F.n++;F.t=0;F.fire=0;
+      if(F.n===1)M.after=()=>{M.flash=null;M.freeze=1e9;playCutscene(SC.benchMid,()=>{mode='match';show(null);kickoff(M.away);syncUI();});};
+      else{F.end=1;M.after=()=>{M.flash=null;M.freeze=1e9;M.ended=true;playCutscene(SC.benchEnd,()=>CHAPTERS[4].start());};}}}catch(e){console.warn('goal5',e);}return r;};}
+  CHAPTERS[3].start=()=>playCutscene(SC.selection,()=>playCutscene(SC.benchMatch,()=>startMatch(5)));
+  window.__SC=SC;window.__F5={start(){startMatch(5);},mid(){playCutscene(SC.benchMid,()=>{});},end(){playCutscene(SC.benchEnd,()=>{});}};
+}
+
+function stP22(){
+  const A=SC.selection;if(!A||A.__w235)return;
+  const i=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/Round five, defending/.test(x.lines[0].text));if(i<0)return;A.__w235=1;
+  A.splice(i,0,{dur:3.2,draw:t=>{chapterCard(5,'Defending',t,'How easily can you stop an attacker? Three one-on-ones, one chance each.');
+    const s=sc(),fs=Math.round(16*s+4),cy=H*.5-Math.min(64*s,H*.12),a=clamp(t*2,0,1);ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#05080e';ctx.fillRect(W/2-fs*8,cy-fs*.9,fs*16,fs*1.8);
+    smallText('ROUND 5 OF 5',W/2,cy,fs,'#ff8a3d','center',FS,700);ctx.restore();}});
+}
+// ---- w236: the foul is a real animation: Seiran player plays the tackle clip, Barou the trip clip, then lies injured; 22 players stay in frame ----
+function stP23(){
+  const A=SC.benchMatch;if(!A||A.__w236)return;
+  const i=A.findIndex(x=>x&&x.lines&&x.lines[0]&&/shoved him hard from behind/.test(x.lines[0].text));if(i<0||!A[i].s3)return;A.__w236=1;
+  const PI=Math.PI,BX=-8,BZ=46.4,sv=A[i].s3,KU=['kgk','kd2','kd3','kd4','kd5','kd6','bachK','kenji','shun','barK','kd11'],SE=['sgk','sq2','sq3','sq5','sq6','sB','sq7','sC','sq8','sD','s9'];
+  const F=[[-64,0,.08],[-30,-22,.5],[-30,-8,.5],[-30,8,.5],[-30,22,.5],[-12,-18,.72],[-8,-6,.72],[-8,6,.72],[-12,18,.72],[6,-8,.9],[8,8,.9]];
+  const side=(keys,tm,dir,b0)=>keys.map((k,j)=>{const f=F[j],hx=f[0]*dir,hz=f[1]*dir,sh=f[2];return {k,tm,hx,hz,sh,x:hx+sh*b0[0],z:hz*.85+b0[1]*.45,yaw:dir>0?PI/2:-PI/2,vm:j===0?4.5:6.2};});
+  const BG=['kgk','kd2','kd3','kd4','kd5','kd6','bachK','kenji','shun','kd11'].concat(['sgk','sq2','sq3','sq5','sq6','sq7','sC','sq8','sD','s9']);
+  const mk=()=>{const b0=[-14,6],K=side(KU,0,1,b0).filter(p=>p.k!=='barK'),S=side(SE,1,-1,b0).filter(p=>p.k!=='sB');
+    return stMPMk([...K,...S],[{d:40,c:'kenji',go:[-2,8]}],{dir:1});};
+  sv.cast=[...new Set([...(sv.cast||[]),...KU,...SE,'ishi'])];
+  const old=sv.d3,vo=sv.ov;
+  sv.d3=function(t,dt,li,lt){
+    if(!this.mp||!stMPAdvance(this.mp,t))this.mp=mk();if(this.mp.reset||this.mp.t<t-.05)stMPAdvance(this.mp,t);
+    stMPApply(this.mp,null);
+    const B=stA('barK'),S4=stA('sB'),I=stA('ishi'),tt=li<=0?lt:99,TH=2.6;
+    const bx=tt<TH?-22+5.4*tt:-22+5.4*TH+2.2*(1-Math.exp(-(Math.min(tt,6)-TH)*2.5)),bz=8-Math.min(tt,TH)*.3;
+    const sx=tt<TH?-28+7.4*tt:bx-.9-Math.min(tt-TH,1)*.4,sz=bz+.1;
+    const ft=Math.min(Math.max(tt-TH,0),9);
+    B.mxForce=tt>=TH&&ft<1.55?{n:'trip',t:ft,w:1,loop:false}:null;
+    const sT=tt-(TH-.5);S4.mxForce=(sT>=0&&sT<1.7)?{n:'tackle',t:sT,w:1,loop:false}:null;
+    const down=tt>=TH+1.5;
+    stP(B,bx,bz,PI/2,{pose:down?'fallen':null,ex:tt>=TH?'pain':'determined'});
+    stP(S4,sx,sz,PI/2,{pose:null,ex:tt>=TH+.6?'smirk':'angry'});
+    stBall(down?bx+3+Math.min(lt,3)*.5:tt<TH?bx+.55:bx+.55+(tt-TH)*2.4,.14,bz+(tt<TH?0:.3));
+    stP(I,BX+1.5,BZ-2.2,PI,{pose:li>=1?'accuse':'armsCrossed',ex:li>=1?'shock':'focus'});
+    if(li<=0){if(tt<TH+.2){const u=clamp(tt/TH,0,1);stC(stE(bx-9,bx-5,u),stE(3.4,2.2,u),bz+stE(17,11,u),bx+2,1.0,bz,stE(42,36,u));}else{const u=clamp((tt-TH)/2.2,0,1);stC(stE(bx-4.5,bx-2.8,u),stE(1.9,1.2,u),bz-stE(8.4,5.6,u),bx+.2,.7,bz,stE(36,30,u));}}
+    else{const u=clamp(lt/4,0,1);stC(stE(BX+4,BX+2.4,u),1.5,stE(BZ-5,BZ-4.6,u),BX+1.5,1.5,BZ-2.2,34);}
+    window.__shove={tt:+tt.toFixed(2),down,bx:+bx.toFixed(2),bz:+bz.toFixed(2),bPos:[B.root.position.x,B.root.position.y,B.root.position.z].map(v=>+v.toFixed(2)),sPos:[S4.root.position.x,S4.root.position.z].map(v=>+v.toFixed(2)),bForce:B.mxForce&&B.mxForce.n,sForce:S4.mxForce&&S4.mxForce.n,bVis:B.root.visible,bNum:(B.design&&B.design.name)||'',k11:(()=>{const a=ST.actors.get('kd11');return a?[a.root.position.x,a.root.position.z].map(v=>+v.toFixed(1)):null;})()};
+    ST.focus.set(bx,0,bz);};
+}
+
 function stP13(){
   const A=SC.trialIntro;if(!A||A.__w220)return;A.__w220=1;const sh=A[1];if(!sh||!sh.s3||!sh.lines||sh.lines.length<4)return;
   const L=sh.lines;
@@ -16963,7 +17134,7 @@ function stP13(){
 function stP12(){for(const k of Object.keys(SC)){const a=SC[k];if(!Array.isArray(a)||a.__w219)continue;a.__w219=1;
   a.forEach((s,i)=>{if(s&&s.s3&&s.s3.set==='training'){s.s3.set='exam';if(s.s3.tod==null)s.s3.tod=.3;(window.__trainSw=window.__trainSw||[]).push(k+':'+i);}});}}
 window.__ST=ST;stDayStreet();
-stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();stP14();stP15();stP16();stP17();stP18();stP19();stP20();squadAttach();
+stAttach();stP2();stP3();stP4();stP5();stP6();stP7();stP8();stP9();stP10();stP11();stP12();stP13();stP14();stP15();stP16();stP17();stP22();stP23();stP21();stP18();stP19();stP20();squadAttach();
 // ==== W5 story3d: the v87 chapters (Subject Seven, Five Months, National Practice, the World Cup, the league cards) staged in 3D
 // with the anime rig instead of the flat 2D figures. New sets: the white room under Hokuto, a hospital room, a rehab gym and the
 // players' tunnel; props (ambulance, trophy, confetti, cones, bench) live in one group under ST.grp so they work on the borrowed
